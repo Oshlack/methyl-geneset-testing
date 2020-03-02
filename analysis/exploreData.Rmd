@@ -1,0 +1,574 @@
+---
+title: 'Gene set testing for Illumina HumanMethylation Arrays'
+author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r libload, message=FALSE}
+library(here)
+library(minfi)
+library(paletteer)
+library(limma)
+library(BiocParallel)
+library(reshape2)
+library(gridExtra)
+library(missMethyl)
+library(ggplot2)
+library(glue)
+source(here("code/helperFunctions.R"))
+```
+
+# Load data
+
+We are using publicly available EPIC data [GSE110554](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE110554) generated from flow sorted blood cells. The data is normalised and filtered (bad probes, multi-mapping probes, SNP probes, sex chromosomes).
+
+```{r}
+# load data
+dataFile <- here("data/GSE110554-data.RData")
+if(file.exists(dataFile)){
+  # load processed data and sample information
+  load(dataFile)
+} else {
+  # get data from experiment hub, normalise, filter and save objects
+  readData(dataFile)
+  # load processed data and sample information
+  load(dataFile)
+}
+```
+
+## QC plots
+
+```{r}
+# plot mean detection p-values across all samples
+ksPal <- paletteer_d(package = "LaCroixColoR", palette = "KiwiSandia")
+graphics::barplot(colMeans(detP), col=ksPal[factor(targets$CellType)], las=2,
+         cex.names=0.8,ylab="Mean detection p-values", cex.axis = 0.6)
+abline(h=0.01,col="red")
+legend("topright", legend=levels(factor(targets$CellType)), fill=ksPal,
+        bg="white")
+```
+
+```{r}
+# plot normalised beta value distribution
+par(mfrow=c(1,1))
+densityPlot(getBeta(normGr), sampGroups=targets$CellType,
+              main="Normalized", legend=FALSE, pal = ksPal)
+legend("top", legend = levels(factor(targets$CellType)),
+        col = ksPal, lty = 1)
+```
+
+```{r}
+# MDS plots to look at largest sources of variation
+par(mfrow=c(1,1))
+plotMDS(getM(fltGr), top=1000, gene.selection="common", pch = 19,
+         col=ksPal[factor(targets$CellType)], cex=1.5)
+legend("topleft", legend=levels(factor(targets$CellType)), col=ksPal,
+       bg="white", pch = 19, cex = 1.2)
+```
+
+# Statistical analysis
+
+Compare several sets of sorted immune cells. Consider results significant at FDR < 0.05 and delta beta ~ 10% (~ lfc = 0.5).
+
+```{r}
+mVals <- getM(fltGr)
+bVals <- getBeta(fltGr)
+```
+
+```{r, fig.width=9,fig.height=6}
+design <- model.matrix(~0+targets$CellType)
+colnames(design) <- levels(factor(targets$CellType))
+fit <- lmFit(mVals, design)
+cont.matrix <- makeContrasts(CD4vCD8=CD4T-CD8T,
+                             BcellvMono=Bcell-Mono,
+                             MonovNeu=Mono-Neu,
+                             BcellvNK=Bcell-NK,
+                             NeuvNK=Neu-NK,
+                             MonovNK=Mono-NK,
+                             levels=design)
+fit2 <- contrasts.fit(fit, cont.matrix)
+tfit <- eBayes(fit2, robust=TRUE, trend=TRUE)
+tfit <- treat(tfit, lfc = 0.5)
+pval <- 0.05
+fitSum <- summary(decideTests(tfit, p.value = pval))
+fitSum
+```
+
+Examine only the independent contrasts.
+
+```{r}
+indCont <- c(1,3,4) # select only independent contrasts for further analysis
+
+fitDat <- melt(fitSum[rownames(fitSum) != "NotSig",indCont])
+colnames(fitDat) <- c("dir","comp","num")
+contNames <- c("B cells vs. NK", "CD4 vs. CD8", "Mono vs. Neu")
+names(contNames) <- c("BcellvNK", "CD4vCD8", "MonovNeu")
+  
+ggplot(fitDat,aes(x=comp,y=num,fill=dir)) +
+  geom_bar(stat="identity",position = "dodge") +
+  labs(x="Comparison", y="No. DM CpGs (FDR < 0.05)", fill="Direction") +
+  scale_x_discrete(labels = contNames) + 
+  scale_fill_paletteer_d(package = "wesanderson", palette = "Moonrise3") + 
+  theme_minimal()
+```
+
+## Test GO categories
+
+Compare the gene set testing methods available for methylation arrays; hypergeometric test (HGT), gometh (best), methylRRA (GLM), methylRRA (ORA) and methylRRA (GSEA). As methylRRA does not work well with sets that only contain very few genes or very large sets, we will only test sets with at least 5 genes and maximum of 5000 genes. First test GO categories.
+
+### gometh
+
+```{r}
+minsize <- 5
+maxsize <- 5000
+
+inputFile <- here("data/input.RData")
+save(tfit, maxsize, minsize, mVals, targets, file = inputFile)
+```
+
+```{r}
+method <- "gometh"
+arrayType <- "EPIC"
+set <- "GO"
+out <- paste(method,arrayType,set,sep=".")
+outFile <- here(glue("data/{out}.RData"))
+scriptFile <- here("code/testMethods.R")
+  
+if(file.exists(outFile)){
+  load(outFile)
+} else {
+  runBgAnalysis(scriptFile, method, arrayType, set, inputFile)
+}
+```
+
+```{r, fig.width=9}
+anno <- loadAnnotation("EPIC")
+flatAnn <- missMethyl:::.getFlatAnnotation("EPIC", anno = anno)
+cpgEgGo <- cpgsByGO(flatAnn)
+medCpgEgGo <- data.frame(med=tapply(cpgEgGo$Freq, cpgEgGo$GO, median))
+medCpgEgGo$id <- rownames(medCpgEgGo)
+
+dat <- numeric(0)
+
+for(i in indCont){
+  
+  hgt <- gometh.EPIC.GO[[i]]$none
+  gmeth <- gometh.EPIC.GO[[i]]$adj
+
+  tmp <- medCpgEgGo[medCpgEgGo$id %in% rownames(hgt),]
+  tmp <- tmp[order(tmp$med),]
+
+  hgt <- hgt[match(rownames(hgt),tmp$id),]
+  gmeth <- gmeth[match(rownames(gmeth),tmp$id),]
+
+  bins <- rbin_quantiles(tmp, id, med, bins = 5)
+  tmp$bin <- as.factor(findInterval(tmp$med, bins$upper_cut))
+  tmp$hgt <- hgt$P.DE
+  tmp$gmeth <- gmeth$P.DE
+
+  binLabs <- paste0("<", bins$upper_cut)
+  names(binLabs) <- levels(tmp$bin)
+  binLabs[length(binLabs)] <- gsub("<", "\u2265", binLabs[length(binLabs) - 1])
+    
+  dat <- rbind(dat, data.frame(reshape2::melt(tmp, id.vars = c("id","med","bin")), 
+                               contrast = colnames(tfit$contrasts)[i]))
+}
+
+as_tibble(dat) %>% group_by(contrast, variable, bin) %>%
+  summarise(prop = sum(value < 0.05)/n()) -> pdat
+
+p <- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = variable)) +
+  geom_line() +
+  facet_wrap(vars(contrast), ncol = 3) +
+  theme_minimal() +
+  scale_x_continuous(breaks = as.numeric(levels(pdat$bin)),labels = binLabs) +
+  theme(axis.text.x = element_text(angle=90, hjust = 1, vjust = 0.5,
+                                   size = 7)) +
+  labs(x = "Med. No. CpGs per Gene per GO Cat. (binned)",
+       y = "Prop. GO Cat. with p-value < 0.05")
+p
+```
+```{r, fig.width=5, fig.height=8}
+dat <- numeric(0)
+
+for(i in 4){
+  
+  hgt <- gometh.EPIC.GO[[i]]$none
+  gmeth <- gometh.EPIC.GO[[i]]$adj
+
+  tmp <- medCpgEgGo[medCpgEgGo$id %in% rownames(hgt),]
+  tmp <- tmp[order(tmp$med),]
+
+  hgt <- hgt[match(rownames(hgt),tmp$id),]
+  gmeth <- gmeth[match(rownames(gmeth),tmp$id),]
+
+  bins <- rbin_quantiles(tmp, id, med, bins = 5)
+  tmp$bin <- as.factor(findInterval(tmp$med, bins$upper_cut))
+  tmp$hgt <- hgt$P.DE
+  tmp$gmeth <- gmeth$P.DE
+
+  binLabs <- paste0("<", bins$upper_cut)
+  names(binLabs) <- levels(tmp$bin)
+  binLabs[length(binLabs)] <- gsub("<", "\u2265", binLabs[length(binLabs) - 1])
+    
+  dat <- rbind(dat, data.frame(reshape2::melt(tmp, id.vars = c("id","med","bin")), 
+                               contrast = colnames(tfit$contrasts)[i]))
+}
+
+as_tibble(dat) %>% group_by(contrast, variable, bin) %>%
+  summarise(prop = sum(value < 0.05)/n()) -> pdat
+
+p <- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = variable)) +
+  geom_line(size = 1.5) +
+  theme_minimal() +
+  scale_x_continuous(breaks = as.numeric(levels(pdat$bin)),labels = binLabs) +
+  theme(axis.text.x = element_text(angle=90, hjust = 1, vjust = 0.5,
+                                   size = 10)) +
+  labs(x = "Med. No. CpGs per Gene per GO Cat. (binned)",
+       y = "Prop. GO Cat. with p-value < 0.05")
+p
+```
+
+
+### methylGSA
+
+```{r}
+method <- "mRRA"
+arrayType <- "EPIC"
+set <- "GO"
+out <- paste(method,arrayType,set,sep=".")
+outFile <- here(glue("data/{out}.RData"))
+
+if(file.exists(outFile)){
+  load(outFile)
+} else {
+  runBgAnalysis(scriptFile, method, arrayType, set, inputFile)
+}
+```
+
+As we are comparing immune cells, we expect GO categories related to the immune system and its processes to be highly ranked. To evalue this, we downloaded all of the child terms for the GO category "immune system process" (GO:002376) from AminGO 2;  [http://amigo.geneontology.org/amigo/term/GO:0002376](http://amigo.geneontology.org/amigo/term/GO:0002376). 
+
+```{r, fig.width=8}
+immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"), 
+                            stringsAsFactors = FALSE, header = FALSE, 
+                            col.names = "GOID"))
+methodNames <- c("hgt", "gometh-best", "mrra-glm", "mrra-ora", "mrra-gsea", "ebgsea")
+
+if(exists("gometh.EPIC.GO") & exists("mRRA.EPIC.GO")){
+  
+  goDat <- numeric(0)
+  sub <- 1:50
+  
+  #for(i in 1:ncol(tfit)){
+  for(i in indCont){
+    
+    hgt <- cumsum(rownames(gometh.EPIC.GO[[i]]$none) %in% immuneGO$GOID)[sub]
+    gmeth <- cumsum(rownames(gometh.EPIC.GO[[i]]$adj) %in% immuneGO$GOID)[sub]
+    glm <- cumsum(rownames(mRRA.EPIC.GO[[i]]$glm) %in% immuneGO$GOID)[sub]
+    ora <- cumsum(rownames(mRRA.EPIC.GO[[i]]$ora) %in% immuneGO$GOID)[sub]
+    gsea <- cumsum(rownames(mRRA.EPIC.GO[[i]]$gsea) %in% immuneGO$GOID)[sub]
+  
+    tmp <- melt(data.frame(hgt, gmeth, glm, ora, gsea, rank=sub), id="rank")
+    tmp$contrast <- colnames(tfit$contrasts)[i]
+    goDat <- rbind(goDat, tmp)  
+  }
+
+  p <- ggplot(goDat, aes(x=rank,y=value, colour=variable)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3, labeller = labeller(contrast = contNames)) +
+    theme_minimal() +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    scale_color_paletteer_d(package = "LaCroixColoR", palette = "PassionFruit",
+                            labels = methodNames) +
+    labs(colour = "Method") + xlab("Rank") + ylab("Cumulative no. immune sets")
+  p
+}
+```
+
+Examine what the top 10 ranked gene sets are and how many genes (N) they contain, for each method and comparison.
+
+```{r, fig.width=10, fig.height=8}
+pfPal <- paletteer_d(package = "LaCroixColoR", palette = "PassionFruit")
+mar <-  c(4, 25, 2, 3) + 0.1
+oma <- c(2, 0, 2, 0)
+
+for(i in indCont){
+
+  par(mfrow = c(3, 2), mar = mar, oma = oma)
+  dat <- head(gometh.EPIC.GO[[i]]$none, n=10)
+  plotTopSets(dat$FDR, dat$TERM, dat$N, methodNames[1], col = pfPal[1])
+  
+  dat <- head(gometh.EPIC.GO[[i]]$adj, n=10)
+  plotTopSets(dat$FDR, dat$TERM, dat$N, methodNames[2], col = pfPal[2])
+  
+  dat <- head(mRRA.EPIC.GO[[i]]$glm, n=10)
+  plotTopSets(dat$padj, dat$TERM, dat$Size, methodNames[3], col = pfPal[3])
+  
+  dat <- head(mRRA.EPIC.GO[[i]]$ora, n=10)
+  plotTopSets(dat$padj, dat$TERM, dat$Size, methodNames[4], col = pfPal[4])
+  
+  dat <- head(mRRA.EPIC.GO[[i]]$gsea, n=10)
+  plotTopSets(dat$padj, dat$TERM, dat$Size, methodNames[5], col = pfPal[5])
+  
+  mtext(contNames[colnames(tfit$contrasts)[i]], outer = TRUE)
+  
+  par(xpd = TRUE, mar = c(5,4,4,2))
+  plot.new()
+  legend("top", legend = methodNames[1:5], 
+       fill = pfPal, cex = 1.5, title = "Method")
+  legend("topright", legend = "p-value = 0", cex = 1.5, pch = "*")
+  par(xpd = FALSE)
+}
+```
+
+P-value histograms for the different methods for all contrasts on GO categories.
+
+```{r, fig.width=10, fig.height=8}
+breaks <- 50
+#ylim <- c(0, 6000)
+ylim <- NULL
+
+for(i in 1:length(contNames)){
+
+  par(mfrow=c(3,2), oma = c(2, 0, 2, 0))
+  hist(gometh.EPIC.GO[[i]]$none$P.DE, breaks = breaks, main = methodNames[1], 
+       xlab = "P-value", col = pfPal[1], ylim = ylim)
+  hist(gometh.EPIC.GO[[i]]$adj$P.DE, breaks = breaks, main = methodNames[2], 
+       xlab = "P-value", col = pfPal[2], ylim = ylim)
+  hist(mRRA.EPIC.GO[[i]]$glm$pvalue, breaks = breaks, main = methodNames[3], 
+       xlab = "P-value", col = pfPal[3], ylim = ylim)
+  hist(mRRA.EPIC.GO[[i]]$ora$pvalue, breaks = breaks, main = methodNames[4], 
+       xlab = "P-value", col = pfPal[4], ylim = ylim)
+  hist(mRRA.EPIC.GO[[i]]$gsea$pvalue, breaks = breaks, main = methodNames[5], 
+       xlab = "P-value", col = pfPal[5], ylim = ylim)
+  
+  mtext(contNames[colnames(tfit$contrasts)[i]], outer = TRUE)
+  
+  par(xpd = TRUE)
+  plot.new()
+  legend("top", legend = methodNames[1:5], 
+       fill = pfPal, cex = 1.5, title = "Method")
+  par(xpd = FALSE)
+}
+
+```
+
+
+## Test KEGG pathways
+
+Now test KEGG pathways with at least 5 genes and 5000 at most.
+
+### gometh
+
+```{r}
+method <- "gometh"
+arrayType <- "EPIC"
+set <- "KEGG"
+out <- paste(method,arrayType,set,sep=".")
+outFile <- here(glue("data/{out}.RData"))
+scriptFile <- here("code/testMethods.R")
+  
+if(file.exists(outFile)){
+  load(outFile)
+} else {
+  runBgAnalysis(scriptFile, method, arrayType, set, inputFile)
+}
+```
+
+### methylGSA
+
+```{r}
+method <- "mRRA"
+arrayType <- "EPIC"
+set <- "KEGG"
+out <- paste(method,arrayType,set,sep=".")
+outFile <- here(glue("data/{out}.RData"))
+
+if(file.exists(outFile)){
+  load(outFile)
+} else {
+  runBgAnalysis(scriptFile, method, arrayType, set, inputFile)
+}
+```
+
+Again, as we are comparing immune cells we expecte pathways from the following categories to be highly ranked: Immune system, Immune disease, Signal transduction, Signaling molecules and interaction; [https://www.genome.jp/kegg/pathway.html](https://www.genome.jp/kegg/pathway.html). 
+
+```{r, fig.width=8}
+immuneKEGG <- read.csv(here("data/kegg-immune-related-pathways.csv"), 
+                            stringsAsFactors = FALSE, header = FALSE, 
+                            col.names = c("ID","pathway"))
+immuneKEGG$PID <- paste0("path:hsa0",immuneKEGG$ID)
+
+if(exists("gometh.EPIC.KEGG") & exists("mRRA.EPIC.KEGG")){  
+
+  keggDat <- numeric(0)
+  sub <- 1:20
+
+    #for(i in 1:ncol(tfit)){
+  for(i in indCont){
+  
+    hgt <- cumsum(rownames(gometh.EPIC.KEGG[[i]]$none) %in% immuneKEGG$PID)[sub]
+    gmeth <- cumsum(rownames(gometh.EPIC.KEGG[[i]]$adj) %in% immuneKEGG$PID)[sub]
+    glm <- cumsum(rownames(mRRA.EPIC.KEGG[[i]]$glm) %in% immuneKEGG$PID)[sub]
+    ora <- cumsum(rownames(mRRA.EPIC.KEGG[[i]]$ora) %in% immuneKEGG$PID)[sub]
+    gsea <- cumsum(rownames(mRRA.EPIC.KEGG[[i]]$gsea) %in% immuneKEGG$PID)[sub]
+  
+    tmp <- melt(data.frame(hgt, gmeth, glm, ora, gsea, rank=sub), id="rank")
+    tmp$contrast <- colnames(tfit$contrasts)[i]
+    keggDat <- rbind(keggDat, tmp)  
+  }
+
+  p <- ggplot(keggDat, aes(x=rank,y=value, colour=variable)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3, labeller = labeller(contrast = contNames)) +
+    theme_minimal() +
+    geom_vline(xintercept = 10, linetype = "dotted") + 
+    scale_color_paletteer_d(package = "LaCroixColoR", palette = "PassionFruit",
+                            labels = methodNames) +
+    labs(colour = "Method") + xlab("Rank") + ylab("Cumulative no. immune sets")
+  p
+}
+```
+
+```{r, fig.width=10, fig.height=8}
+for(i in indCont){
+
+  par(mfrow = c(3, 2), mar = mar, oma = oma)
+  dat <- head(gometh.EPIC.KEGG[[i]]$none, n=10)
+  plotTopSets(dat$FDR, dat$Description, dat$N, methodNames[1], col = pfPal[1])
+  
+  dat <- head(gometh.EPIC.KEGG[[i]]$adj, n=10)
+  plotTopSets(dat$FDR, dat$Description, dat$N, methodNames[2], col = pfPal[2])
+  
+  dat <- head(mRRA.EPIC.KEGG[[i]]$glm, n=10)
+  plotTopSets(dat$padj, dat$Description, dat$Size, methodNames[3], col = pfPal[3])
+  
+  dat <- head(mRRA.EPIC.KEGG[[i]]$ora, n=10)
+  plotTopSets(dat$padj, dat$Description, dat$Size, methodNames[4], col = pfPal[4])
+  
+  dat <- head(mRRA.EPIC.KEGG[[i]]$gsea, n=10)
+  plotTopSets(dat$padj, dat$Description, dat$Size, methodNames[5], col = pfPal[5])
+  
+  mtext(contNames[colnames(tfit$contrasts)[i]], outer = TRUE)
+  
+  par(xpd = TRUE, mar = c(5,4,4,2))
+  plot.new()
+  legend("top", legend = methodNames[1:5], 
+       fill = pfPal, cex = 1.5, title = "Method")
+  legend("topright", legend = "p-value = 0", cex = 1.5, pch = "*")
+  par(xpd = FALSE)
+}
+```
+
+## Test Broad gene sets
+
+As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. Note, As methylRRA (GSEA) consistenly performed very poorly in previous comparisons, it is being omitted from the following results.  
+
+### ebGSEA
+
+```{r}
+method <- "ebGSEA"
+arrayType <- "EPIC"
+set <- "BROAD"
+out <- paste(method,arrayType,set,sep=".")
+outFile <- here(glue("data/{out}.RData"))
+
+if(file.exists(outFile)){
+  load(outFile)
+} else {
+  runBgAnalysis(scriptFile, method, arrayType, set, inputFile)
+}
+```
+
+### gometh
+```{r}
+method <- "gometh"
+arrayType <- "EPIC"
+set <- "BROAD"
+out <- paste(method,arrayType,set,sep=".")
+outFile <- here(glue("data/{out}.RData"))
+
+if(file.exists(outFile)){
+  load(outFile)
+} else {
+  runBgAnalysis(scriptFile, method, arrayType, set, inputFile)
+}
+```
+
+### mRRA
+```{r}
+method <- "mRRA"
+arrayType <- "EPIC"
+set <- "BROAD"
+out <- paste(method,arrayType,set,sep=".")
+outFile <- here(glue("data/{out}.RData"))
+
+if(file.exists(outFile)){
+  load(outFile)
+} else {
+  runBgAnalysis(scriptFile, method, arrayType, set, inputFile)
+}
+```
+
+```{r, fig.width=10, fig.height=8}
+for(i in indCont){
+
+  par(mfrow = c(3, 2), mar = mar, oma = oma)
+  dat <- head(gometh.EPIC.BROAD[[i]]$none, n=10)
+  plotTopSets(dat$FDR, rownames(dat), dat$N, methodNames[1], col = pfPal[1])
+  
+  dat <- head(gometh.EPIC.BROAD[[i]]$adj, n=10)
+  plotTopSets(dat$FDR, rownames(dat), dat$N, methodNames[2], col = pfPal[2])
+  
+  dat <- head(mRRA.EPIC.BROAD[[i]]$glm, n=10)
+  plotTopSets(dat$padj, rownames(dat), dat$Size, methodNames[3], col = pfPal[3])
+  
+  dat <- head(mRRA.EPIC.BROAD[[i]]$ora, n=10)
+  plotTopSets(dat$padj, rownames(dat), dat$Size, methodNames[4], col = pfPal[4])
+  
+  dat <- data.frame(head(ebGSEA.EPIC.BROAD[[i]]$ebgs[[1]], n=10))
+  plotTopSets(dat$adjP, rownames(dat), dat$nREP, methodNames[6], col = pfPal[6])
+  
+  mtext(contNames[colnames(tfit$contrasts)[i]], outer = TRUE)
+  
+  par(xpd = TRUE, mar = c(5,4,4,2))
+  plot.new()
+  legend("top", legend = methodNames[c(1:4,6)], 
+       fill = pfPal[c(1:4,6)], cex = 1.5, title = "Method")
+  legend("topright", legend = "p-value = 0", cex = 1.5, pch = "*")
+  par(xpd = FALSE)
+}
+```
+P-value histograms for the different methods for all contrasts on BROAD gene sets.
+
+```{r, fig.width=10, fig.height=8}
+breaks <- 50
+#ylim <- c(0, 6000)
+ylim <- NULL
+
+for(i in 1:length(contNames)){
+
+  par(mfrow=c(3,2), oma = c(2, 0, 2, 0))
+  hist(gometh.EPIC.BROAD[[i]]$none$P.DE, breaks = breaks, main = methodNames[1], 
+       xlab = "P-value", col = pfPal[1], ylim = ylim)
+  hist(gometh.EPIC.BROAD[[i]]$adj$P.DE, breaks = breaks, main = methodNames[2], 
+       xlab = "P-value", col = pfPal[2], ylim = ylim)
+  hist(mRRA.EPIC.BROAD[[i]]$glm$pvalue, breaks = breaks, main = methodNames[3], 
+       xlab = "P-value", col = pfPal[3], ylim = ylim)
+  hist(mRRA.EPIC.BROAD[[i]]$ora$pvalue, breaks = breaks, main = methodNames[4], 
+       xlab = "P-value", col = pfPal[4], ylim = ylim)
+  hist(mRRA.EPIC.BROAD[[i]]$gsea$pvalue, breaks = breaks, main = methodNames[5], 
+       xlab = "P-value", col = pfPal[5], ylim = ylim)
+  hist(ebGSEA.EPIC.BROAD[[i]]$ebgs[[1]][,c("P(WT)")], breaks = breaks, 
+       main = methodNames[6], 
+       xlab = "P-value", col = pfPal[6], ylim = ylim)
+  
+  mtext(contNames[colnames(tfit$contrasts)[i]], outer = TRUE)
+}
+
+```

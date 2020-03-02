@@ -9,3 +9,8 @@ analysis/*png
 analysis/*html
 analysis/*_cache
 analysis/site_libs
+data/*
+*.docx
+*.pptx
+*.xlsx
+Thumbs.db

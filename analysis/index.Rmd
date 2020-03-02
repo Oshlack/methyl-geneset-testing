@@ -4,8 +4,49 @@ site: workflowr::wflow_site
 output:
   workflowr::wflow_html:
     toc: false
-editor_options:
-  chunk_output_type: console
 ---
 
-Welcome to my research website.
+# Gene set testing for methylation arrays
+
+This site contains the development and evaluation of various methylation array 
+gene set testing methods available in the Bioconductor [missMethyl package](https://bioconductor.org/packages/release/bioc/html/missMethyl.html). 
+Follow the links below to explore the 
+different parts of the project. 
+
+
+Analysis
+--------
+* Explore EPIC array bias
+    * [EPIC array bias](exploreArrayBiasEPIC.html) - Explore the various 
+      array biases that affect gene set testing.
+      
+* Explore 450k array bias
+    * [450k array bias](exploreArrayBias450.html) - Explore the various 
+      array biases that affect gene set testing.
+
+* Compare methods
+    * [Compare methods](exploreData.html) - Analyse an EPIC array sorted blood cell 
+      dataset using various gene set testing methods. Compare the results of the different 
+      methods.
+
+* Compare false discovery rate of different methods
+    * [Compare false discovery rate](nullAnalysis.html) - Analyse the normal samples from
+      a 450k array rheumatoid arthritis dataset using various genset testing methods to 
+      estimate the false discovery rate control.
+      
+* Gene set testing of regions
+    * [Region analysis](regionAnalysis.html) - Evalulate the use of gometh for geneset 
+      testing of differentially methylated regions from region finding software.
+      
+Licenses
+--------
+
+The code in this analysis is covered by the [MIT license][mit] and the written
+content on this website is covered by a [Creative Commons CC-BY][cc] license.
+
+
+Citations
+---------
+
+[mit]: https://choosealicense.com/licenses/mit/ "MIT License"
+[cc]: https://creativecommons.org/licenses/by/4.0/ "CC-BY License"
