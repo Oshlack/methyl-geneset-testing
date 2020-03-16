@@ -109,7 +109,7 @@ Calculate the average number of CpGs per gene, per GO category and plot the dens
 ```{r}
 cpgEgGo %>% 
   group_by(GO) %>%
-  summarise(avg = mean(NoCpgs)) -> dat
+  summarise(avg = mean(Freq)) -> dat
 
 med <- round(median(dat$avg), 2)
 
@@ -135,7 +135,7 @@ dat <- readRDS(here("output/random-cpg-sims/EPIC.rds"))
 #dat$noCpgs <- factor(dat$noCpgs, levels = c(50, 100, 500, 1000, 5000, 10000))
 
 dat %>% group_by(simNo, noCpgs, method) %>% 
-  summarise(pSig = sum(pVals < 0.05)/length(pVals)) -> sigDat
+  summarise(pSig = sum(P.DE < 0.05)/length(P.DE)) -> sigDat
 
 p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) + 
   geom_violin() +
@@ -151,11 +151,11 @@ QQ plots of randomly selected simulations at each level of CpGs sampled.
 set.seed(42)
 s <- sample(1:100, 3)
 dat %>% filter(simNo %in% s) %>%
-  arrange(simNo, noCpgs, method, pVals) %>%
+  arrange(simNo, noCpgs, method, P.DE) %>%
   group_by(simNo, noCpgs, method) %>%
   mutate(exp = 1:n()/n()) -> subDat
 
-p <- ggplot(subDat, aes(x=-log10(exp), y=-log10(pVals), color=method)) + 
+p <- ggplot(subDat, aes(x=-log10(exp), y=-log10(P.DE), color=method)) + 
   geom_point(shape = 1, size = 0.5) + 
   facet_grid(noCpgs ~ simNo, scales = "free_y")
 
@@ -170,27 +170,22 @@ p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
 Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.
 
 ```{r}
-dat %>% filter(pVals < 0.05) -> sigDat
-
+dat %>% filter(P.DE < 0.05) -> sigDat
 goFreq <- as_tibble(unique(cpgEgGo[,c("GO","Freq")]))
 
-sigDat %>% inner_join(goFreq, by=c("id" = "GO")) %>%
-  group_by(simNo, cpg, method, id) %>%
+sigDat %>% inner_join(goFreq, by=c("GO" = "GO")) %>%
+  group_by(simNo, noCpgs, method, GO) %>%
   summarise(avgFreq=mean(Freq)) %>% 
-  group_by(sim, cpg, adj) %>%
+  group_by(simNo, noCpgs, method) %>%
   summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
-```
 
-```{r}
-# Basic violin plot
-p <- ggplot(medAvgDat, aes(x=cpg, y=medAvgFreq, fill=adj)) + 
+p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
   geom_violin()
-p + 
-  stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
-               show.legend = FALSE, fun.y = median) +
-  labs(y="Median avg. no. CpGs/gene/GO cat.", x="No. randomly sampled CpGs",
-       fill="Adj. type") + 
-  theme_minimal()
+p + stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
+                show.legend = FALSE, fun = median) +
+  labs(y="Median avg. no. CpGs/gene/GO cat.", 
+       x="No. randomly sampled CpGs",
+       fill="Adj. type")
 ```
 
 
