@@ -79,7 +79,7 @@ cpgsEgGoFreqs <- function(flatAnn){
 
   m1 <- match(egGo$ENTREZID, names(cpgsEg))
   cpgsEgGo <- data.frame(egGo[!is.na(m1),], cpgsEg[m1[!is.na(m1)]])
-  colnames(cpgsEgGo)[3:4] <- c("ENTREZID.","NoCpgs")
+  colnames(cpgsEgGo)[3:4] <- c("ENTREZID.","Freq")
 
   gene.go <- paste(cpgsEgGo$ENTREZID, cpgsEgGo$GO, sep=".")
   d <- duplicated(gene.go)
