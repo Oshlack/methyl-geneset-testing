@@ -20,7 +20,7 @@ library(gridExtra)
 library(missMethyl)
 library(ggplot2)
 library(glue)
-source(here("code/helperFunctions.R"))
+source(here("code/utility.R"))
 ```
 
 # Load data
