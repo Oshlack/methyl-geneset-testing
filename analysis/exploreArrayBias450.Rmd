@@ -6,21 +6,24 @@ date: '`r format(Sys.Date(), "%B %d, %Y")`'
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+options(scipen=10000)
 ```
 
 ```{r libload, message=FALSE}
 library(here)
 library(glue)
 library(minfi)
+library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 library(missMethyl)
 library(org.Hs.eg.db)
 library(GO.db)
+library(patchwork)
 library(grid)
 library(ggplot2)
 library(tibble)
 library(dplyr)
-source(here("code/helperFunctions.R"))
+source(here("code/utility.R"))
 ```
 
 ## Array properties
@@ -28,7 +31,7 @@ source(here("code/helperFunctions.R"))
 Get the array annotation data.
 
 ```{r}
-ann <- loadAnnotation(arrayType = "450k")
+ann <- loadAnnotation(arrayType="450K")
 ```
 
 Associate CpGs to genes (ENTREZ ID) using the Illumina annotation information.
@@ -40,33 +43,26 @@ flatAnn <- loadFlatAnnotation(ann)
 The number of CpGs annotated to a gene is highly variable.
 
 ```{r, fig.height=10, fig.width=8}
-cpgEg <- data.frame(table(table(flatAnn$entrezid)))
-head(cpgEg)
-```
-
-Summary statistics for number of CpGs per gene.
-
-```{r}
-summary(as.vector(table(flatAnn$entrezid)))
+numCpgsPerGene <- as.vector(table(flatAnn$entrezid))
+summary(numCpgsPerGene)
 ```
 
 ```{r}
-med <- median(as.vector(table(flatAnn$entrezid)))
-
-ggplot(cpgEg, aes(x=Var1, y=Freq)) +
-  geom_segment( aes(x=Var1, xend=Var1, y=0, yend=Freq), color="grey") +
+dat <- data.frame(table(table(flatAnn$entrezid)))
+med <- median(numCpgsPerGene)
+mod <- getMode(numCpgsPerGene)
+  
+ggplot(dat, aes(x=Var1, y=Freq)) +
+  geom_segment(aes(x=Var1, xend=Var1, y=0, yend=Freq), color="darkgrey") +
   geom_point( color="black", size=1) +
   geom_vline(xintercept = med, linetype = "dashed", color = "red") +
-  geom_text(aes(x=med), label=glue("median = {med}"), y=1050, colour="red", 
-            size=3, hjust="left", nudge_x = 2) +
+  annotate("text", x = med + 2, label=glue("median = {med}"), y=700, colour="red", 
+            size = 3, hjust="left") +
+  geom_vline(xintercept = mod, linetype = "dashed", color = "blue") +
+  annotate("text", x = mod + 2, label=glue("mode = {mod}"), y=760, colour="blue", 
+            size = 3, hjust="left") +
   scale_x_discrete(breaks = c(1,5,10,20,35,50,60,70,80,90,100,125,152,202,251,350,1299)) +
-  theme_light() +
-  theme(
-    panel.grid.major.x = element_blank(),
-    panel.border = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.text.x = element_text(size = 8)
-  ) +
+  theme(axis.text.x=element_text(angle=45, hjust=1)) +
   xlab("No. CpGs per gene") +
   ylab("Frequency")
 ```
@@ -74,135 +70,111 @@ ggplot(cpgEg, aes(x=Var1, y=Freq)) +
 The number of genes a CpG maps to can also vary, although the majority of CpGs only map to one gene.
 
 ```{r}
-egCpg <- data.frame(table(table(flatAnn$cpg)))
-egCpg$Split <- ifelse(egCpg$Freq > 2000, "A", 
-                      ifelse(egCpg$Freq < 2000 & egCpg$Freq > 50,"B","C"))
-egCpg
-```
+dat <- data.frame(table(table(flatAnn$cpg)))
+dat$Split <- ifelse(dat$Freq > 2500, "A", 
+                    ifelse(dat$Freq < 2500 & dat$Freq > 65,"B","C"))
 
-```{r}
- p <- ggplot(egCpg, aes(x=Var1, y=Freq)) +
+a <- ggplot(dat[dat$Split == "A",], aes(x=Var1, y=Freq)) +
   geom_bar(stat = "identity") +
-  theme_light() +
-  theme(
-    panel.grid.major.x = element_blank(),
-    panel.border = element_blank(),
-    axis.ticks.x = element_blank(),
-    axis.text.x = element_text(size = 8)
-  ) +
-  xlab("No. genes mapped to a CpG") +
+  theme(axis.title.x = element_blank(), 
+        axis.text.y=element_text(angle=90, hjust=0.5)) +
   ylab("Frequency")
 
-p <- p + facet_wrap(~Split, scales = "free") +
-  theme(
-  strip.background = element_blank(),
-  strip.text.x = element_blank())
+b <- ggplot(dat[dat$Split == "B",], aes(x=Var1, y=Freq)) +
+  geom_bar(stat = "identity") +
+  theme(axis.title.x = element_blank(),
+        axis.title.y = element_blank())
 
-# Get the ggplot grob
-gt = ggplotGrob(p)
+c <- ggplot(dat[dat$Split == "C",], aes(x=Var1, y=Freq)) +
+  geom_bar(stat = "identity") +
+  theme(axis.title.x=element_blank(),
+        axis.title.y = element_blank()) 
 
-# Check for the widths - you need to change the two that are set to 1null
-gt$widths
-# The required widths are 4 and 8
-
-# Replace the default widths with relative widths:
-gt$widths[5] = unit(1, "null")
-gt$widths[9] = unit(2, "null")
-gt$widths[13] = unit(7, "null")
-
-# Draw the plot
-grid.newpage()
-grid.draw(gt)
+a + b + c + plot_layout(widths = c(1,2,6)) + 
+  plot_annotation(caption = "No. genes mapped to a CpG",
+                  theme = theme(plot.caption = element_text(hjust = 0.5, 
+                                                            size = 12)))
 ```
 
 Explore the distribution of the average number of CpGs per gene, per GO category. First, associate GO categories with the CpG and gene data.
 
 ```{r}
-cpgEgGo <- cpgsByGO(flatAnn)
+cpgEgGo <- cpgsEgGoFreqs(flatAnn)
 head(cpgEgGo)
 ```
 
-Calculate the average number of CpGs per gene and plot the density distribution. 
+Calculate the average number of CpGs per gene, per GO category and plot the density distribution. 
 
 ```{r}
-avgCpgEgGo <- data.frame(avg=tapply(cpgEgGo$Freq, cpgEgGo$GO, mean))
+cpgEgGo %>% 
+  group_by(GO) %>%
+  summarise(avg = mean(NoCpgs)) -> dat
 
-p <- ggplot(avgCpgEgGo, aes(x=avg)) +
+med <- round(median(dat$avg), 2)
+
+p <- ggplot(dat, aes(x=avg)) +
   geom_density() +
-  geom_vline(xintercept=median(avgCpgEgGo$avg),
-             linetype="dashed") +
-  labs(x="Mean No. CpGs per gene per GO category", y = "Density") +
-  theme_minimal()
+  geom_vline(xintercept = med, linetype="dashed", colour = "red") +
+  labs(x="Mean no. CpGs per gene per GO category", y = "Density") +
+  annotate("text", x = med + 4, label=glue("median = {med}"), 
+           y = 0.035, colour="red", size = 3, hjust="left")
 p
 ```
 
-
 ## Null simulations
 
-Null simulation strategy: randomly select 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array. 
+Null simulation strategy: randomly select 50, 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array. 
 
 The code used for the simulation can be found in `r here("code/randCpgSim.R")`.   
-
-Load the results.
-
-```{r}
-load(here("output/nullSim450k.100.long.RData"))
-```
 
 The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.
 
 ```{r}
-nullDat <- as_tibble(longDat)
-nullDat$cpg <- as.factor(nullDat$cpg)
+dat <- readRDS(here("output/random-cpg-sims/EPIC.rds"))
+#dat$noCpgs <- factor(dat$noCpgs, levels = c(50, 100, 500, 1000, 5000, 10000))
 
-nullDat %>% group_by(sim, cpg, adj) %>% 
-  summarise(psig = sum(pval < 0.05)/length(pval)) -> psigData
+dat %>% group_by(simNo, noCpgs, method) %>% 
+  summarise(pSig = sum(pVals < 0.05)/length(pVals)) -> sigDat
 
-p <- ggplot(psigData, aes(x=cpg, y=psig, fill=adj)) + 
-  geom_violin()
-p + scale_fill_brewer(palette="Set1") +
-  stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
-               show.legend = FALSE, fun.y = median) +
+p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) + 
+  geom_violin() +
   geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
   labs(y="Prop. GO cat. with p-value < 0.05", x="No. randomly sampled CpGs",
-       fill="Adj. type") +
-  theme_minimal()
+       fill="Method")
+p
 ```
 
 QQ plots of randomly selected simulations at each level of CpGs sampled.
 
-```{r, fig.height=8, fig.width=7}
+```{r, fig.height=10, fig.width=7}
 set.seed(42)
 s <- sample(1:100, 3)
-nullDat %>% filter(sim %in% s) %>%
-  arrange(sim, cpg, adj, pval) %>%
-  group_by(sim, cpg, adj) %>%
+dat %>% filter(simNo %in% s) %>%
+  arrange(simNo, noCpgs, method, pVals) %>%
+  group_by(simNo, noCpgs, method) %>%
   mutate(exp = 1:n()/n()) -> subDat
 
-p <- ggplot(subDat, aes(x=-log10(exp), y=-log10(pval), color=adj)) + 
-  geom_point(shape = 1) + 
-  facet_grid(cpg ~ sim, scales = "free_y")
+p <- ggplot(subDat, aes(x=-log10(exp), y=-log10(pVals), color=method)) + 
+  geom_point(shape = 1, size = 0.5) + 
+  facet_grid(noCpgs ~ simNo, scales = "free_y")
 
-p + scale_colour_brewer(palette="Set1") + 
-  geom_line(aes(x=-log10(exp), y=-log10(exp)),
-             linetype="dashed", color = "black") +
+p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
+            linetype="dashed", color = "black") +
   labs(y=expression(Observed~~-log[10](italic(p))), 
        x=expression(Expected~~-log[10](italic(p))),
-       color="Adj. type") +
-  theme(legend.position="bottom", strip.text.x = element_blank()) + 
-  theme_minimal()
-
+       color="Method") +
+  theme(legend.position="bottom", strip.text.x = element_blank()) 
 ```
 
 Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.
 
 ```{r}
-nullDat %>% filter(pval < 0.05) -> sigDat
+dat %>% filter(pVals < 0.05) -> sigDat
 
 goFreq <- as_tibble(unique(cpgEgGo[,c("GO","Freq")]))
 
 sigDat %>% inner_join(goFreq, by=c("id" = "GO")) %>%
-  group_by(sim, cpg, adj, id) %>%
+  group_by(simNo, cpg, method, id) %>%
   summarise(avgFreq=mean(Freq)) %>% 
   group_by(sim, cpg, adj) %>%
   summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
@@ -212,7 +184,7 @@ sigDat %>% inner_join(goFreq, by=c("id" = "GO")) %>%
 # Basic violin plot
 p <- ggplot(medAvgDat, aes(x=cpg, y=medAvgFreq, fill=adj)) + 
   geom_violin()
-p + scale_fill_brewer(palette="Set1") +
+p + 
   stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
                show.legend = FALSE, fun.y = median) +
   labs(y="Median avg. no. CpGs/gene/GO cat.", x="No. randomly sampled CpGs",
@@ -224,6 +196,7 @@ p + scale_fill_brewer(palette="Set1") +
 ```{r}
 sessionInfo()
 ```
+
 
 
 
