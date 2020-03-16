@@ -14,3 +14,5 @@ data/*
 *.pptx
 *.xlsx
 Thumbs.db
+code/old/*
+output/*

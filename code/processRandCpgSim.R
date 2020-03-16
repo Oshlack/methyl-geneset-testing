@@ -1,26 +1,42 @@
-library(here)
+#!/usr/bin/env Rscript
 
-# extract columns from simulation results
-getSimResults <- function(file,column){
+noCpgs <- c(50, 100, 500, 1000, 5000, 10000)
+arrayType <- c("EPIC","450K")
 
-  load(file)
-  a <- data.frame(Method="Adj", sapply(randCpgSim,function(sim){
-                    sim$Adj[,column]}))
-  u <- data.frame(Method="Unadj", sapply(randCpgSim,function(sim){
-                    sim$Unadj[,column]}))
-  rbind(a,u)
+dir <- here::here("output/random-cpg-sims/")
+rdsFiles <- numeric(0)
+outFiles <- numeric(0)
+noSim <- numeric(0)
+
+for (array in arrayType) {
+  obj <- vector("list", length(noCpgs))
+  i = 1
+
+  for (cpgs in noCpgs) {
+    inFiles <- sapply(1:100, function(sim){
+      glue::glue("{dir}/{array}.{cpgs}.{sim}.rds")
+    })
+
+    bpparam <- BiocParallel::MulticoreParam(min(20, BiocParallel::multicoreWorkers()))
+    tmp <- BiocParallel::bplapply(inFiles, readRDS, BPPARAM = bpparam)
+    obj[[i]] <- dplyr::bind_rows(tmp)
+
+    rdsFiles <- c(rdsFiles, inFiles)
+    outFiles <- c(outFiles, glue::glue("{dir}/{array}.{cpgs}.err"),
+                  glue::glue("{dir}/{array}.{cpgs}.out"))
+    i = i + 1
+
+  }
+  obj <- dplyr::bind_rows(obj)
+  obj <- dplyr::mutate(obj, noCpgs = factor(noCpgs, levels = c(50, 100, 500,
+                                                               1000, 5000,
+                                                               10000)))
+  saveRDS(obj, glue::glue("{dir}/{array}.rds"))
+
 }
 
-# get names of simulation results files
-files <- list.files(here("output/test"), pattern = "randCpgSim",full.names = TRUE)
-# order results files by no. of Cpgs sampled
-n <- sapply(files, function(file){
-  as.numeric(gsub("randCpgSim","",
-                  unlist(strsplit(unlist(strsplit(file,"/"))[9],".",fixed=TRUE))[1]))
-}, USE.NAMES = FALSE)
-o <- order(n)
-# get raw p-values from all simulation results
-simPvals <- lapply(files[o],getSimResults,"P.DE")
-names(simPvals) <- n[o]
-save(simPvals, file=here("output/allRandCpgSimPvals.RData"))
+binDir <- glue::glue("{dir}/.bin")
+if (!dir.exists(binDir)) dir.create(binDir)
 
+filesstrings::file.move(rdsFiles, binDir)
+filesstrings::file.move(outFiles, binDir)
