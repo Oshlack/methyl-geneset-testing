@@ -101,7 +101,7 @@ getBloodCellData <- function(){
   # give the samples descriptive names
   sampleNames(rawRg) <- targets$Sample_Name
 
-  return(list(rawRg = rawRg), targets = targets)
+  return(list(rawRg = rawRg, targets = targets))
 }
 
 getRheumArthritisData <- function(){

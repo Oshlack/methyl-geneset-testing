@@ -45,30 +45,33 @@ if(file.exists(dataFile)){
 
 ```{r}
 # plot mean detection p-values across all samples
-ksPal <- paletteer_d(package = "LaCroixColoR", palette = "KiwiSandia")
-graphics::barplot(colMeans(detP), col=ksPal[factor(targets$CellType)], las=2,
-         cex.names=0.8,ylab="Mean detection p-values", cex.axis = 0.6)
-abline(h=0.01,col="red")
-legend("topright", legend=levels(factor(targets$CellType)), fill=ksPal,
-        bg="white")
+dat <- tibble::tibble(mean = colMeans(detP), cellType = targets$CellType)
+ggplot(dat, aes(y = mean, x = cellType, fill = cellType)) +
+  geom_bar(stat = "identity") +
+  labs(fill = "Cell Type")
 ```
 
 ```{r}
 # plot normalised beta value distribution
-par(mfrow=c(1,1))
-densityPlot(getBeta(normGr), sampGroups=targets$CellType,
-              main="Normalized", legend=FALSE, pal = ksPal)
-legend("top", legend = levels(factor(targets$CellType)),
-        col = ksPal, lty = 1)
+bVals <- getBeta(normGr)
+dat <- data.frame(reshape2::melt(bVals))
+colnames(dat) <- c("cpg", "sample", "bVal")
+dat <- dplyr::bind_cols(dat, cellType = rep(targets$CellType, 
+                                            each = nrow(bVals)))
+
+ggplot(dat, aes(x = bVal, colour = cellType)) +
+  geom_density() +
+  labs(colour = "Cell Type")
 ```
 
 ```{r}
 # MDS plots to look at largest sources of variation
-par(mfrow=c(1,1))
-plotMDS(getM(fltGr), top=1000, gene.selection="common", pch = 19,
-         col=ksPal[factor(targets$CellType)], cex=1.5)
-legend("topleft", legend=levels(factor(targets$CellType)), col=ksPal,
-       bg="white", pch = 19, cex = 1.2)
+p <- plotMDS(getM(fltGr), top=1000, gene.selection="common", plot = FALSE)
+dat <- tibble::tibble(x = p$x, y = p$y, cellType = targets$CellType)
+
+ggplot(dat, aes(x = x, y = y, colour = cellType)) +
+  geom_point() +
+  labs(colour = "Cell Type")
 ```
 
 # Statistical analysis
@@ -85,11 +88,11 @@ design <- model.matrix(~0+targets$CellType)
 colnames(design) <- levels(factor(targets$CellType))
 fit <- lmFit(mVals, design)
 cont.matrix <- makeContrasts(CD4vCD8=CD4T-CD8T,
-                             BcellvMono=Bcell-Mono,
+                             #BcellvMono=Bcell-Mono,
                              MonovNeu=Mono-Neu,
                              BcellvNK=Bcell-NK,
-                             NeuvNK=Neu-NK,
-                             MonovNK=Mono-NK,
+                             #NeuvNK=Neu-NK,
+                             #MonovNK=Mono-NK,
                              levels=design)
 fit2 <- contrasts.fit(fit, cont.matrix)
 tfit <- eBayes(fit2, robust=TRUE, trend=TRUE)
@@ -102,19 +105,12 @@ fitSum
 Examine only the independent contrasts.
 
 ```{r}
-indCont <- c(1,3,4) # select only independent contrasts for further analysis
+dat <- melt(fitSum[rownames(fitSum) != "NotSig", ])
+colnames(dat) <- c("dir","comp","num")
 
-fitDat <- melt(fitSum[rownames(fitSum) != "NotSig",indCont])
-colnames(fitDat) <- c("dir","comp","num")
-contNames <- c("B cells vs. NK", "CD4 vs. CD8", "Mono vs. Neu")
-names(contNames) <- c("BcellvNK", "CD4vCD8", "MonovNeu")
-  
-ggplot(fitDat,aes(x=comp,y=num,fill=dir)) +
-  geom_bar(stat="identity",position = "dodge") +
-  labs(x="Comparison", y="No. DM CpGs (FDR < 0.05)", fill="Direction") +
-  scale_x_discrete(labels = contNames) + 
-  scale_fill_paletteer_d(package = "wesanderson", palette = "Moonrise3") + 
-  theme_minimal()
+ggplot(dat, aes(x = comp, y = num, fill = dir)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Comparison", y = "No. DM CpGs (FDR < 0.05)", fill = "Direction")
 ```
 
 ## Test GO categories
@@ -127,8 +123,19 @@ Compare the gene set testing methods available for methylation arrays; hypergeom
 minsize <- 5
 maxsize <- 5000
 
-inputFile <- here("data/input.RData")
-save(tfit, maxsize, minsize, mVals, targets, file = inputFile)
+outFile <- here("data/blood.contrasts.rds")
+
+if(!file.exists(outFile)){
+  obj <- NULL
+  obj$tfit <- tfit
+  obj$maxsize <- maxsize
+  obj$minsize <- minsize
+  obj$mVals <- mVals
+  obj$targets <- targets
+
+  saveRDS(obj, file = outFile)
+
+} 
 ```
 
 ```{r}
@@ -193,6 +200,7 @@ p <- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = variable)) +
        y = "Prop. GO Cat. with p-value < 0.05")
 p
 ```
+
 ```{r, fig.width=5, fig.height=8}
 dat <- numeric(0)
 
