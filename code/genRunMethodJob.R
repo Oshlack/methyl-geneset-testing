@@ -3,11 +3,12 @@
 dir <- here::here("code")
 jobDir <- glue::glue("{dir}/.job")
 outDir <- here::here("output/compare-methods")
+input <- here::here("data/blood.contrasts.rds")
 
 if (!dir.exists(outDir)) dir.create(outDir)
 if (!dir.exists(jobDir)) dir.create(jobDir)
 
-packages <- c("missMethyl", "methylGSA", "ChAMP")
+packages <- c("MissMethyl", "MethylGSA", "ChAMP")
 sets <- c("GO", "KEGG", "BROAD")
 
 for (package in packages) {
@@ -26,19 +27,19 @@ for (package in packages) {
         cat(glue::glue("#SBATCH --job-name={package}.{set}.job"), "\n")
         cat(glue::glue("#SBATCH --output={outDir}/{package}.{set}.out"), "\n")
         cat(glue::glue("#SBATCH --error={outDir}/{package}.{set}.err"), "\n")
-        cat("#SBATCH --time=00:15:00\n")
-        cat("#SBATCH --mem=6144\n")
+        cat("#SBATCH --time=12:00:00\n")
+        cat("#SBATCH --mem=16384\n")
         cat("#\n")
         cat("module load R/3.6.0\n")
         cat("#\n")
-        cat(glue::glue("Rscript {dir}/run{package}.R {package} {set} {outDir}"),
+        cat(glue::glue("Rscript {dir}/run{package}.R {package} {set} {input} {outDir}"),
             "\n")
 
         # Close the sink!
         sink()
 
         # Submit to run on cluster
-        #system(glue::glue("sbatch {jobFile}"))
+        system(glue::glue("sbatch {jobFile}"))
 
     }
 }

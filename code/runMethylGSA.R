@@ -4,6 +4,7 @@ args <- commandArgs(trailingOnly=TRUE)
 package <- args[1]
 set <- args[2]
 input <- args[3]
+outDir <- args[4]
 
 library(org.Hs.eg.db)
 library(ChAMP)
@@ -53,24 +54,24 @@ res <- lapply(pvalList, function(pval){
   tmp <- vector("list", 3)
   names(tmp) <- c("mgsa.glm", "mgsa.ora", "mgsa.gsea")
 
-  tmp[[1]] <- tibble::as_tibble(methylGSA::methylglm(cpg.pval = pval,
+  tmp[[1]] <- methylGSA::methylglm(cpg.pval = pval,
               FullAnnot = ann, minsize = minsize, maxsize = maxsize,
-              GS.list = collection, GS.idtype = "SYMBOL", parallel = TRUE,
-              BPPARAM = BiocParallel::MulticoreParam(min(BiocParallel::bpworkers(),
-                                                         10)))[, c("ID","pvalue")])
-  tmp[[2]] <- tibble::as_tibble(methylGSA::methylRRA(cpg.pval = pval,
+              GS.list = collection, GS.idtype = "SYMBOL")[, c("ID","pvalue")]
+  tmp[[2]] <- methylGSA::methylRRA(cpg.pval = pval,
               method = "ORA", FullAnnot = ann, minsize = minsize,
               maxsize = maxsize, GS.list = collection,
-              GS.idtype = "SYMBOL")[, c("ID","pvalue")])
-  tmp[[3]] <- tibble::as_tibble(methylGSA::methylRRA(cpg.pval = pval,
+              GS.idtype = "SYMBOL")[, c("ID","pvalue")]
+  tmp[[3]] <- methylGSA::methylRRA(cpg.pval = pval,
               method = "GSEA", FullAnnot = ann, minsize = minsize,
               maxsize = maxsize, GS.list = collection,
-              GS.idtype = "SYMBOL")[, c("ID","pvalue")])
+              GS.idtype = "SYMBOL")[, c("ID","pvalue")]
+
   dplyr::bind_rows(tmp, .id = "method")
 
 })
-
 res <- dplyr::bind_rows(res, .id = "contrast")
+res <- tibble::add_column(res, sub = "n", .after = 1)
+res$set <- set
 
 out <- glue::glue("{outDir}/{package}.{set}.rds")
 saveRDS(res, out)
