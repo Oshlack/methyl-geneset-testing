@@ -31,7 +31,7 @@ source(here("code/utility.R"))
 Get the array annotation data.
 
 ```{r}
-ann <- loadAnnotation(arrayType="450K")
+ann <- loadAnnotation(arrayType="450k")
 ```
 
 Associate CpGs to genes (ENTREZ ID) using the Illumina annotation information.
@@ -61,7 +61,8 @@ ggplot(dat, aes(x=Var1, y=Freq)) +
   geom_vline(xintercept = mod, linetype = "dashed", color = "blue") +
   annotate("text", x = mod + 2, label=glue("mode = {mod}"), y=760, colour="blue", 
             size = 3, hjust="left") +
-  scale_x_discrete(breaks = c(1,5,10,20,35,50,60,70,80,90,100,125,152,202,251,350,1299)) +
+  scale_x_discrete(breaks = c(1,10,20,30,45,55,70,80,90,100,120,135,150,160,180,
+                              200,215,250,330,429,1485)) +
   theme(axis.text.x=element_text(angle=45, hjust=1)) +
   xlab("No. CpGs per gene") +
   ylab("Frequency")
@@ -108,7 +109,7 @@ Calculate the average number of CpGs per gene, per GO category and plot the dens
 ```{r}
 cpgEgGo %>% 
   group_by(GO) %>%
-  summarise(avg = mean(NoCpgs)) -> dat
+  summarise(avg = mean(Freq)) -> dat
 
 med <- round(median(dat$avg), 2)
 
@@ -130,11 +131,11 @@ The code used for the simulation can be found in `r here("code/randCpgSim.R")`.
 The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.
 
 ```{r}
-dat <- readRDS(here("output/random-cpg-sims/EPIC.rds"))
+dat <- readRDS(here("output/random-cpg-sims/450K.rds"))
 #dat$noCpgs <- factor(dat$noCpgs, levels = c(50, 100, 500, 1000, 5000, 10000))
 
 dat %>% group_by(simNo, noCpgs, method) %>% 
-  summarise(pSig = sum(pVals < 0.05)/length(pVals)) -> sigDat
+  summarise(pSig = sum(P.DE < 0.05)/length(P.DE)) -> sigDat
 
 p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) + 
   geom_violin() +
@@ -150,11 +151,11 @@ QQ plots of randomly selected simulations at each level of CpGs sampled.
 set.seed(42)
 s <- sample(1:100, 3)
 dat %>% filter(simNo %in% s) %>%
-  arrange(simNo, noCpgs, method, pVals) %>%
+  arrange(simNo, noCpgs, method, P.DE) %>%
   group_by(simNo, noCpgs, method) %>%
   mutate(exp = 1:n()/n()) -> subDat
 
-p <- ggplot(subDat, aes(x=-log10(exp), y=-log10(pVals), color=method)) + 
+p <- ggplot(subDat, aes(x=-log10(exp), y=-log10(P.DE), color=method)) + 
   geom_point(shape = 1, size = 0.5) + 
   facet_grid(noCpgs ~ simNo, scales = "free_y")
 
@@ -169,27 +170,22 @@ p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
 Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.
 
 ```{r}
-dat %>% filter(pVals < 0.05) -> sigDat
-
+dat %>% filter(P.DE < 0.05) -> sigDat
 goFreq <- as_tibble(unique(cpgEgGo[,c("GO","Freq")]))
 
-sigDat %>% inner_join(goFreq, by=c("id" = "GO")) %>%
-  group_by(simNo, cpg, method, id) %>%
+sigDat %>% inner_join(goFreq, by=c("GO" = "GO")) %>%
+  group_by(simNo, noCpgs, method, GO) %>%
   summarise(avgFreq=mean(Freq)) %>% 
-  group_by(sim, cpg, adj) %>%
+  group_by(simNo, noCpgs, method) %>%
   summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
-```
 
-```{r}
-# Basic violin plot
-p <- ggplot(medAvgDat, aes(x=cpg, y=medAvgFreq, fill=adj)) + 
+p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
   geom_violin()
-p + 
-  stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
-               show.legend = FALSE, fun.y = median) +
-  labs(y="Median avg. no. CpGs/gene/GO cat.", x="No. randomly sampled CpGs",
-       fill="Adj. type") + 
-  theme_minimal()
+p + stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
+                show.legend = FALSE, fun = median) +
+  labs(y="Median avg. no. CpGs/gene/GO cat.", 
+       x="No. randomly sampled CpGs",
+       fill="Adj. type")
 ```
 
 
