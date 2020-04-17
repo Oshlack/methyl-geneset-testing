@@ -30,9 +30,9 @@ Analysis
       methods.
 
 * Compare false discovery rate of different methods
-    * [Compare false discovery rate](nullAnalysis.html) - Analyse the normal samples from
-      a 450k array rheumatoid arthritis dataset using various genset testing methods to 
-      estimate the false discovery rate control.
+    * [Compare false discovery rate](fdrAnalysis.html) - Analyse the normal samples from
+      a 450k array KIRC TCGA dataset using various genset testing methods to 
+      estimate their false discovery rate control.
       
 * Gene set testing of regions
     * [Region analysis](regionAnalysis.html) - Evalulate the use of gometh for geneset 
