@@ -28,7 +28,7 @@ source(here("code/utility.R"))
 
 We are using publicly available kidney clear cell carcinoma (KIRC) 450k data from The Cancer Genome Atlas (TCGA). We are using only the normal samples to look at false discovery rate control by various methylation gene set testing methods.
 
-Download the data using the `curatedTCGAData` Bioconductor package and then extract the normal samples. Remove poor probes, SNP, multi-mapping and sex-xhromosome probes. 
+Download the data using the `curatedTCGAData` Bioconductor package and then extract the normal samples. The data seems to have already been normalised(?) so we will only remove poor probes (>1 NA), SNP, multi-mapping and sex-chromosome probes. 
 
 ```{r}
 kirc <- curatedTCGAData(diseaseCode = "KIRC", assays = "Methylation_methyl450", 
@@ -117,49 +117,22 @@ if(!file.exists(outFile)){
 Load the results of the FDR simulations.
 
 ```{r}
-nullDataFile <- here("output/nullData.long.RData")
-
-if(!file.exists(nullDataFile)){
-  
-  load(here("output/nullDat.gm.long.RData"))
-  gmDat <- as_tibble(longDat)
-  rm(longDat)
-
-  load(here("data/nullLong.RData"))
-  allDat <- as_tibble(longDat)
-  rm(longDat)
-
-  allDat %>% filter(method != "gm1" & method != "gm2") %>% 
-    droplevels() -> allDat
-
-  nullDat <- bind_rows(gmDat, allDat)
-
-  nullDat %>% mutate_at(c("method","sim","samps"), as.factor) %>%
-    mutate(method = recode_factor(method, gm1 = "a", gm2 = "b", glm = "c", ora = "d", 
-                         gsea = "e", ebgs = "f", .default = levels(method))) %>%
-    mutate(method = factor(method, labels = c("gometh-500", "gometh-1000", "mrra-glm", 
-                                            "mrra-ora", "mrra-gsea", 
-                                            "ebgsea"))) -> nullDat
-
-  save(nullDat, file = here("output/nullData.long.RData"))
-} else {
-  load(here("output/nullData.long.RData"))
-}
+inFile <- here("output/FDR-analysis/FDR-analysis.rds")
+if(file.exists(inFile)) dat <- as_tibble(readRDS(inFile))
 ```
 
-The plots below shows that mRRA-ORA does not control the false discovery rate very well as the median proportion of p-value 0.05 for the 100 simulations is greater than 0.75. mRRA-GSEA does better, although its median false discovery rate is still relatively high at around 0.2. ebGSEA and mRRA-GLM both have a median false discovery rate at around 0.05, although ebGSEA has a tail of simulations between 0.05 and 0.2. Gometh is very consistent althought somewhat conservative in terms of false discovery control. 
+The plots below shows that MethylGSA-ORA does not control the false discovery rate very well as the median proportion of p-value 0.05 for the 100 simulations is greater than 0.5. MethylGSA-GSEA does better, although its median false discovery rate is still relatively high at around 0.25. MethylGSA-GLM has good false discovery rate control with median FDR at around 0.05. ChAMP-ebGSEA is only slightly anti-conservative using both the wicox test (WT) and known population median test (KPMT) with a median FDR at around 0.06-0.08. MissMethyl-gometh is very consistent although somewhat conservative with a median FDR at around 0.02-0.03. 
 
 ```{r, fig.width=9}  
-nullDat %>% group_by(sim, samps, method) %>%
-  summarise(psig = sum(pval < 0.05)/length(pval)) -> psigData
+dat %>% group_by(simNo, sampleNo, method) %>%
+  summarise(psig = sum(pvalue < 0.05)/length(pvalue)) -> psigData
 
-p <- ggplot(psigData, aes(x=samps, y=psig, fill=method)) + 
-  geom_violin(scale = "width")
-p + scale_fill_paletteer_d(package = "LaCroixColoR", palette = "PassionFruit") +
-  stat_summary(geom="point", size=0.8, color="white", position = position_dodge(0.9),
-               show.legend = FALSE, fun.y = median) +
+p <- ggplot(psigData, aes(x = sampleNo, y = psig, fill = method)) + 
+    geom_violin(scale = "width", width = 0.8)
+p + stat_summary(geom = "point", size = 1, color = "white", 
+                 position = position_dodge(0.8),
+                 show.legend = FALSE, fun = median) +
   geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
   labs(y="Prop. gene sets with p-value < 0.05", x="No. samples",
-       fill="Method") +
-  theme_minimal()
+       fill="Method")
 ```
