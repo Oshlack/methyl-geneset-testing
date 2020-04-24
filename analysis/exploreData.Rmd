@@ -213,20 +213,11 @@ immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"),
                             stringsAsFactors = FALSE, header = FALSE,
                             col.names = "GOID"))
 
-# immuneGO <- NULL
-# 
-# for(i in 1:ncol(cont.matrix)){
-#     tmp <- read.csv(here(glue("code/{colnames(cont.matrix)[i]}.GO.csv")), 
-#                          stringsAsFactors = FALSE)
-#     immuneGO <- bind_rows(immuneGO, data.frame("GOID" = tmp$X[1:100],
-#                                                contrast = colnames(cont.matrix)[i]))
-# }
-
 dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% immuneGO$GOID)) %>% #[immuneGO$contrast == contrast])) %>%
+    mutate(csum = cumsum(ID %in% immuneGO$GOID)) %>% 
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> sub
 
@@ -255,7 +246,7 @@ dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% immuneGO$GOID[immuneGO$contrast == contrast])) %>%
+    mutate(csum = cumsum(ID %in% immuneGO$GOID[immuneGO$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> sub
 
@@ -384,9 +375,9 @@ dat %>% filter(set == "KEGG") %>%
     filter(sub %in% c("n","c1")) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% immuneKEGG$PID[immuneKEGG$contrast == contrast])) %>%
+    mutate(csum = cumsum(ID %in% immuneKEGG$PID[immuneKEGG$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 50) -> sub
+    filter(rank <= 100) -> sub
 
 p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
@@ -487,7 +478,7 @@ dat %>% filter(set == "BROAD") %>%
     filter(sub %in% c("n","c1")) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% immuneBROAD$ID[immuneBROAD$contrast == contrast])) %>%
+    mutate(csum = cumsum(ID %in% immuneBROAD$ID[immuneBROAD$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> sub
 
