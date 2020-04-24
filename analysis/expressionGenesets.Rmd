@@ -175,7 +175,9 @@ fit2 <- eBayes(cfit, robust = TRUE)
 summary(decideTests(fit2, p.value = 0.05))
 ```
 
-Testing for enrichment of GO  categories amongst statistically significant differentially expressed genes.
+# Gene set testing
+
+Testing for enrichment of GO categories and KEGG pathways amongst statistically significant differentially expressed genes.
 
 ```{r, echo=FALSE}
 for(i in 1:ncol(cont)){
@@ -193,102 +195,20 @@ for(i in 1:ncol(cont)){
 }
 ```
 
-# Gene set testing
+Test whether any of the genes in the BROAD sets are differentially expressed.
 
-Gene set testing helps us to interpret the results of a differential expression analysis. The `camera` function performs a competitive test to assess whether the genes in a given set are highly ranked in terms of differential expression relative to genes that are not in the set. We have tested several collections of gene sets from the Broad Institute's Molecular Signatures Database [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp).  
+```{r}
+library(ChAMP)
+data(PathwayList)
 
-Build gene set indexes. 
-
-```{r, echo=FALSE}
-entrezToEns <- function(entrezList){
+keep <- sapply(PathwayList, function(x) any(x %in% z$genes$symbol))
+idx <- suppressMessages(lapply(PathwayList[keep], function(x){
+    tmp <- z$genes$gene_id[z$genes$symbol %in% x]
+    tmp[!is.na(tmp)]
+}))
   
-    ensList <- lapply(entrezList, function(x) {
-      tmp <- suppressMessages(select(org.Hs.eg.db, keys = x, 
-                                     columns = c("ENSEMBL"))$ENSEMBL)
-      tmp[!is.na(tmp)]
-    })
-    
-    return(ensList)
+for(i in 1:ncol(cont)){
+    broad <- fry(v, index = idx, design = design, contrast = cont.matrix[,i])
+    write.csv(broad, here(glue("code/{colnames(cont)[i]}.BROAD.csv")))
 }
-
-gsAnnots <- buildIdx(entrezIDs = v$genes$entrezid, species = "human",
-                     msigdb.gsets = c("h", "c2", "c5"))
 ```
-
-The GO gene sets  consist of genes annotated by the same GO terms.
-
-```{r, echo=FALSE}
-c5EnsFile <- here("output/c5Ens.RData")
-
-if(!file.exists(c5EnsFile)){
-  c5Ens <- entrezToEns(gsAnnots$c5@original)
-  save(c5Ens, file = c5EnsFile)
-  
-} else {
-  load(c5EnsFile)
-}
-
-c5Idx <- ids2indices(c5Ens, rownames(v))
-
-c5Cam <- camera(v, c5Idx, design, contrast = cont, trend.var = TRUE)
-write.csv(c5Cam[c5Cam$FDR < 0.05,], file = here("output/salmon-limma-voom-c5Cam.csv"))
-head(c5Cam, n=10)
-```
-
-The hallmark gene sets  are coherently expressed signatures derived by aggregating many MSigDB gene sets to represent well-defined biological states or processes.
-
-```{r, echo=FALSE}
-hEnsFile <- here("output/hEns.RData")
-
-if(!file.exists(hEnsFile)){
-  hEns <- entrezToEns(gsAnnots$h@original)
-  save(hEns, file = hEnsFile)
-  
-} else {
-  load(hEnsFile)
-}
-
-hIdx <- ids2indices(hEns, rownames(v))
-
-hCam <- camera(v, hIdx, design, contrast = cont, trend.var = TRUE)
-head(hCam, n=10)
-```
-
-The curated gene sets are compiled from online pathway databases, publications in PubMed, and knowledge of domain experts.
-
-```{r, echo=FALSE}
-c2EnsFile <- here("output/c2Ens.RData")
-
-if(!file.exists(c2EnsFile)){
-  c2Ens <- entrezToEns(gsAnnots$c2@original)
-  save(c2Ens, file = c2EnsFile)
-  
-} else {
-  load(c2EnsFile)
-}
-
-c2Idx <- ids2indices(c2Ens, rownames(v))
-
-c2Cam <- camera(v, c2Idx, design, contrast = cont, trend.var = TRUE)
-head(c2Cam, n=10)
-```
-
-The Kegg gene sets encompass all of the pathways defined in the [Kegg pathway database](https://www.genome.jp/kegg/pathway.html). 
-
-```{r, echo=FALSE}
-keggEnsFile <- here("output/keggEns.RData")
-
-if(!file.exists(keggEnsFile)){
-  keggEns <- entrezToEns(gsAnnots$kegg@original)
-  save(keggEns, file = keggEnsFile)
-  
-} else {
-  load(keggEnsFile)
-}
-
-keggIdx <- ids2indices(keggEns, rownames(v))
-
-keggCam <- camera(v, keggIdx, design, contrast = cont, trend.var = TRUE)
-head(keggCam, n=10)
-```
-
