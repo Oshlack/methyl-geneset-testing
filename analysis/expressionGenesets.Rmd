@@ -1,0 +1,293 @@
+---
+title: "Salmon quasi-mapping with limma-voom analysis"
+output:
+  html_document:
+    df_print: paged
+---
+
+```{r, message=FALSE, echo=FALSE}
+library(tximport)
+library(here)
+library(tidyverse)
+library(EnsDb.Hsapiens.v75)
+library(readr)
+library(limma)
+library(edgeR)
+library(EGSEA)
+library(EGSEAdata)
+```
+
+# Data import
+
+The data was quasi-mapped and quantified using Salmon (v1.2.1) with the hg19_cdna Ensembl human transcriptome.  
+
+Load sample information and file names.
+
+```{r}
+targets <- read_csv(here("data/SRP125125/SraRunTable.txt"))
+targets$Cell_type <- gsub(" ", "_", targets$Cell_type)
+targets
+```
+
+```{r, echo=FALSE}
+files <- list.files(here("data/SRP125125/quants"), 
+                    recursive = TRUE, pattern = "quant.sf", full.names = TRUE)
+names(files) <- substr(strsplit2(files, "/")[,10], 1, 10)
+```
+
+Associate transcripts with gene IDs for gene-level summarization.
+
+```{r, echo=FALSE}
+edb <- EnsDb.Hsapiens.v75
+tx2gene <- transcripts(edb, columns = c("tx_id", "gene_id"), 
+                       return.type = "DataFrame")
+tx2gene
+```
+
+Import gene-level counts and abundances.
+
+```{r, echo=FALSE}
+txiG <- tximport(files, type = "salmon", tx2gene = tx2gene, 
+                  countsFromAbundance = "lengthScaledTPM", 
+                  ignoreTxVersion = TRUE)
+colnames(txiG$counts) <- names(files)
+head(txiG$counts)
+```
+
+Set up `DGElist` object for downstream analysis.
+
+```{r, echo=FALSE}
+z <- DGEList(txiG$counts)
+z$genes <- ensembldb::genes(edb, filter = GeneIdFilter(rownames(z)), 
+                 columns = c("gene_id", "symbol", "entrezid"), 
+                 return.type = "DataFrame")
+z$genes$entrezid <- sapply(z$genes$entrezid, function(x) x[1])
+z$genes$length <- rowMedians(txiG$length)
+targets <- targets[match(colnames(z), targets$Run), ]
+z$samples$group <- targets$Cell_type
+z
+```
+
+# Quality control
+
+Genes that do not have an adequate number of reads in any sample should be filtered out prior to downstream analyses. From a biological perspective, genes that are not expressed at a biologically meaningful level in any condition are not of interest. Statistically, we get a better estimate of the mean-variance relationship in the data and reduce the number of statistical tests that are performes during differential expression analyses.
+
+Filter out lowly expressed genes and calculate TMM normalisation factors.
+
+```{r, echo=FALSE}
+keep <- filterByExpr(z, group = z$group)
+x <- z[keep, ]
+y <- calcNormFactors(x)
+y
+```
+
+Plotting the distribution log-CPM values shows that a majority of genes within each sample are either not expressed or lowly-expressed with log-CPM values that are small or negative.
+
+```{r, echo=FALSE}
+L <- mean(z$samples$lib.size) * 1e-6
+M <- median(z$samples$lib.size) * 1e-6
+
+par(mfrow=c(1,2))
+lcpmz <- cpm(z, log = TRUE)
+lcpm.cutoff <- log2(10/M + 2/L)
+nsamples <- ncol(z)
+col <- paletteer_d("Polychrome::dark", 24)
+plot(density(lcpmz[,1]), col=col[1], lwd=2, ylim=c(0,0.75), las=2, main="", xlab="")
+title(main="Unfiltered data", xlab="Log-cpm")
+abline(v=lcpm.cutoff, lty=3)
+for (i in 2:nsamples){
+  den <- density(lcpmz[,i])
+  lines(den$x, den$y, col=col[i], lwd=2)
+}
+
+lcpmy <- cpm(y, log=TRUE)
+plot(density(lcpmy[,1]), col=col[1], lwd=2, ylim=c(0,0.15), las=2, main="", xlab="")
+title(main="Filtered data", xlab="Log-cpm")
+abline(v=lcpm.cutoff, lty=3)
+for (i in 2:nsamples){
+  den <- density(lcpmy[,i])
+  lines(den$x, den$y, col=col[i], lwd=2)
+}
+```
+
+
+```{r, fig.height=8, fig.width=9, echo=FALSE}
+pal <- paletteer_d("LaCroixColoR::paired", 14)
+
+par(mar=c(5,6,4,2)+0.1, mfrow=c(2,2))
+barplot(y$samples$lib.size, col=pal[factor(targets$Cell_type)], cex.names = 0.8, 
+        names.arg = colnames(y), las = 2, main = "Library size", yaxt = "none")
+aty <- seq(0, 14000000, by = 2000000)
+axis(2, at=aty, labels=format(aty, scientific=FALSE), las=2, cex = 0.8)
+legend("topright", legend = levels(factor(targets$Cell_type)), fill = pal)
+
+par(mar=c(5,3,4,2)+0.1)
+boxplot(cpm(x, log=TRUE), las=2, col=pal[factor(targets$Cell_type)], 
+        main="Unnormalised log2 CPM")
+legend("topright", legend = levels(factor(targets$Cell_type)), fill = pal)
+
+par(mar=c(5,3,4,2)+0.1)
+boxplot(cpm(y, log=TRUE), las=2, col=pal[factor(targets$Cell_type)], 
+        main="Normalised log2 CPM")
+legend("topright", legend = levels(factor(targets$Cell_type)), fill = pal)
+
+```
+
+Multi-dimensional scaling (MDS) plots show the largest sources of variation in the data. They are a good way of exploring the relationships between the samples and identifying structure in the data. The following series of MDS plots examines the first four principal components. The samples are coloured by various known features of the samples such as CMV result and foetal sex. The MDS plots do not show the samples obviously clustering by any of the known features of the data. This indicates that we are unlikely to find many differentially expressed genes between CMV and normal samples.
+
+```{r, fig.height=8, fig.width=9, echo=FALSE}
+lcpm <- cpm(y, log = TRUE)
+
+par(mfrow=c(2,2), oma = c(0,0,2,0))
+plotMDS(lcpm, gene.selection = "common", pch = 19,
+        col = pal[factor(targets$Cell_type)])
+legend("topleft", legend = levels(factor(targets$Cell_type)), text.col = pal,
+       cex = 0.7)
+plotMDS(lcpm, gene.selection = "common", pch = 19,
+        col = pal[factor(targets$Cell_type)], dim.plot = c(1,3))
+legend("topright", legend = levels(factor(targets$Cell_type)), text.col = pal,
+       cex = 0.7)
+plotMDS(lcpm, gene.selection = "common", pch = 19,
+        col = pal[factor(targets$Cell_type)], dim.plot = c(2,3))
+legend("topright", legend = levels(factor(targets$Cell_type)), text.col = pal,
+       cex = 0.7)
+plotMDS(lcpm, gene.selection = "common", pch = 19,
+        col = pal[factor(targets$Cell_type)], dim.plot = c(3,4))
+legend("topleft", legend = levels(factor(targets$Cell_type)), text.col = pal,
+       cex = 0.7)
+```
+
+# Differential expression analysis
+The TMM normalised data was transformed using `voomWithQualityWeights`. This takes into account the differing library sizes and the mean variance relationship in the data as well as calculating sample-specific quality weights. Linear models were fit in `limma`, taking into account the `voom` weights. 
+
+```{r, echo=FALSE}
+design <- model.matrix(~0+y$samples$group, data = targets)
+colnames(design) <- c(levels(factor(y$samples$group)))
+v <- voomWithQualityWeights(y, design, plot = TRUE)
+cont <- makeContrasts(CD4vCD8=Naive_CD4_T_cells-Naive_CD8_T_cells,
+                      #MonovNeu=Classical_monocytes-Low-density_neutrophils,
+                      #BcellvNK=Naive_B_cells-Natural_killer_cells,
+                      levels=design)
+fit <- lmFit(v, design)
+cfit <- contrasts.fit(fit, cont)
+fit2 <- eBayes(cfit, robust = TRUE)
+summary(decideTests(fit2, p.value = 0.05))
+```
+
+Testing for enrichment of GO  categories amongst statistically significant differentially expressed genes.
+
+```{r, echo=FALSE}
+top <- topTable(fit2, coef = 1, p.value = 0.05, number = Inf)
+
+go <- goana(top$entrezid, universe = y$genes$entrezid, trend = "length")
+go <- topGO(go, number = Inf)
+go$FDR <- p.adjust(go$P.DE)
+write.csv(go, here("output/CD4vCD8.GO.csv"))
+```
+
+```{r}
+kegg <- kegga(top$entrezid, universe = y$genes$entrezid, trend="length")
+kegg <- topKEGG(kegg, number = Inf)
+kegg$FDR <- p.adjust(kegg$P.DE)
+write.csv(kegg, here("output/CD4vCD8.KEGG.csv"))
+```
+
+# Gene set testing
+
+Gene set testing helps us to interpret the results of a differential expression analysis. The `camera` function performs a competitive test to assess whether the genes in a given set are highly ranked in terms of differential expression relative to genes that are not in the set. We have tested several collections of gene sets from the Broad Institute's Molecular Signatures Database [MSigDB](http://software.broadinstitute.org/gsea/msigdb/index.jsp).  
+
+Build gene set indexes. 
+
+```{r, echo=FALSE}
+entrezToEns <- function(entrezList){
+  
+    ensList <- lapply(entrezList, function(x) {
+      tmp <- suppressMessages(select(org.Hs.eg.db, keys = x, 
+                                     columns = c("ENSEMBL"))$ENSEMBL)
+      tmp[!is.na(tmp)]
+    })
+    
+    return(ensList)
+}
+
+gsAnnots <- buildIdx(entrezIDs = v$genes$entrezid, species = "human",
+                     msigdb.gsets = c("h", "c2", "c5"))
+```
+
+The GO gene sets  consist of genes annotated by the same GO terms.
+
+```{r, echo=FALSE}
+c5EnsFile <- here("output/c5Ens.RData")
+
+if(!file.exists(c5EnsFile)){
+  c5Ens <- entrezToEns(gsAnnots$c5@original)
+  save(c5Ens, file = c5EnsFile)
+  
+} else {
+  load(c5EnsFile)
+}
+
+c5Idx <- ids2indices(c5Ens, rownames(v))
+
+c5Cam <- camera(v, c5Idx, design, contrast = cont, trend.var = TRUE)
+write.csv(c5Cam[c5Cam$FDR < 0.05,], file = here("output/salmon-limma-voom-c5Cam.csv"))
+head(c5Cam, n=10)
+```
+
+The hallmark gene sets  are coherently expressed signatures derived by aggregating many MSigDB gene sets to represent well-defined biological states or processes.
+
+```{r, echo=FALSE}
+hEnsFile <- here("output/hEns.RData")
+
+if(!file.exists(hEnsFile)){
+  hEns <- entrezToEns(gsAnnots$h@original)
+  save(hEns, file = hEnsFile)
+  
+} else {
+  load(hEnsFile)
+}
+
+hIdx <- ids2indices(hEns, rownames(v))
+
+hCam <- camera(v, hIdx, design, contrast = cont, trend.var = TRUE)
+head(hCam, n=10)
+```
+
+The curated gene sets are compiled from online pathway databases, publications in PubMed, and knowledge of domain experts.
+
+```{r, echo=FALSE}
+c2EnsFile <- here("output/c2Ens.RData")
+
+if(!file.exists(c2EnsFile)){
+  c2Ens <- entrezToEns(gsAnnots$c2@original)
+  save(c2Ens, file = c2EnsFile)
+  
+} else {
+  load(c2EnsFile)
+}
+
+c2Idx <- ids2indices(c2Ens, rownames(v))
+
+c2Cam <- camera(v, c2Idx, design, contrast = cont, trend.var = TRUE)
+head(c2Cam, n=10)
+```
+
+The Kegg gene sets encompass all of the pathways defined in the [Kegg pathway database](https://www.genome.jp/kegg/pathway.html). 
+
+```{r, echo=FALSE}
+keggEnsFile <- here("output/keggEns.RData")
+
+if(!file.exists(keggEnsFile)){
+  keggEns <- entrezToEns(gsAnnots$kegg@original)
+  save(keggEns, file = keggEnsFile)
+  
+} else {
+  load(keggEnsFile)
+}
+
+keggIdx <- ids2indices(keggEns, rownames(v))
+
+keggCam <- camera(v, keggIdx, design, contrast = cont, trend.var = TRUE)
+head(keggCam, n=10)
+```
+
