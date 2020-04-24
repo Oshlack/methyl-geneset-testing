@@ -18,3 +18,4 @@ code/old/*
 output/*
 code/.job/*
 *.Rproj
+.Rproj
