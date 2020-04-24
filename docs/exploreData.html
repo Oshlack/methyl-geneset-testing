@@ -496,16 +496,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree9373b7c2d151dd410026e9245af939d15adcce69targetblank9373b7ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/9373b7c2d151dd410026e9245af939d15adcce69" target="_blank">9373b7c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreef98b24528912422b34a5c2f82c6c0da8990f8952targetblankf98b245a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/f98b24528912422b34a5c2f82c6c0da8990f8952" target="_blank">f98b245</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree9373b7c2d151dd410026e9245af939d15adcce69targetblank9373b7ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreef98b24528912422b34a5c2f82c6c0da8990f8952targetblankf98b245a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/9373b7c2d151dd410026e9245af939d15adcce69" target="_blank">9373b7c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/f98b24528912422b34a5c2f82c6c0da8990f8952" target="_blank">f98b245</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -558,6 +558,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/f98b24528912422b34a5c2f82c6c0da8990f8952/analysis/exploreData.Rmd" target="_blank">f98b245</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+<td>
+wflow_publish(“analysis/exploreData.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/exploreData.html" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1142,20 +1176,11 @@ Jovana Maksimovic
                             stringsAsFactors = FALSE, header = FALSE,
                             col.names = &quot;GOID&quot;))
 
-# immuneGO &lt;- NULL
-# 
-# for(i in 1:ncol(cont.matrix)){
-#     tmp &lt;- read.csv(here(glue(&quot;code/{colnames(cont.matrix)[i]}.GO.csv&quot;)), 
-#                          stringsAsFactors = FALSE)
-#     immuneGO &lt;- bind_rows(immuneGO, data.frame(&quot;GOID&quot; = tmp$X[1:100],
-#                                                contrast = colnames(cont.matrix)[i]))
-# }
-
 dat %&gt;% filter(set == &quot;GO&quot;) %&gt;%
     filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;% 
     arrange(contrast, method, pvalue) %&gt;%
     group_by(contrast, method) %&gt;%
-    mutate(csum = cumsum(ID %in% immuneGO$GOID)) %&gt;% #[immuneGO$contrast == contrast])) %&gt;%
+    mutate(csum = cumsum(ID %in% immuneGO$GOID)) %&gt;% 
     mutate(rank = 1:n()) %&gt;%
     filter(rank &lt;= 100) -&gt; sub
 
@@ -1235,53 +1260,11 @@ into character vector</code></pre>
     filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;% 
     arrange(contrast, method, pvalue) %&gt;%
     group_by(contrast, method) %&gt;%
-    mutate(csum = cumsum(ID %in% immuneGO$GOID[immuneGO$contrast == contrast])) %&gt;%
+    mutate(csum = cumsum(ID %in% immuneGO$GOID[immuneGO$contrast %in% contrast])) %&gt;%
     mutate(rank = 1:n()) %&gt;%
-    filter(rank &lt;= 100) -&gt; sub</code></pre>
-<pre><code>Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length</code></pre>
-<pre><code>Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
+    filter(rank &lt;= 100) -&gt; sub
 
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length
-
-Warning in immuneGO$contrast == contrast: longer object length is not a multiple
-of shorter object length</code></pre>
-<pre class="r"><code>p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
@@ -1311,6 +1294,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-14-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-14-1.png" target="_blank">76dacfc</a>
@@ -1399,6 +1393,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-15-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-15-1.png" target="_blank">76dacfc</a>
 </td>
 <td>
@@ -1416,10 +1421,84 @@ Jovana Maksimovic
     plot_annotation(title = unique(sub$contrast)[2],
                     theme = theme(plot.title = element_text(size = 10))) </code></pre>
 <p><img src="figure/exploreData.Rmd/unnamed-chunk-15-2.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-2">
+Past versions of unnamed-chunk-15-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-15-2.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>(p[[11]] / p[[12]] / p[[13]] / p[[14]] / p[[15]]) + 
     plot_annotation(title = unique(sub$contrast)[3],
                     theme = theme(plot.title = element_text(size = 10))) </code></pre>
 <p><img src="figure/exploreData.Rmd/unnamed-chunk-15-3.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-15-3">
+Past versions of unnamed-chunk-15-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-15-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-15-3.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>P-value histograms for the different methods for all contrasts on GO categories.</p>
 <pre class="r"><code>dat %&gt;% filter(set == &quot;GO&quot;) %&gt;%
     filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) -&gt; sub 
@@ -1452,6 +1531,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-16-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-16-1.png" target="_blank">76dacfc</a>
@@ -1517,6 +1607,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-17-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-17-1.png" target="_blank">76dacfc</a>
 </td>
 <td>
@@ -1561,53 +1662,11 @@ into character vector</code></pre>
     filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;% 
     arrange(contrast, method, pvalue) %&gt;%
     group_by(contrast, method) %&gt;%
-    mutate(csum = cumsum(ID %in% immuneKEGG$PID[immuneKEGG$contrast == contrast])) %&gt;%
+    mutate(csum = cumsum(ID %in% immuneKEGG$PID[immuneKEGG$contrast %in% contrast])) %&gt;%
     mutate(rank = 1:n()) %&gt;%
-    filter(rank &lt;= 50) -&gt; sub</code></pre>
-<pre><code>Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length</code></pre>
-<pre><code>Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
+    filter(rank &lt;= 100) -&gt; sub
 
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneKEGG$contrast == contrast: longer object length is not a
-multiple of shorter object length</code></pre>
-<pre class="r"><code>p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
     facet_wrap(vars(contrast), ncol=3, scales = &quot;free_y&quot;) +
     geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
@@ -1637,6 +1696,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-18-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-18-1.png" target="_blank">76dacfc</a>
@@ -1725,6 +1795,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-19-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-19-1.png" target="_blank">76dacfc</a>
 </td>
 <td>
@@ -1766,6 +1847,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-19-2.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-19-2.png" target="_blank">76dacfc</a>
 </td>
 <td>
@@ -1805,6 +1897,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-19-3.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-19-3.png" target="_blank">76dacfc</a>
@@ -1852,6 +1955,17 @@ Date
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-20-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
 <tr>
 <td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/76dacfc5a81bde2340b04eafea5cb11045f13922/docs/figure/exploreData.Rmd/unnamed-chunk-20-1.png" target="_blank">76dacfc</a>
@@ -1902,71 +2016,11 @@ into character vector</code></pre>
     filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;% 
     arrange(contrast, method, pvalue) %&gt;%
     group_by(contrast, method) %&gt;%
-    mutate(csum = cumsum(ID %in% immuneBROAD$ID[immuneBROAD$contrast == contrast])) %&gt;%
+    mutate(csum = cumsum(ID %in% immuneBROAD$ID[immuneBROAD$contrast %in% contrast])) %&gt;%
     mutate(rank = 1:n()) %&gt;%
-    filter(rank &lt;= 100) -&gt; sub</code></pre>
-<pre><code>Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length</code></pre>
-<pre><code>Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
+    filter(rank &lt;= 100) -&gt; sub
 
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length
-
-Warning in immuneBROAD$contrast == contrast: longer object length is not a
-multiple of shorter object length</code></pre>
-<pre class="r"><code>p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
     facet_wrap(vars(contrast), ncol=3, scales = &quot;free_y&quot;) +
     geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
@@ -1974,6 +2028,43 @@ multiple of shorter object length</code></pre>
     theme(legend.position = &quot;bottom&quot;)
 p</code></pre>
 <p><img src="figure/exploreData.Rmd/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-21-1">
+Past versions of unnamed-chunk-21-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-21-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-21-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>data(PathwayList)
 nGenes &lt;- rownames_to_column(data.frame(n = sapply(PathwayList, 
                                                    length)), 
@@ -2021,14 +2112,126 @@ for(cont in unique(sub$contrast)){
     plot_annotation(title = unique(sub$contrast)[1],
                     theme = theme(plot.title = element_text(size = 10))) </code></pre>
 <p><img src="figure/exploreData.Rmd/unnamed-chunk-22-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-22-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>(p[[8]] / p[[9]] / p[[10]] / p[[11]] / p[[12]] / p[[13]] / p[[14]]) + 
     plot_annotation(title = unique(sub$contrast)[2],
                     theme = theme(plot.title = element_text(size = 10))) </code></pre>
 <p><img src="figure/exploreData.Rmd/unnamed-chunk-22-2.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-2">
+Past versions of unnamed-chunk-22-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-22-2.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>(p[[15]] / p[[16]] / p[[17]] / p[[18]] / p[[19]] / p[[20]] / p[[21]]) + 
     plot_annotation(title = unique(sub$contrast)[3],
                     theme = theme(plot.title = element_text(size = 10))) </code></pre>
-<p><img src="figure/exploreData.Rmd/unnamed-chunk-22-3.png" width="576" style="display: block; margin: auto;" /> P-value histograms for the different methods for all contrasts on BROAD gene sets.</p>
+<p><img src="figure/exploreData.Rmd/unnamed-chunk-22-3.png" width="576" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-3">
+Past versions of unnamed-chunk-22-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-22-3.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>P-value histograms for the different methods for all contrasts on BROAD gene sets.</p>
 <pre class="r"><code>dat %&gt;% filter(set == &quot;BROAD&quot;) %&gt;%
     filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) -&gt; sub 
     
@@ -2038,6 +2241,43 @@ ggplot(sub, aes(pvalue, fill = method)) +
     theme(legend.position = &quot;bottom&quot;) +
     labs(x = &quot;P-value&quot;, y = &quot;Frequency&quot;, fill = &quot;Method&quot;)</code></pre>
 <p><img src="figure/exploreData.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-23-1">
+Past versions of unnamed-chunk-23-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-23-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/caa373d621a0188cc00aeceb75aa65d4146c8e8f/docs/figure/exploreData.Rmd/unnamed-chunk-23-1.png" target="_blank">caa373d</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-24
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
