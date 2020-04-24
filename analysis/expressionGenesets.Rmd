@@ -24,8 +24,9 @@ The data was quasi-mapped and quantified using Salmon (v1.2.1) with the hg19_cdn
 Load sample information and file names.
 
 ```{r}
-targets <- read_csv(here("data/SRP125125/SraRunTable.txt"))
+targets <- read_csv(here("data/SRP125125/SraRunTableFull.txt"))
 targets$Cell_type <- gsub(" ", "_", targets$Cell_type)
+targets$Cell_type <- gsub("-", "_", targets$Cell_type)
 targets
 ```
 
@@ -165,8 +166,8 @@ design <- model.matrix(~0+y$samples$group, data = targets)
 colnames(design) <- c(levels(factor(y$samples$group)))
 v <- voomWithQualityWeights(y, design, plot = TRUE)
 cont <- makeContrasts(CD4vCD8=Naive_CD4_T_cells-Naive_CD8_T_cells,
-                      #MonovNeu=Classical_monocytes-Low-density_neutrophils,
-                      #BcellvNK=Naive_B_cells-Natural_killer_cells,
+                      MonovNeu=Classical_monocytes-Low_density_neutrophils,
+                      BcellvNK=Naive_B_cells-Natural_killer_cells,
                       levels=design)
 fit <- lmFit(v, design)
 cfit <- contrasts.fit(fit, cont)
@@ -177,19 +178,19 @@ summary(decideTests(fit2, p.value = 0.05))
 Testing for enrichment of GO  categories amongst statistically significant differentially expressed genes.
 
 ```{r, echo=FALSE}
-top <- topTable(fit2, coef = 1, p.value = 0.05, number = Inf)
-
-go <- goana(top$entrezid, universe = y$genes$entrezid, trend = "length")
-go <- topGO(go, number = Inf)
-go$FDR <- p.adjust(go$P.DE)
-write.csv(go, here("output/CD4vCD8.GO.csv"))
-```
-
-```{r}
-kegg <- kegga(top$entrezid, universe = y$genes$entrezid, trend="length")
-kegg <- topKEGG(kegg, number = Inf)
-kegg$FDR <- p.adjust(kegg$P.DE)
-write.csv(kegg, here("output/CD4vCD8.KEGG.csv"))
+for(i in 1:ncol(cont)){
+    top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
+    
+    go <- goana(top$entrezid, universe = y$genes$entrezid, trend = "length")
+    go <- topGO(go, number = Inf)
+    go$FDR <- p.adjust(go$P.DE)
+    write.csv(go, here(glue("code/{colnames(cont)[i]}.GO.csv")))
+    
+    kegg <- kegga(top$entrezid, universe = y$genes$entrezid, trend="length")
+    kegg <- topKEGG(kegg, number = Inf)
+    kegg$FDR <- p.adjust(kegg$P.DE)
+    write.csv(kegg, here(glue("code/{colnames(cont)[i]}.KEGG.csv")))
+}
 ```
 
 # Gene set testing
