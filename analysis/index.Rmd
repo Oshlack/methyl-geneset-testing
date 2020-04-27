@@ -24,6 +24,10 @@ Analysis
     * [450k array bias](exploreArrayBias450.html) - Explore the various 
       array biases that affect gene set testing.
 
+* Blood cell RNAseq "truth" set
+    * [RNAseq analysis](expressionGenesets.html) - Analyse an RNAseq sorted blood cell 
+      dataset and identify the top ranked gene sets for each cell type comparison.
+      
 * Compare methods
     * [Compare methods](exploreData.html) - Analyse an EPIC array sorted blood cell 
       dataset using various gene set testing methods. Compare the results of the different 
