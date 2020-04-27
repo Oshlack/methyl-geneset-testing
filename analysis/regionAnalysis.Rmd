@@ -111,7 +111,9 @@ dmrGo <- NULL
 if(!file.exists(outFile)){
     for(i in 1:length(dmrList)){
         
-        overlaps <- findOverlaps(hg19Genes, dmrList[[i]])
+        keep <- (abs(dmrList[[i]]$meandiff) > 0.1 & dmrList[[i]]$no.cpgs >=3)
+        
+        overlaps <- findOverlaps(hg19Genes, dmrList[[i]][keep, ])
         sigGenes <- hg19Genes$gene_id[from(overlaps)]
         tmp <- topGO(goana(sigGenes), number = Inf)
         tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
@@ -119,14 +121,16 @@ if(!file.exists(outFile)){
         tmp$contrast <- colnames(cont.matrix)[i]
         dmrGo <- bind_rows(dmrGo, tmp)
   
-        tmp <- topGSA(goregion(dmrList[[i]], anno = anno, prior.prob = FALSE, 
-                                        array.type = "EPIC"), number = Inf)
+        tmp <- topGSA(goregion(dmrList[[i]][keep, ], anno = anno, 
+                               prior.prob = FALSE, array.type = "EPIC"), 
+                      number = Inf)
         tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
         tmp$method <- "goregion-hgt"
         tmp$contrast <- colnames(cont.matrix)[i]
         dmrGo <- bind_rows(dmrGo, tmp)
         
-        tmp <- topGSA(goregion(dmrList[[i]], anno = anno, array.type = "EPIC"), 
+        tmp <- topGSA(goregion(dmrList[[i]][keep, ], anno = anno, 
+                               array.type = "EPIC"), 
                       number = Inf)
         tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
         tmp$method <- "goregion-gometh"
@@ -176,6 +180,28 @@ p <- ggplot(dat, aes(x = rank, y = csum, colour = method)) +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets")
+p
+```
+
+```{r}
+immuneGO <- readRDS(here("data/RNAseq-GO.rds"))
+immuneGO %>% group_by(contrast) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> topSets
+    
+dat %>% arrange(contrast, method, P.DE) %>%
+    group_by(contrast, method) %>%
+    mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> sub
+
+p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Method", x = "Rank", 
+         y = glue("Cumulative no. RNAseq sets")) +
+    theme(legend.position = "bottom")
 p
 ```
 
@@ -248,18 +274,21 @@ for(i in 1:ncol(cont.matrix)){
   overlaps <- findOverlaps(cpgs, dmrList[[i]])
   tmp <- data.frame(cpgs = cpgs$name[from(overlaps)],
                     method = "dmrcate", 
-                    contrast = colnames(cont.matrix)[i])
+                    contrast = colnames(cont.matrix)[i],
+                    stringsAsFactors = FALSE)
   dat <- bind_rows(dat, tmp)
   
   tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = 5000)),
                     method = "probe-top",
-                    contrast = colnames(cont.matrix)[i])
+                    contrast = colnames(cont.matrix)[i],
+                    stringsAsFactors = FALSE)
   dat <- bind_rows(dat, tmp)
   
   tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
                                              p.value = pval)),
                     method = "probe-fdr",
-                    contrast = colnames(cont.matrix)[i])
+                    contrast = colnames(cont.matrix)[i],
+                    stringsAsFactors = FALSE)
   dat <- bind_rows(dat, tmp)
   
 }
@@ -279,7 +308,7 @@ flatAnn <- loadFlatAnnotation(anno)
 dat %>% group_by(contrast, method) %>%
     inner_join(flatAnn, by = c("cpgs" = "cpg")) %>% 
     group_by(contrast, method) %>%
-    select(group_cols(), entrezid) %>%
+    dplyr::select(group_cols(), entrezid) %>%
     distinct() %>%
     tally() -> sub
 
@@ -294,7 +323,7 @@ ggplot(sub, aes(x = method, y = n, fill = method)) +
 dat %>% group_by(contrast, method) %>%
     left_join(flatAnn, by = c("cpgs" = "cpg")) %>% 
     group_by(contrast, method) %>%
-    select(group_cols(), entrezid, cpgs) %>%
+    dplyr::select(group_cols(), entrezid, cpgs) %>%
     summarise(prop = sum(!is.na(entrezid[!duplicated(cpgs)]))/
                   length(unique(cpgs))) -> sub
 
@@ -309,7 +338,7 @@ ggplot(sub, aes(x = method, y = prop, fill = method)) +
 dat %>% group_by(contrast, method) %>%
     left_join(flatAnn, by = c("cpgs" = "cpg")) %>% 
     group_by(contrast, method) %>%
-    select(group_cols(), group, cpgs) %>%
+    dplyr::select(group_cols(), group, cpgs) %>%
     group_by(contrast, method, group) %>%
     tally() -> sub
 
@@ -351,7 +380,7 @@ p <- vector("list", ncol(cont.matrix))
 for(i in 1:ncol(cont.matrix)){
     dat %>% filter(contrast == colnames(cont.matrix)[i]) %>%
         left_join(flatAnn, by = c("cpgs" = "cpg")) %>% 
-        select(method, entrezid) %>%
+        dplyr::select(method, entrezid) %>%
         distinct() -> tmp
 
     tmp <- split(tmp$entrezid, f = tmp$method)
@@ -365,425 +394,81 @@ p[[2]]
 p[[3]]
 ```
 
-## How important are region cut offs i.e. num probes in region and delta beta?
+## Effect of DMR cut offs i.e. num probes in region and delta beta
 
 ```{r}
-dmrParamFile <- here("data/dmrParams.RData")
-forceRedo <- FALSE
+outFile <- here("data/dmrcate-params.rds")
+dmrParams <- NULL
 
-params <- data.frame(betacutoff = rep(c("NULL", 0.1, 0.2), times = 3), 
-                     min.cpgs = rep(c(2, 3, 4), each = 3), stringsAsFactors = FALSE)
+meanDiffs <- seq(0, 0.2, by = 0.1)
+noCpgs <- 2:4
 
-if(!file.exists(dmrParamFile) | forceRedo){
-  dmrParamList <- vector("list", nrow(params))
-  
-  cpgAnn <- cpg.annotate("array", mVals, what = "M", arraytype = "EPIC",
-                             analysis.type = "differential", design = design, 
-                             contrasts = TRUE, cont.matrix = cont.matrix, 
-                             coef = "CD4vCD8")
-    
-  for(i in 1:nrow(params)){
-    
-    if(params$betacutoff[i] == "NULL"){
-      betacutoff = NULL
-      
-    } else {
-      betacutoff = params$betacutoff[i]
-      
+if(!file.exists(outFile)){
+    for(i in 1:length(dmrList)){
+        for(j in meanDiffs){
+            for(k in noCpgs){
+                keep <- (abs(dmrList[[i]]$meandiff) > j & 
+                             dmrList[[i]]$no.cpgs >= k)
+                
+                tmp <- topGSA(goregion(dmrList[[i]][keep, ], anno = anno, 
+                                       array.type = "EPIC"), 
+                              number = Inf)
+                tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
+                tmp$params <- glue("|Beta| = {j}; No. CpGs = {k}")
+                tmp$contrast <- colnames(cont.matrix)[i]
+                dmrParams <- bind_rows(dmrParams, tmp)
+            }
+        }
     }
     
-    dmrOut <- dmrcate(cpgAnn, lambda = 1000, mc.cores = 10, 
-                      betacutoff = betacutoff, 
-                      min.cpgs = params$min.cpgs[i])
-
-    coord <- dmrOut$results$coord
-    coord <- gsub("-",":",coord)
-    coord <- strsplit2(coord,":")
-
-    dmrParamList[[i]] <- GRanges(seqnames = coord[,1], 
-                          ranges = IRanges(start = as.numeric(coord[,2]), 
-                                    end = as.numeric(coord[,3])),
-                          dmrData = dmrOut$results)
-  }
-  save(dmrParamList, file = dmrParamFile)
-  
+    saveRDS(dmrParams, file = outFile)
+    
 } else {
-  load(dmrParamFile)
-  
+    dmrParams <- readRDS(outFile)
+    
 }
 ```
 
-```{r}
-dmrParamGoFile <- here("data/dmr.param.GO.RData")
-forceRedo <- FALSE
-
-if(!file.exists(dmrParamGoFile) | forceRedo){
-
-  dmrParamGO <- lapply(1:length(dmrParamList), function(i){
-    gmreg <- topGSA(goregion(dmrParamList[[i]], anno = anno, 
-                           array.type = "EPIC"), number = Inf)
-    list(gmreg = gmreg)
-  })
-  
-  save(dmrParamGO, file = dmrParamGoFile)
-  
-} else {
-  load(dmrParamGoFile)
-  
-}
-```
-
-
-```{r, fig.width=8}
-  goDat <- numeric(0)
-  sub <- 1:50
-  
-  for(i in 1:length(dmrParamGO)){
-    
-    tmp <- data.frame(value=cumsum(rownames(dmrParamGO[[i]]$gmreg) %in% immuneGO$GOID)[sub],
-                      rank=sub, variable=factor(i))
-    goDat <- rbind(goDat, tmp)  
-  }
-
-  paramLabels <- glue("\u0394\u03b2= {params$betacutoff}, Min. CpGs = {params$min.cpgs}")
-
-  goDat$betacut <- factor(rep(params$betacutoff, each=max(sub)))
-  goDat$mincpgs <- factor(rep(params$min.cpgs, each=max(sub)))
-  
-  p <- ggplot(goDat, aes(x=rank,y=value, colour=mincpgs), group=betacut) +
-    geom_line(aes(linetype=betacut)) +
-    theme_minimal() +
-    geom_vline(xintercept = 10, linetype = "dotted") +
-    scale_color_paletteer_d(package = "wesanderson", palette = "Darjeeling1") +
-    scale_linetype_manual(values=c("solid", "longdash", "dotdash")) +
-    labs(linetype = "\u0394\u03b2", colour = "Min. CpGs") + xlab("Rank") + 
-    ylab("Cumulative no. immune sets")
-  p
-
-```
-
-## Different region finding methods
-
-```{r}
-maxGap <- 300 # max distance between probes in same cluster
-minProbes <- 7 # valid cluster must have > minProbes
-cores <- 10 # num. cores to use for bootstraps
-B <- 1000 # num. bootstraps
-adjP <- 0.05
-dmrFile <- here("data/dmrsList.RData") # name of results file
-inputFile <- here("data/dmrsInputs.RData") # saved input objects
-save(tfit, bVals, mVals, targets, file = inputFile)
-
-forceRedo <- FALSE
-
-if(!file.exists(dmrFile) | forceRedo){
-  scriptFile <- here("code/runDmrMethods.R")
-  runBgAnalysis(scriptFile, outPrefix = "dmr",
-                args = c(maxGap, minProbes, cores, B, betacut, adjP, dmrFile, inputFile))
-  
-} else {
-  load(dmrFile)
-}
-```
-
-
-```{r}
-dmrGoFile <- here("data/dmrsGO.RData")
-forceRedo <- FALSE
-
-if(!file.exists(dmrGoFile) | forceRedo){
-
-  anno <- loadAnnotation(arrayType = "EPIC")
-  dmrGO <- lapply(1:length(dmrList), function(i){
-    
-    hgt <- lapply(dmrList[[i]], function(res){
-      
-      r <- res[[1]]
-      g <- GRanges(seqnames = Rle(as.character(r$seqnames)), 
-                 ranges = IRanges(start = r$start, end = r$end))
-    
-      topGSA(goregion(g, anno = anno, prior.prob = FALSE, array.type = "EPIC"), 
-             number = Inf)
-    })
-    
-    gmreg <- lapply(dmrList[[i]], function(res){
-      
-      r <- res[[1]]
-      g <- GRanges(seqnames = Rle(as.character(r$seqnames)), 
-                 ranges = IRanges(start = r$start, end = r$end))
-    
-      topGSA(goregion(g, anno = anno, prior.prob = TRUE, array.type = "EPIC"), 
-             number = Inf)
-    })
-
-    list(hgt = hgt, gmreg = gmreg)
-  })
-
-  save(dmrGO, file = dmrGoFile)
-
-} else {
-  load(dmrGoFile)
-
-}
-```
-
-<!-- ```{r} -->
-<!-- bumpCpgs <- vector("list", length(contNames)) -->
-
-<!-- for(i in 1:length(contNames)){ -->
-
-<!--   overlaps <- findOverlaps(cpgs,bumpList[[i]]) -->
-<!--   bumpCpgs[[i]] <- cpgs$name[from(overlaps)] -->
-<!-- } -->
-<!-- ``` -->
+Examine effect of changing DMr parameter cut offs on gene set rankings of GO categories in "immune system process".
 
 ```{r, fig.width=9}
-  goDat <- numeric(0)
-  sub <- 1:200
+immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"), 
+                            stringsAsFactors = FALSE, header = FALSE, 
+                            col.names = "GOID"))
 
-  for(i in 1:length(dmrGO)){
+dmrParams %>% arrange(contrast, params, P.DE) %>%
+    group_by(contrast, params) %>%
+    mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> dat
 
-    hgt.dmrc <- cumsum(rownames(dmrGO[[i]]$hgt$dmrc) %in% immuneGO$GOID)[sub]
-    hgt.bumph <- cumsum(rownames(dmrGO[[i]]$hgt$bumph) %in% immuneGO$GOID)[sub]
-    hgt.probel <- cumsum(rownames(dmrGO[[i]]$hgt$probel) %in% immuneGO$GOID)[sub]
-    
-    gmreg.dmrc <- cumsum(rownames(dmrGO[[i]]$gmreg$dmrc) %in% immuneGO$GOID)[sub]
-    gmreg.bumph <- cumsum(rownames(dmrGO[[i]]$gmreg$bumph) %in% immuneGO$GOID)[sub]
-    gmreg.probel <- cumsum(rownames(dmrGO[[i]]$gmreg$probel) %in% immuneGO$GOID)[sub]
-    
-    #gmprbtop <- cumsum(rownames(probeGO[[i]]$gmprbtop) %in% immuneGO$GOID)[sub]
-    #gmprbpval <- cumsum(rownames(probeGO[[i]]$gmprbpval) %in% immuneGO$GOID)[sub]
-
-    #tmp <- melt(data.frame(hgt, gmreg, gmprbtop, gmprbpval, rank=sub), id="rank")
-    hgt <- melt(data.frame(dmrc = hgt.dmrc, bumph=hgt.bumph, probel=hgt.probel, 
-                           rank = sub), id="rank")
-    hgt$method <- "hgt"
-    gmreg <- melt(data.frame(dmrc = gmreg.dmrc, bumph=gmreg.bumph, probel=gmreg.probel, 
-                             rank = sub), id="rank")
-    gmreg$method <- "gmreg"
-    tmp <- rbind(hgt, gmreg)
-    #tmp <- melt(data.frame(hgt.dmrc, hgt.bumph, hgt.probel,
-    #                       gmreg.dmrc, gmreg.bumph, gmreg.probel, rank=sub), id="rank")
-    tmp$contrast <- colnames(tfit$contrasts)[i]
-    goDat <- rbind(goDat, tmp)
-  }
-
-  p <- ggplot(goDat, aes(x=rank,y=value, colour=method)) +
+p <- ggplot(dat, aes(x = rank, y = csum, colour = params)) +
     geom_line() +
-    facet_wrap(vars(variable, contrast), ncol=3, scales = "free_y", 
-               labeller = labeller(contrast = contNames)) +
-    theme_minimal() +
-  #  geom_vline(xintercept = 10, linetype = "dotted") +
-    scale_color_paletteer_d(package = "LaCroixColoR", palette = "PassionFruit") +
-    labs(colour = "Method") + xlab("Rank") + ylab("Cumulative no. immune sets")
-  p
-
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Parameters", x = "Rank", y = "Cumulative no. immune sets")
+p
 ```
 
-<!-- ```{r, fig.width=9} -->
-<!--   goDat <- numeric(0) -->
-<!--   pcuts <- c(0.0001, 0.001, 0.01, 0.05, 0.1) -->
+Examine effect of changing DMR parameter cut offs on gene set rankings on GO categories derived from RNAseq analysis.  
 
-<!--   propSig <- function(pcuts, result){ -->
-<!--     sapply(pcuts, function(p){ -->
-<!--       sum(rownames(result)[result$FDR < p] %in% immuneGO$GOID)/nrow(result) -->
-<!--     }) -->
-<!--   } -->
-
-<!--   for(i in 1:length(dmrGO)){ -->
-
-<!--     hgt.dmrc <- propSig(pcuts, dmrGO[[i]]$hgt$dmrc) -->
-<!--     hgt.bumph <- propSig(pcuts, dmrGO[[i]]$hgt$bumph) -->
-<!--     hgt.probel <- propSig(pcuts, dmrGO[[i]]$hgt$probel) -->
-
-<!--     gmreg.dmrc <- propSig(pcuts, dmrGO[[i]]$gmreg$dmrc) -->
-<!--     gmreg.bumph <- propSig(pcuts, dmrGO[[i]]$gmreg$bumph) -->
-<!--     gmreg.probel <- propSig(pcuts, dmrGO[[i]]$gmreg$probel) -->
-
-<!--     hgt <- melt(data.frame(dmrc = hgt.dmrc, bumph=hgt.bumph, probel=hgt.probel,  -->
-<!--                            pval = pcuts), id="pval") -->
-<!--     hgt$method <- "hgt" -->
-<!--     gmreg <- melt(data.frame(dmrc = gmreg.dmrc, bumph=gmreg.bumph, probel=gmreg.probel,  -->
-<!--                              pval = pcuts), id="pval") -->
-<!--     gmreg$method <- "gmreg" -->
-<!--     tmp <- rbind(hgt, gmreg) -->
-<!--     tmp$contrast <- colnames(tfit$contrasts)[i] -->
-<!--     goDat <- rbind(goDat, tmp) -->
-<!--   } -->
-
-<!--   p <- ggplot(goDat, aes(x=pval,y=value, colour=method)) + -->
-<!--     geom_line() + -->
-<!--     facet_wrap(vars(variable, contrast), ncol=3, scales = "free_y",  -->
-<!--                labeller = labeller(contrast = contNames)) + -->
-<!--     theme_minimal() + -->
-<!--   #  geom_vline(xintercept = 10, linetype = "dotted") + -->
-<!--     scale_color_paletteer_d(package = "LaCroixColoR", palette = "PassionFruit") + -->
-<!--     labs(colour = "Method") + xlab("Rank") + ylab("Cumulative no. immune sets") -->
-<!--   p -->
-
-<!-- ``` -->
-
-```{r, fig.height=8, fig.width=9}
-pfPal <- paletteer_d(package = "LaCroixColoR", palette = "PassionFruit")
-mar <-  c(4, 22, 2, 3) + 0.1
-oma <- c(2, 0, 2, 0)
-
-for(i in 1:length(contNames)){
-
-  par(mfrow = c(3, 2), mar = mar, oma = oma)
-  dat <- head(dmrGO[[i]]$hgt$dmrc, n=10)
-  plotTopSets(dat$FDR, dat$TERM, dat$N, methodNames[1], col = pfPal[1], cex.names = 0.7,
-              main = "DMRcate")
-
-  dat <- head(dmrGO[[i]]$gmreg$dmrc, n=10)
-  plotTopSets(dat$FDR, dat$TERM, dat$N, methodNames[2], col = pfPal[2], cex.names = 0.7,
-              main = "DMRcate")
-
-  dat <- head(dmrGO[[i]]$hgt$bumph, n=10)
-  plotTopSets(dat$FDR, dat$TERM, dat$N, methodNames[1], col = pfPal[1], cex.names = 0.7,
-              main = "Bumphunter")
-
-  dat <- head(dmrGO[[i]]$gmreg$bumph, n=10)
-  plotTopSets(dat$FDR, dat$TERM, dat$N, methodNames[2], col = pfPal[2], cex.names = 0.7,
-              main = "Bumphunter")
-
-  dat <- head(dmrGO[[i]]$hgt$probel, n=10)
-  plotTopSets(dat$FDR, dat$TERM, dat$N, methodNames[1], col = pfPal[1], cex.names = 0.7,
-              main = "ProbeLasso")
-
-  dat <- head(dmrGO[[i]]$gmreg$probel, n=10)
-  plotTopSets(dat$FDR, dat$TERM, dat$N, methodNames[2], col = pfPal[2], cex.names = 0.7,
-              main = "ProbeLasso")
-
-  mtext(colnames(tfit$contrasts)[i], outer = TRUE)
-
-  # par(xpd = TRUE, mar = c(5,4,4,2))
-  # plot.new()
-  # legend("center", legend = methodNames,
-  #      fill = pfPal, cex = 1.25, title = "Method")
-  # #legend("topright", legend = "p-value = 0", cex = 1.25, pch = "*")
-  # par(xpd = FALSE)
-}
-```
-
-```{r}
-  dmrRanges <- lapply(1:length(dmrList), function(i){
+```{r, fig.width=9}
+immuneGO <- readRDS(here("data/RNAseq-GO.rds"))
+immuneGO %>% group_by(contrast) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> topSets
     
-    lapply(dmrList[[i]], function(res){
-      
-      r <- res[[1]]
-      GRanges(seqnames = Rle(as.character(r$seqnames)), 
-              ranges = IRanges(start = r$start, end = r$end))
-    })
-  })
-  
-cpgs <- GRanges(seqnames = anno$chr, 
-                  ranges = IRanges(start = anno$pos, 
-                                   end = anno$pos),
-                  strand = anno$strand,
-                  name = anno$Name)
+dmrParams %>% arrange(contrast, params, P.DE) %>%
+    group_by(contrast, params) %>%
+    mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> sub
 
-dmrStats <- lapply(dmrRanges, function(contr){
-  lapply(contr, function(method){
-    
-    overlaps <- findOverlaps(cpgs,method)
-    sig.cpg <- cpgs$name[from(overlaps)]
-    sig.eg <- getMappedEntrezIDs(sig.cpg = sig.cpg, array.type = "EPIC", anno=anno)$sig.eg
-    list(sig.cpg = sig.cpg, sig.eg = sig.eg)
-  })
-})
-
-
-```
-
-```{r}
-dmrDat <- lapply(1:length(dmrRanges), function(i){
-  data.frame(reshape2::melt(list(dmrc = width(dmrRanges[[i]]$dmrc), 
-                      bumph = width(dmrRanges[[i]]$bumph),
-                      probel = width(dmrRanges[[i]]$probel))), 
-             contrast=colnames(tfit$contrasts)[i])
-})
-
-dmrDat <- bind_rows(dmrDat)
-
-p <- ggplot(dmrDat, aes(x=L1, y = value, fill = contrast)) + 
-  geom_boxplot() +
-  labs(x = "Region finding method", y = "Region width") +
-  theme_minimal()
+p <- ggplot(sub, aes(x = rank, y = csum, colour = params)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Parameters", x = "Rank", 
+         y = glue("Cumulative no. RNAseq sets"))
 p
 ```
-
-```{r}
-dmrDat <- lapply(1:length(dmrStats), function(i) {
-  melt(data.frame(dmrc = length(dmrStats[[i]]$dmrc$sig.cpg),
-             bumph = length(dmrStats[[i]]$bumph$sig.cpg),
-             probel = length(dmrStats[[i]]$probel$sig.cpg),
-             contrast = colnames(tfit$contrasts)[i]))
-})
-
-dmrDat <- bind_rows(dmrDat)
-
-p <- ggplot(dmrDat, aes(x=variable, y = value, fill = contrast)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
-  labs(x = "Region finding method", y = "No. CpGs covered by regions") +
-  theme_minimal()
-p
-```
-
-```{r}
-dmrDat <- lapply(1:length(dmrStats), function(i) {
-  melt(data.frame(dmrc = length(dmrStats[[i]]$dmrc$sig.eg),
-             bumph = length(dmrStats[[i]]$bumph$sig.eg),
-             probel = length(dmrStats[[i]]$probel$sig.eg),
-             contrast = colnames(tfit$contrasts)[i]))
-})
-
-dmrDat <- bind_rows(dmrDat)
-
-p <- ggplot(dmrDat, aes(x=variable, y = value, fill = contrast)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
-  labs(x = "Region finding method", y = "No. genes covered by regions") +
-  theme_minimal()
-p
-```
-
-```{r}
-usDmrCpgs <- list(DMRcate=dmrStats[[1]]$dmrc$sig.cpg, 
-                  Bumphunter=dmrStats[[1]]$bumph$sig.cpg, 
-                  ProbeLasso=dmrStats[[1]]$probel$sig.cpg)
-upset(fromList(usDmrCpgs), order.by = "freq", keep.order = TRUE, 
-      sets = c("DMRcate","Bumphunter","ProbeLasso"))
-
-usDmrCpgs <- list(DMRcate=dmrStats[[2]]$dmrc$sig.cpg, 
-                  Bumphunter=dmrStats[[2]]$bumph$sig.cpg, 
-                  ProbeLasso=dmrStats[[2]]$probel$sig.cpg)
-upset(fromList(usDmrCpgs), order.by = "freq", keep.order = TRUE, 
-      sets = c("DMRcate","Bumphunter","ProbeLasso"))
-
-usDmrCpgs <- list(DMRcate=dmrStats[[3]]$dmrc$sig.cpg, 
-                  Bumphunter=dmrStats[[3]]$bumph$sig.cpg, 
-                  ProbeLasso=dmrStats[[3]]$probel$sig.cpg)
-upset(fromList(usDmrCpgs), order.by = "freq", keep.order = TRUE, 
-      sets = c("DMRcate","Bumphunter","ProbeLasso"))
-```
-
-```{r}
-usDmrGenes <- list(DMRcate=dmrStats[[1]]$dmrc$sig.eg, 
-                  Bumphunter=dmrStats[[1]]$bumph$sig.eg, 
-                  ProbeLasso=dmrStats[[1]]$probel$sig.eg)
-upset(fromList(usDmrGenes), order.by = "freq", keep.order = TRUE, 
-      sets = c("DMRcate","Bumphunter","ProbeLasso"))
-
-usDmrGenes <- list(DMRcate=dmrStats[[2]]$dmrc$sig.eg, 
-                  Bumphunter=dmrStats[[2]]$bumph$sig.eg, 
-                  ProbeLasso=dmrStats[[2]]$probel$sig.eg)
-upset(fromList(usDmrGenes), order.by = "freq", keep.order = TRUE, 
-      sets = c("DMRcate","Bumphunter","ProbeLasso"))
-
-usDmrGenes <- list(DMRcate=dmrStats[[3]]$dmrc$sig.eg, 
-                  Bumphunter=dmrStats[[3]]$bumph$sig.eg, 
-                  ProbeLasso=dmrStats[[3]]$probel$sig.eg)
-upset(fromList(usDmrGenes), order.by = "freq", keep.order = TRUE, 
-      sets = c("DMRcate","Bumphunter","ProbeLasso"))
-```
-

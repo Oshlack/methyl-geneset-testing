@@ -242,7 +242,7 @@ dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% topSets$GOID[topSets$contrast %in% contrast])) %>%
+    mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> sub
 
