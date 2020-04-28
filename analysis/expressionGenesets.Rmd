@@ -178,14 +178,16 @@ kegg <- NULL
 for(i in 1:ncol(cont)){
     top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
     
-    tmp <- goana(top$entrezid, universe = y$genes$entrezid, trend = "length")
+    tmp <- goana(top$entrezid, universe = v$genes$entrezid, 
+                 covariate = v$genes$length)
     tmp <- topGO(tmp, number = Inf)
     tmp$FDR <- p.adjust(tmp$P.DE)
     tmp <- rownames_to_column(tmp, var = "ID")
     tmp$contrast <- colnames(cont)[i] 
     go <- bind_rows(go, tmp)
         
-    tmp <- kegga(top$entrezid, universe = y$genes$entrezid, trend="length")
+    tmp <- kegga(top$entrezid, universe = v$genes$entrezid, species = "Hs", 
+                 covariate = v$genes$length, species.KEGG = "hsa")
     tmp <- topKEGG(tmp, number = Inf)
     tmp$FDR <- p.adjust(tmp$P.DE)
     tmp <- rownames_to_column(tmp, var = "PID")
@@ -206,6 +208,7 @@ idx <- suppressMessages(lapply(PathwayList[keep], function(x){
     tmp <- z$genes$gene_id[z$genes$symbol %in% x]
     tmp[!is.na(tmp)]
 }))
+idx <- ids2indices(idx, v$genes$gene_id)
 
 broad <- NULL  
 for(i in 1:ncol(cont)){

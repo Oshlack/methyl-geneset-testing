@@ -479,7 +479,7 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
 p
 ```
 
-```{r, fig.height=15, fig.width=6}
+```{r, fig.height=15, fig.width=8}
 data(PathwayList)
 nGenes <- rownames_to_column(data.frame(n = sapply(PathwayList, 
                                                    length)), 
