@@ -260,7 +260,7 @@ for(cont in unique(sub$contrast)){
                     theme = theme(plot.title = element_text(size = 10))) 
 ```
 
-## Compare results of region-wise and probe-wise analyses
+## Compare characteristics of region-wise and probe-wise results
 
 ```{r, message=FALSE}
 cpgs <- GRanges(seqnames = anno$chr, 
@@ -394,7 +394,7 @@ p[[2]]
 p[[3]]
 ```
 
-## Effect of DMR cut offs i.e. num probes in region and delta beta
+## Effect of DMR cut offs i.e. num probes in region and absolute delta beta
 
 ```{r}
 outFile <- here("data/dmrcate-params.rds")
