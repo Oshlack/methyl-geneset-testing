@@ -157,3 +157,121 @@ filterProbes <- function(datGr, dist=2, mafcut=0, and=TRUE, rmcrosshyb = TRUE,
   fltGr <- datGr[rownames(datGr) %in% keep,]
   fltGr
 }
+
+gsaseq <- function(sig.de, universe, collection, plot.bias=FALSE,
+                   gene.length=NULL, sort = TRUE)
+    # Generalised version of goana with user-specified gene sets
+    # Gene sets collections must be Entrez Gene ID
+    # Can take into account gene length bias
+    # Belinda Phipson
+    # 4 May 2020
+{
+
+    if(!is.vector(sig.de))
+        stop("Input DE list is not a character vector")
+
+    if(is.null(universe)){
+        stop("Please supply the universe: all genes analysed in the experiment")
+    }
+
+    if(!is.null(gene.length)){
+        if(length(gene.length)!=length(universe)){
+            stop("Gene length and universe must be the same length")
+        }
+    }
+
+    # Check collection is a list with character vectors
+    if(!is.list(collection))
+        collection <- list(collection=collection)
+    collection <- lapply(collection, as.character)
+    # Make sure gene set collections don't have any NAs
+    collection <- lapply(collection, function(x) x[!is.na(x)])
+    # Remove genes that are not in the universe from collections
+    collection <- lapply(collection, function(x) x[x %in% universe])
+    # Remove collections with no genes left after universe filter
+    inUniv <- sapply(collection, function(x) length(x) > 0)
+    collection <- collection[inUniv]
+
+    test.de <- as.numeric(universe %in% sig.de)
+
+    # Estimate prior probabilities
+    if(!is.null(gene.length)){
+        pwf <- .estimatePWF(D=test.de,bias=gene.length)
+        if(plot.bias)
+            .plotBiasSeq(D=test.de,bias=as.vector(gene.length))
+    }
+
+    results <- matrix(NA,ncol=4,nrow=length(collection))
+    colnames(results) <- c("N","DE","P.DE","FDR")
+    rownames(results) <- names(collection)
+    results[,"N"] <- unlist(lapply(collection,length))
+    results[,"DE"] <- unlist(lapply(collection, function(x) sum(sig.de %in% x)))
+    Nuniverse <- length(universe)
+    m <- length(sig.de)
+
+    # Hypergeometric test with prior probabilities
+    if(!is.null(gene.length)){
+        for(i in 1:length(collection)){
+            InSet <- universe %in% collection[[i]]
+            pw.red <- sum(pwf[InSet])/results[i,"N"]
+            pw.white <- sum(pwf[!InSet])/(Nuniverse-results[i,"N"])
+            odds <- pw.red/pw.white
+            results[i,"P.DE"] <- BiasedUrn::pWNCHypergeo(results[i,"DE"],
+                                                         results[i,"N"],
+                                                         Nuniverse-results[i,"N"],
+                                                         m,
+                                                         odds,
+                                                         lower.tail=FALSE) +
+                BiasedUrn::dWNCHypergeo(results[i,"DE"],
+                                        results[i,"N"],
+                                        Nuniverse-results[i,"N"],
+                                        m, odds)
+        }
+    }
+    # Hypergeometric test without prior probabilities
+    else{
+        for(i in 1:length(collection)){
+            results[i,"P.DE"] <- stats::phyper(q=results[i,"DE"]-0.5, m=m,
+                                               n=Nuniverse-m,
+                                               k=results[i,"N"],
+                                               lower.tail=FALSE)
+        }
+    }
+    results[,"FDR"] <- stats::p.adjust(results[,"P.DE"],method="BH")
+    if(sort){
+        o <- order(results[,"P.DE"])
+        results[o,]
+    }
+    else
+        data.frame(results)
+}
+
+.estimatePWF <- function(D,bias)
+    # An alternative to goseq function nullp, which is transformation invariant
+    # Belinda Phipson and Gordon Smyth
+    # 6 March 2015
+{
+    prior.prob <- bias
+    o <- order(bias)
+    prior.prob[o] <- limma::tricubeMovingAverage(D[o],span=0.5)
+    prior.prob
+}
+
+.plotBiasSeq <- function(D,bias)
+    # Plotting function to show gene level CpG density bias
+    # Belinda Phipson
+    # 5 March 2015
+{
+    o <- order(bias)
+    splitf <- rep(1:100,each=200)[1:length(bias)]
+    avgbias <- tapply(bias[o],factor(splitf),mean)
+    sumDM <- tapply(D[o],factor(splitf),sum)
+    propDM <- sumDM/table(splitf)
+    graphics::par(mar=c(5,5,2,2))
+    graphics::plot(avgbias,as.vector(propDM),
+                   xlab="Gene length (binned)",
+                   ylab="Proportion Differential Expression",cex.lab=1.5,
+                   cex.axis=1.2)
+    graphics::lines(stats::lowess(avgbias,propDM),col=4,lwd=2)
+}
+
