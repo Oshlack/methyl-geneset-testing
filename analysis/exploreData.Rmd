@@ -121,6 +121,31 @@ fitSum <- summary(decideTests(tfit, p.value = pval))
 fitSum
 ```
 
+```{r}
+rfit <- readRDS(here("data/rnaseq-fit.rds"))
+rdat <- rownames_to_column(data.frame(rfit$coefficients), var = "gene_id")
+rdat %>% inner_join(data.frame(rfit$genes)) %>%
+    mutate(entrezid = as.character(entrezid)) %>%
+    dplyr::select(-length) -> rdat
+rdat <- reshape2::melt(rdat, value.name = "coefficient")
+
+mdat <- rownames_to_column(data.frame(tfit$coefficients), var = "cpg")
+mdat %>% inner_join(flatAnn) %>%
+    dplyr::select(-group, -symbol, -alias) -> mdat
+mdat <- reshape2::melt(mdat, value.name = "coefficient") %>%
+    dplyr::select(-cpg) %>%
+    group_by(variable, entrezid) %>%
+    summarise(coef = median(coefficient)) -> mdat
+
+mdat %>% inner_join(rdat, by = c("entrezid", "variable")) -> dat
+
+ggplot(dat, aes(x = coef, y = coefficient)) +
+    geom_point(alpha = 0.5, size = 0.5) +
+    facet_wrap(vars(variable), ncol = 2) +
+    labs(x = "Median delta M per gene", y = "Log FC")
+
+```
+
 Examine only the independent contrasts.
 
 ```{r}
