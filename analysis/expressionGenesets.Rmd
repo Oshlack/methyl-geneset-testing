@@ -19,6 +19,7 @@ library(glue)
 library(patchwork)
 library(biobroom)
 library(ChAMP)
+source(here("code/utility.R"))
 ```
 
 # Data import
@@ -203,12 +204,12 @@ Test whether any of the genes in the BROAD sets are differentially expressed.
 
 ```{r}
 data(PathwayList)
-keep <- sapply(PathwayList, function(x) any(x %in% z$genes$symbol))
-idx <- suppressMessages(lapply(PathwayList[keep], function(x){
-    tmp <- z$genes$gene_id[z$genes$symbol %in% x]
+keep <- sapply(PathwayList, function(x) any(x %in% v$genes$symbol))
+ensembl <- suppressMessages(lapply(PathwayList[keep], function(x){
+    tmp <- v$genes$gene_id[v$genes$symbol %in% x]
     tmp[!is.na(tmp)]
 }))
-idx <- ids2indices(idx, v$genes$gene_id)
+idx <- ids2indices(ensembl, v$genes$gene_id)
 
 broad <- NULL  
 for(i in 1:ncol(cont)){
@@ -220,4 +221,27 @@ for(i in 1:ncol(cont)){
 }
 
 saveRDS(broad, here("data/RNAseq-BROAD.rds"))
+```
+
+Test whether the BROAD sets are enriched for the differentially expressed genes using Belinda's `gsaseq` function.
+
+```{r}
+entrez <- suppressMessages(lapply(ensembl, function(x){
+    tmp <- unname(v$genes$entrezid[v$genes$gene_id %in% x])
+    tmp[!is.na(tmp)]
+}))
+
+gsa <- NULL
+for(i in 1:ncol(cont)){
+    top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
+    
+    tmp <- gsaseq(top$entrezid, universe = v$genes$entrezid, 
+                  collection = entrez, gene.length = v$genes$length)
+    tmp <- rownames_to_column(data.frame(tmp), var = "ID")
+    tmp$contrast <- colnames(cont)[i] 
+    gsa <- bind_rows(gsa, tmp)
+    
+}
+
+saveRDS(gsa, here("data/RNAseq-BROAD-GSA.rds"))
 ```

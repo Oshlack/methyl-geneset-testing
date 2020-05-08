@@ -78,6 +78,21 @@ ggplot(dat, aes(x = x, y = y, colour = cellType)) +
   labs(colour = "Cell Type")
 ```
 
+MDS plots using *only* the CpGs that map to genes.
+
+```{r}
+ann <- loadAnnotation("EPIC")
+flatAnn <- missMethyl:::.getFlatAnnotation("EPIC", anno = ann)
+geneM <- getM(fltGr[rownames(fltGr) %in% flatAnn$cpg,])
+
+p <- plotMDS(geneM, top=1000, gene.selection="common", plot = FALSE)
+dat <- tibble::tibble(x = p$x, y = p$y, cellType = targets$CellType)
+
+ggplot(dat, aes(x = x, y = y, colour = cellType)) +
+  geom_point() +
+  labs(colour = "Cell Type")
+```
+
 # Statistical analysis
 
 Compare several sets of sorted immune cells. Consider results significant at FDR < 0.05 and delta beta ~ 10% (~ lfc = 0.5).
@@ -170,8 +185,6 @@ ggplot(sub, aes(x = pvalue, colour = sub)) +
 ## Test GO categories
 
 ```{r}
-ann <- loadAnnotation("EPIC")
-flatAnn <- missMethyl:::.getFlatAnnotation("EPIC", anno = ann)
 cpgEgGo <- cpgsEgGoFreqs(flatAnn)
 ```
 
@@ -454,7 +467,7 @@ ggplot(sub, aes(pvalue, fill = method)) +
 
 ## Test BROAD gene sets
 
-As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. 
+As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. We are using the top 100 ranked gene sets as identified by `camera` analysis of the corresponding RNAseq data as "truth".
 
 ```{r, fig.width=7}
 immuneBROAD <- readRDS(here("data/RNAseq-BROAD.rds"))
@@ -474,7 +487,32 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
     facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
+    labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
+    theme(legend.position = "bottom")
+p
+```
+
+Using the top 100 ranked gene sets as identified by Belinda's `gsaseq` analysis of the corresponding RNAseq data as "truth".
+
+```{r, fig.width=7}
+immuneBROAD <- readRDS(here("data/RNAseq-BROAD-GSA.rds"))
+immuneBROAD %>% group_by(contrast) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> topSets
+
+dat %>% filter(set == "BROAD") %>%
+    filter(sub %in% c("n","c1")) %>% 
+    arrange(contrast, method, pvalue) %>%
+    group_by(contrast, method) %>%
+    mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> sub
+
+p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
     theme(legend.position = "bottom")
 p
 ```
