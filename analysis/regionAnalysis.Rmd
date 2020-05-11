@@ -215,7 +215,7 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList,
 
 dat %>% arrange(contrast, method, P.DE) %>% 
     group_by(contrast, method) %>%
-    mutate(FDR = p.adjust(P.DE)) %>%
+    mutate(FDR = p.adjust(P.DE, method = "BH")) %>%
     filter(rank <= 10) %>% 
     inner_join(terms, by = c("GO" = "GOID")) %>%
     inner_join(nGenes, by = c("GO" = "ID")) -> sub

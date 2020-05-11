@@ -121,29 +121,45 @@ fitSum <- summary(decideTests(tfit, p.value = pval))
 fitSum
 ```
 
-```{r}
+```{r, fig.height=6, fig.width=7}
 rfit <- readRDS(here("data/rnaseq-fit.rds"))
 rdat <- rownames_to_column(data.frame(rfit$coefficients), var = "gene_id")
+
 rdat %>% inner_join(data.frame(rfit$genes)) %>%
     mutate(entrezid = as.character(entrezid)) %>%
     dplyr::select(-length) -> rdat
 rdat <- reshape2::melt(rdat, value.name = "coefficient")
 
+reshape2::melt(rfit$p.value, value.name = "p.value") %>%
+    group_by(Contrasts) %>%
+    mutate(FDR = p.adjust(p.value, method = "BH")) -> rfdr
+
+rdat %>% inner_join(rfdr, 
+                    by = c("gene_id" = "Var1", "variable" = "Contrasts")) -> rdat
+
 mdat <- rownames_to_column(data.frame(tfit$coefficients), var = "cpg")
 mdat %>% inner_join(flatAnn) %>%
-    dplyr::select(-group, -symbol, -alias) -> mdat
-mdat <- reshape2::melt(mdat, value.name = "coefficient") %>%
-    dplyr::select(-cpg) %>%
-    group_by(variable, entrezid) %>%
-    summarise(coef = median(coefficient)) -> mdat
+    dplyr::select(-symbol, -alias) -> mdat
+mdat <- reshape2::melt(mdat, value.name = "coefficient") -> mdat
 
-mdat %>% inner_join(rdat, by = c("entrezid", "variable")) -> dat
+mdat %>% dplyr::select(-cpg) %>%
+    mutate(promoter = ifelse(group %in% c("TSS1500", "TSS200", "1stExon"), 
+                             "prom", "other")) %>%
+    group_by(variable, entrezid, promoter) %>%
+    #summarise(coef = coefficient[which.max(abs(coefficient))]) -> mdat
+    summarise(coef = median(coefficient)) %>%
+    filter(promoter == "prom") -> mdat
 
-ggplot(dat, aes(x = coef, y = coefficient)) +
-    geom_point(alpha = 0.5, size = 0.5) +
-    facet_wrap(vars(variable), ncol = 2) +
-    labs(x = "Median delta M per gene", y = "Log FC")
+mdat %>% inner_join(rdat, by = c("entrezid", "variable")) %>%
+    mutate(colour = ifelse(FDR < 0.05, "Sig.", "Not sig.")) -> dat
 
+ggplot(dat, aes(x = coef, y = coefficient, colour = colour)) +
+    geom_point(data = dat[dat$colour == 'Not sig.',], alpha = 0.25, 
+               size = 1) +
+    geom_point(data = dat[dat$colour == 'Sig.',], size = 0.75, alpha = 0.5) +
+    facet_wrap(vars(variable), ncol = 2, scales = "free") +
+    labs(x = "Median logFC for CpGs in gene promoter", 
+         y = "Gene expression Log FC", color = "Diff. Gene Exp.")
 ```
 
 Examine only the independent contrasts.
@@ -306,7 +322,7 @@ dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(FDR = p.adjust(pvalue)) %>%
+    mutate(FDR = p.adjust(pvalue, method = "BH")) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 10) %>% 
     inner_join(terms, by = c("ID" = "GOID")) %>%
@@ -431,7 +447,7 @@ dat %>% filter(set == "KEGG") %>%
     filter(sub %in% c("n","c1")) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(FDR = p.adjust(pvalue)) %>%
+    mutate(FDR = p.adjust(pvalue, method = "BH")) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 10) %>% 
     inner_join(terms, by = c("ID" = "PathwayID")) %>%
@@ -552,7 +568,7 @@ dat %>% filter(set == "BROAD") %>%
     filter(sub %in% c("n","c1")) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(FDR = p.adjust(pvalue)) %>%
+    mutate(FDR = p.adjust(pvalue, method = "BH")) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 10) %>% 
     inner_join(nGenes) -> sub
