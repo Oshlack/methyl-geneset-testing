@@ -1,0 +1,115 @@
+---
+title: "Untitled"
+author: "Jovana Maksimovic"
+date: "12/05/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(here)
+library(limma)
+library(tidyverse)
+library(patchwork)
+```
+
+# Test selecting by genomic feature in gometh
+
+Load methylation blood cell comparison input data and annotation.
+
+```{r}
+load(here("data/input.RData"))
+anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+```
+
+Run gometh without and with restricting significant CpGs by genomic features.
+
+```{r}
+go <- NULL
+for(i in 1:ncol(tfit$contrasts)){
+    top <- topTreat(tfit, coef = i, number = 5000)
+    
+    feats <- "ALL"
+    tmp <- gometh(sig.cpg = rownames(top), all.cpg = rownames(tfit$coefficients), 
+                  collection = "GO", array.type = "EPIC", anno = anno,
+                  genomic.features = feats)
+    tmp <- topGSA(tmp, number = Inf)
+    tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+    tmp <- rownames_to_column(tmp, var = "ID")
+    tmp$contrast <- colnames(tfit$contrasts)[i] 
+    tmp$features <- paste(feats,collapse = ".")
+    go <- bind_rows(go, tmp)
+    
+    feats <- c("TSS200","TSS1500","1stExon","5'UTR")
+    tmp <- gometh(sig.cpg = rownames(top), all.cpg = rownames(tfit$coefficients), 
+                  collection = "GO", array.type = "EPIC", anno = anno,
+                  genomic.features = feats)
+    tmp <- topGSA(tmp, number = Inf)
+    tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+    tmp <- rownames_to_column(tmp, var = "ID")
+    tmp$contrast <- colnames(tfit$contrasts)[i] 
+    tmp$features <- paste(feats,collapse = ".")
+    go <- bind_rows(go, tmp)
+    
+    feats <- c("Body","ExonBnd")
+    tmp <- gometh(sig.cpg = rownames(top), all.cpg = rownames(tfit$coefficients), 
+                  collection = "GO", array.type = "EPIC", anno = anno,
+                  genomic.features = feats)
+    tmp <- topGSA(tmp, number = Inf)
+    tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+    tmp <- rownames_to_column(tmp, var = "ID")
+    tmp$contrast <- colnames(tfit$contrasts)[i] 
+    tmp$features <- paste(feats,collapse = ".")
+    go <- bind_rows(go, tmp)
+}
+```
+
+Plot results.
+
+```{r, fig.height=11, fig.width=6}
+go %>% group_by(contrast, features) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 10) -> sub
+
+p <- vector("list", length(unique(sub$contrast)) * length(unique(sub$features)))
+i = 1
+for(cont in unique(sub$contrast)){
+    c = 1
+    for(feat in unique(sub$features)){
+        tmp <- sub %>% filter(contrast == cont & features == feat) %>%
+            mutate(rank = factor(rank), 
+                   rank = factor(rank, levels = rev(levels(rank))))
+        
+        p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
+            geom_point(aes(size = N), alpha = 0.5, 
+                colour = scales::hue_pal()(length(unique(sub$features)))[c]) +
+            scale_y_discrete(labels = rev(tmp$TERM)) +
+            labs(y = "", size = "No. genes", title = feat) +
+            theme(axis.text.y = element_text(size = 6),
+                  plot.title = element_text(size = 8),
+                  legend.position = "right", 
+                  legend.key.size = unit(0.25, "cm"),
+                  legend.text = element_text(size = 6),
+                  legend.title = element_text(size = 8),
+                  axis.text.x = element_text(size = 6),
+                  axis.title.x = element_text(size = 8)) + 
+            coord_cartesian(xlim = c(-log10(0.99), -log10(10^-100))) +
+            geom_vline(xintercept = -log10(0.05), linetype = "dashed")
+        i = i + 1
+        c = c + 1
+    }
+}
+
+(p[[1]] / p[[2]] / p[[3]]) + 
+    plot_annotation(title = unique(sub$contrast)[1],
+                    theme = theme(plot.title = element_text(size = 10))) 
+(p[[4]] / p[[5]] / p[[6]]) + 
+    plot_annotation(title = unique(sub$contrast)[2],
+                    theme = theme(plot.title = element_text(size = 10))) 
+(p[[7]] / p[[8]] / p[[9]]) + 
+    plot_annotation(title = unique(sub$contrast)[3],
+                    theme = theme(plot.title = element_text(size = 10))) 
+```
