@@ -1,0 +1,137 @@
+---
+title: "Untitled"
+author: "Jovana Maksimovic"
+date: "12/05/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, message=FALSE}
+library(here)
+library(minfi)
+library(paletteer)
+library(limma)
+library(reshape2)
+library(gridExtra)
+library(missMethyl)
+library(ggplot2)
+library(glue)
+library(tidyverse)
+library(patchwork)
+library(ChAMPdata)
+library(tictoc)
+library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+library(EnsDb.Hsapiens.v75)
+```
+
+# Compare run-time of different methods
+
+## Setup inputs
+
+Create database for translating gene IDs.
+
+```{r}
+edb <- EnsDb.Hsapiens.v75
+transIDs <- genes(edb, columns = c("symbol", "gene_id", "entrezid"), 
+                       return.type = "DataFrame")
+```
+
+Translate gene IDs.
+
+```{r}
+data("PathwayList")
+keep <- sapply(PathwayList, function(x) any(x %in% transIDs$symbol))
+symbol <- suppressMessages(lapply(PathwayList[keep], function(x){
+    tmp <- unlist(transIDs$symbol[transIDs$symbol %in% x], use.names = FALSE)
+    tmp[!is.na(tmp)]
+}))
+entrezid <- suppressMessages(lapply(symbol, function(x){
+    tmp <- unlist(transIDs$entrezid[transIDs$symbol %in% x], use.names = FALSE)
+    tmp[!is.na(tmp)]
+}))
+```
+
+Load methylation blood cell comparison input data and annotation.
+
+```{r}
+load(here("data/input.RData"))
+anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+```
+
+## Run-time comparison
+
+Execute and record run-time for each method for the three different contrasts.
+
+```{r}
+timing <- NULL
+for(i in 1:ncol(tfit$contrasts)){
+    top <- topTreat(tfit, coef = i, number = 5000)
+    
+    tic("gometh")
+    res <- gsameth(sig.cpg = rownames(top), 
+                   all.cpg = rownames(tfit$coefficients), collection = entrezid, 
+                   array.type = "EPIC", anno = anno)
+    toc(log = TRUE, quiet = TRUE)
+    tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+    log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                      contrast <- colnames(tfit$contrasts)[i])
+    tic.clearlog()
+    timing <- bind_rows(timing, log)
+    
+    tic("mgsa.glm")
+    res <- methylGSA::methylglm(cpg.pval = tfit$p.value[,1],
+              FullAnnot = ann, minsize = minsize, maxsize = maxsize,
+              GS.list = symbol, GS.idtype = "SYMBOL")
+    toc(log = TRUE, quiet = TRUE)
+    tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+    log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                      contrast <- colnames(tfit$contrasts)[i])
+    tic.clearlog()
+    timing <- bind_rows(timing, log)
+    
+    tic("mgsa.ora")
+    res <- methylGSA::methylRRA(cpg.pval = tfit$p.value[,1],
+              method = "ORA", FullAnnot = ann, minsize = minsize,
+              maxsize = maxsize, GS.list = symbol,
+              GS.idtype = "SYMBOL")
+    toc(log = TRUE, quiet = TRUE)
+    tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+    log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                      contrast <- colnames(tfit$contrasts)[i])
+    tic.clearlog()
+    timing <- bind_rows(timing, log)
+    
+    tic("mgsa.gsea")
+    res <- methylGSA::methylRRA(cpg.pval = tfit$p.value[,1],
+              method = "GSEA", FullAnnot = ann, minsize = minsize,
+              maxsize = maxsize, GS.list = symbol,
+              GS.idtype = "SYMBOL")
+    toc(log = TRUE, quiet = TRUE)
+    tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+    log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                      contrast <- colnames(tfit$contrasts)[i])
+    tic.clearlog()
+    timing <- bind_rows(timing, log)
+    
+    cellType <- names(tfit$contrasts[,i])[tfit$contrasts[,i] != 0]
+    tic("champ.ebgsea")
+    ebgs <- champ.ebGSEA(beta = mVals[,targets$CellType %in% cellType],
+                       pheno = targets$CellType[targets$CellType %in% cellType],
+                       minN = 5, adjPval=1, arraytype = "EPIC")
+    toc(log = TRUE, quiet = TRUE)
+    tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+    log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                      contrast <- colnames(tfit$contrasts)[i])
+    tic.clearlog()
+    timing <- bind_rows(timing, log)
+}
+```
+
+Plot run-time results.
+
+```{r, fig.height=11, fig.width=6}
+
+```
