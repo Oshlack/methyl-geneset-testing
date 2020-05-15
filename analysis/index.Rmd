@@ -33,6 +33,11 @@ Analysis
       dataset using various gene set testing methods. Compare the results of the different 
       methods.
 
+* Compare run-time of methods
+    * [Compare run-time](runTimeComparison.html) - Analyse an EPIC array sorted blood cell 
+      dataset using various gene set testing methods. Compare the run-time of the different 
+      methods.
+      
 * Compare false discovery rate of different methods
     * [Compare false discovery rate](fdrAnalysis.html) - Analyse the normal samples from
       a 450k array KIRC TCGA dataset using various genset testing methods to 
