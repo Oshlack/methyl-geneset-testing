@@ -1,7 +1,7 @@
 ---
-title: "Untitled"
-author: "Jovana Maksimovic"
-date: "12/05/2020"
+title: 'Gene set testing for Illumina HumanMethylation Arrays'
+author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
 ---
 
