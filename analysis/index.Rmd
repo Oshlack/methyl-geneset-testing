@@ -16,36 +16,32 @@ different parts of the project.
 
 Analysis
 --------
-* Explore EPIC array bias
-    * [EPIC array bias](exploreArrayBiasEPIC.html) - Explore the various 
-      array biases that affect gene set testing.
+1. [EPIC array bias](exploreArrayBiasEPIC.html)
+    * Explore the various array biases that affect gene set testing.
       
-* Explore 450k array bias
-    * [450k array bias](exploreArrayBias450.html) - Explore the various 
-      array biases that affect gene set testing.
+2. [450k array bias](exploreArrayBias450.html)
+    * Explore the various array biases that affect gene set testing.
 
-* Blood cell RNAseq "truth" set
-    * [RNAseq analysis](expressionGenesets.html) - Analyse an RNAseq sorted blood cell 
-      dataset and identify the top ranked gene sets for each cell type comparison.
+3. [Generate a blood cell RNAseq "truth" set](expressionGenesets.html)
+    * Analyse an RNAseq sorted blood cell dataset and identify the top ranked 
+      gene sets for each cell type comparison.
       
-* Compare methods
-    * [Compare methods](exploreData.html) - Analyse an EPIC array sorted blood cell 
-      dataset using various gene set testing methods. Compare the results of the different 
-      methods.
+4. [Compare FDR of different methods](fdrAnalysis.html)
+    * Analyse the normal samples from a 450k array KIRC TCGA dataset using 
+      various genset testing methods to estimate their false discovery rate control.
+      
+5. [Compare performance of different methods](exploreData.html)
+    * Analyse an EPIC array sorted blood cell dataset using various gene set 
+      testing methods. Compare how well the different methods perform using several 
+      metrics.
 
-* Compare run-time of methods
-    * [Compare run-time](runTimeComparison.html) - Analyse an EPIC array sorted blood cell 
-      dataset using various gene set testing methods. Compare the run-time of the different 
-      methods.
-      
-* Compare false discovery rate of different methods
-    * [Compare false discovery rate](fdrAnalysis.html) - Analyse the normal samples from
-      a 450k array KIRC TCGA dataset using various genset testing methods to 
-      estimate their false discovery rate control.
-      
-* Gene set testing of regions
-    * [Region analysis](regionAnalysis.html) - Evalulate the use of gometh for geneset 
-      testing of differentially methylated regions from region finding software.
+6. [Compare run-time of different methods](runTimeComparison.html)
+    * Analyse an EPIC array sorted blood cell dataset using various gene set 
+      testing methods. Compare the run-time of the different methods.
+
+7. [Evaluate GOregion](regionAnalysis.html)
+    * Evalulate GOregion, our extension of gometh for geneset testing of 
+      differentially methylated regions (DMRs) identified by DMR finding software.
       
 Licenses
 --------
