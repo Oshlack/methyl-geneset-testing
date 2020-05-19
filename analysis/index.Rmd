@@ -16,11 +16,11 @@ different parts of the project.
 
 Analysis
 --------
-1. [EPIC array bias](exploreArrayBiasEPIC.html)
-    * Explore the various array biases that affect gene set testing.
+1. [Explore EPIC array bias](exploreArrayBiasEPIC.html)
+    * Explore the various array biases on the EPIC array that affect gene set testing.
       
-2. [450k array bias](exploreArrayBias450.html)
-    * Explore the various array biases that affect gene set testing.
+2. [Explore 450k array bias](exploreArrayBias450.html)
+    * Explore the various array biases on the 450k array that affect gene set testing.
 
 3. [Generate a blood cell RNAseq "truth" set](expressionGenesets.html)
     * Analyse an RNAseq sorted blood cell dataset and identify the top ranked 
