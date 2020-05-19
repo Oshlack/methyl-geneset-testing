@@ -1,11 +1,12 @@
 ---
-title: "Gene set testing for Illumina HumanMethylation Arrays"
-author: "Jovana Maksimovic"
-date: "7/2/2019"
+title: 'Gene set testing for Illumina HumanMethylation Arrays'
+subtitle: "Comparing the false discovery rate of different methods"
+author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
 ---
 
-```{r libload, message=FALSE}
+```{r, message=FALSE, warning=FALSE, results='hide'}
 library(here)
 library(minfi)
 library(paletteer)
@@ -30,7 +31,7 @@ We are using publicly available kidney clear cell carcinoma (KIRC) 450k data fro
 
 Download the data using the `curatedTCGAData` Bioconductor package and then extract the normal samples. The data seems to have already been normalised(?) so we will only remove poor probes (>1 NA), SNP, multi-mapping and sex-chromosome probes. 
 
-```{r}
+```{r, message=FALSE, warning=FALSE, results='hide'}
 kirc <- curatedTCGAData(diseaseCode = "KIRC", assays = "Methylation_methyl450", 
                         dry.run = FALSE)
 kirc <- splitAssays(kirc, c("11")) # extract only the normal samples

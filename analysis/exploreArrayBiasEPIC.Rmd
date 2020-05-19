@@ -1,7 +1,9 @@
 ---
 title: 'Gene set testing for Illumina HumanMethylation Arrays'
+subtitle: "Exploring the biases on EPIC arrays "
 author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -9,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 options(scipen=10000)
 ```
 
-```{r libload, message=FALSE}
+```{r, message=FALSE, warning=FALSE, results='hide'}
 library(here)
 library(glue)
 library(minfi)
@@ -188,10 +190,6 @@ p + stat_summary(geom="point", size=1, color="white", position = position_dodge(
        fill="Adj. type")
 ```
 
-
-```{r}
-sessionInfo()
-```
 
 
 

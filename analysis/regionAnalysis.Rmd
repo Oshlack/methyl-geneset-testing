@@ -1,7 +1,8 @@
 ---
-title: "Gene set testing for Illumina HumanMethylation Arrays"
-author: "Jovana Maksimovic"
-date: "6/21/2019"
+title: 'Gene set testing for Illumina HumanMethylation Arrays'
+subtitle: "Evaluating the functionality and performance of GOregion"
+author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
 ---
 
@@ -9,7 +10,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r libload, message=FALSE}
+```{r, message=FALSE, warning=FALSE, results='hide'}
 library(here)
 library(ChAMP)
 library(minfi)

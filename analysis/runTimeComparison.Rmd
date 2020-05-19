@@ -1,7 +1,8 @@
 ---
-title: "Untitled"
-author: "Jovana Maksimovic"
-date: "12/05/2020"
+title: 'Gene set testing for Illumina HumanMethylation Arrays'
+subtitle: "Comparing the run-time of different methods"
+author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
 ---
 
@@ -9,7 +10,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE, results='hide'}
 library(here)
 library(minfi)
 library(limma)
@@ -78,7 +79,7 @@ if(!file.exists(inFile)){
         timing <- bind_rows(timing, log)
         
         tic("mgsa.glm")
-        res <- methylglm(cpg.pval = tfit$p.value[,1],
+        res <- methylglm(cpg.pval = tfit$p.value[,i],
                          FullAnnot = anno, minsize = minsize, maxsize = maxsize,
                          GS.list = symbol, GS.idtype = "SYMBOL")
         toc(log = TRUE, quiet = TRUE)
@@ -89,7 +90,7 @@ if(!file.exists(inFile)){
         timing <- bind_rows(timing, log)
         
         tic("mgsa.ora")
-        res <- methylRRA(cpg.pval = tfit$p.value[,1],
+        res <- methylRRA(cpg.pval = tfit$p.value[,i],
                          method = "ORA", FullAnnot = anno, minsize = minsize,
                          maxsize = maxsize, GS.list = symbol,
                          GS.idtype = "SYMBOL")
@@ -101,7 +102,7 @@ if(!file.exists(inFile)){
         timing <- bind_rows(timing, log)
         
         tic("mgsa.gsea")
-        res <- methylRRA(cpg.pval = tfit$p.value[,1],
+        res <- methylRRA(cpg.pval = tfit$p.value[,i],
                          method = "GSEA", FullAnnot = anno, minsize = minsize,
                          maxsize = maxsize, GS.list = symbol,
                          GS.idtype = "SYMBOL")
@@ -137,9 +138,97 @@ if(!file.exists(inFile)){
 Plot run-time results.
 
 ```{r}
-timing %>% mutate(time = as.integer(time)) -> dat
+timing %>% mutate(time = as.integer(time)) %>%
+    mutate(method = ifelse(method == "gometh", "mmethyl.gometh", 
+                           method)) -> dat
 
-ggplot(dat, aes(x = method, y = time/60, fill = contrast)) + 
+p1 <- ggplot(dat, aes(x = method, y = time/60, fill = contrast)) + 
     geom_bar(position = "dodge", stat = "identity") +
     labs(x = "Method", y = "Run time (minutes)", fill = "Contrast")
+p1
 ```
+
+```{r}
+inFile <- here("data/run-time-mcores.rds")
+
+if(!file.exists(inFile)){
+    
+    data("PathwayList")
+    keep <- sapply(PathwayList, function(x) any(x %in% transIDs$symbol))
+    symbol <- suppressMessages(lapply(PathwayList[keep], function(x){
+        tmp <- unlist(transIDs$symbol[transIDs$symbol %in% x], use.names = FALSE)
+        tmp[!is.na(tmp)]
+    }))
+    
+    load(here("data/input.RData"))
+    anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+    multi <- NULL
+    
+    for(i in 1:ncol(tfit$contrasts)){
+        
+        tic("mgsa.glm.3")
+        res <- methylglm(cpg.pval = tfit$p.value[,i],
+                         FullAnnot = anno, minsize = minsize, maxsize = maxsize,
+                         GS.list = symbol, GS.idtype = "SYMBOL", parallel = TRUE,
+                         BPPARAM = BiocParallel::MulticoreParam(workers = 3))
+        toc(log = TRUE, quiet = TRUE)
+        tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+        log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi <- bind_rows(multi, log)
+        
+        tic("mgsa.glm.6")
+        res <- methylglm(cpg.pval = tfit$p.value[,i],
+                         FullAnnot = anno, minsize = minsize, maxsize = maxsize,
+                         GS.list = symbol, GS.idtype = "SYMBOL", parallel = TRUE,
+                         BPPARAM = BiocParallel::MulticoreParam(workers = 6))
+        toc(log = TRUE, quiet = TRUE)
+        tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+        log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi <- bind_rows(multi, log)
+        
+        tic("mgsa.glm.9")
+        res <- methylglm(cpg.pval = tfit$p.value[,i],
+                         FullAnnot = anno, minsize = minsize, maxsize = maxsize,
+                         GS.list = symbol, GS.idtype = "SYMBOL", parallel = TRUE,
+                         BPPARAM = BiocParallel::MulticoreParam(workers = 9))
+        toc(log = TRUE, quiet = TRUE)
+        tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+        log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi <- bind_rows(multi, log)
+        
+    }
+    saveRDS(multi, file = inFile)
+    
+} else {
+    multi <- readRDS(inFile)
+}
+```
+
+Plot run-time results.
+
+```{r}
+multi %>% mutate(time = as.integer(time)) %>%
+    mutate(cores = limma::strsplit2(method, ".", fixed=TRUE)[,3])-> dat
+
+p2 <- ggplot(dat, aes(x = cores, y = time/60, fill = contrast)) + 
+    geom_bar(position = "dodge", stat = "identity") +
+    labs(x = "No. cores", y = "Run time (minutes)", fill = "Contrast") +
+    ggtitle("Using multiple cores for mgsa.glm") 
+p2
+```
+
+Combining single core and multi-core plots.
+
+```{r}
+layout <- c(area(t = 0, l = 1, b = 5, r = 4),
+            area(t = 2, l = 3, b = 3, r = 4))
+p1 + p2 + theme(text = element_text(size = 8), legend.position = "none") + 
+    plot_layout(design = layout, guides = "collect")
+```
+

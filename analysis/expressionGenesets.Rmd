@@ -1,11 +1,12 @@
 ---
-title: "Salmon quasi-mapping with limma-voom analysis"
-output:
-  html_document:
-    df_print: paged
+title: 'Gene set testing for Illumina HumanMethylation Arrays'
+subtitle: 'Generating "truth" gene sets from RNA-seq data'
+author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: html_document
 ---
 
-```{r, message=FALSE, echo=FALSE}
+```{r, message=FALSE, warning=FALSE, results='hide'}
 library(tximport)
 library(here)
 library(tidyverse)
@@ -38,7 +39,9 @@ targets
 ```{r}
 files <- list.files(here("data/SRP125125/quants"), 
                     recursive = TRUE, pattern = "quant.sf", full.names = TRUE)
-names(files) <- substr(strsplit2(files, "/")[,10], 1, 10)
+pos <- regexpr("SRR6298[0-9][0-9][0-9]", files, perl = TRUE)
+names(files) <- unname(substr(files, pos, 
+                              pos[1] + attr(pos, "match.length") - 1))
 ```
 
 Associate transcripts with gene IDs for gene-level summarization.
@@ -172,7 +175,7 @@ summary(decideTests(fit2, p.value = 0.05))
 
 Testing for enrichment of GO categories and KEGG pathways amongst statistically significant differentially expressed genes.
 
-```{r}
+```{r, message=FALSE}
 go <- NULL
 kegg <- NULL
 
