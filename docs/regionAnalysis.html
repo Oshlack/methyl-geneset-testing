@@ -9,8 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Jovana Maksimovic" />
+<meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
+<meta name="date" content="2020-05-19" />
 
 <title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
@@ -378,8 +379,9 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
-<h4 class="author">Jovana Maksimovic</h4>
-<h4 class="date">6/21/2019</h4>
+<h3 class="subtitle">Evaluating the functionality and performance of GOregion</h3>
+<h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
+<h4 class="date">May 19, 2020</h4>
 
 </div>
 
@@ -404,7 +406,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-05-11
+<strong>Last updated:</strong> 2020-05-19
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -414,7 +416,7 @@ div.tocify {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -495,33 +497,27 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree25e58bce337d5abc8c9b4dc5ed1c4e80f0b9de4etargetblank25e58bca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/25e58bce337d5abc8c9b4dc5ed1c4e80f0b9de4e" target="_blank">25e58bc</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree63b001118e0fc05c673ae0a35fac7a0d85b5ca50targetblank63b0011a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/63b001118e0fc05c673ae0a35fac7a0d85b5ca50" target="_blank">63b0011</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree25e58bce337d5abc8c9b4dc5ed1c4e80f0b9de4etargetblank25e58bca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree63b001118e0fc05c673ae0a35fac7a0d85b5ca50targetblank63b0011a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/25e58bce337d5abc8c9b4dc5ed1c4e80f0b9de4e" target="_blank">25e58bc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/63b001118e0fc05c673ae0a35fac7a0d85b5ca50" target="_blank">63b0011</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
-    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    code/.job/
     Ignored:    code/old/
     Ignored:    data/
-    Ignored:    output/.DS_Store
-    Ignored:    output/450K.rds
-    Ignored:    output/CD4vCD8.GO.csv
-    Ignored:    output/CD4vCD8.KEGG.csv
-    Ignored:    output/EPIC.rds
     Ignored:    output/FDR-analysis/
     Ignored:    output/compare-methods/
     Ignored:    output/random-cpg-sims/
@@ -563,6 +559,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/63b001118e0fc05c673ae0a35fac7a0d85b5ca50/analysis/regionAnalysis.Rmd" target="_blank">63b0011</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-19
+</td>
+<td>
+wflow_publish(c(“analysis/exploreArrayBias450.Rmd”, “analysis/exploreArrayBiasEPIC.Rmd”,
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/afc650b9c6be18c3d55cfab7968a66ae5f3ad6bc/docs/regionAnalysis.html" target="_blank">afc650b</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-05-11
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -690,48 +720,8 @@ Initial Commit
 </div>
 </div>
 <pre class="r"><code>library(here)
-library(ChAMP)</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::edges&#39; by &#39;graph::edges&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::intersection&#39; by
-&#39;graph::intersection&#39; when loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::degree&#39; by &#39;graph::degree&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::union&#39; by &#39;graph::union&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;limma::plotMA&#39; by &#39;BiocGenerics::plotMA&#39;
-when loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::path&#39; by &#39;BiocGenerics::path&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;Matrix::which&#39; by &#39;BiocGenerics::which&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::normalize&#39; by
-&#39;BiocGenerics::normalize&#39; when loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;minfi::getMeth&#39; by &#39;bsseq::getMeth&#39; when
-loading &#39;DMRcate&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::summarise&#39; by &#39;plotly::summarise&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::rename&#39; by &#39;plotly::rename&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::arrange&#39; by &#39;plotly::arrange&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::mutate&#39; by &#39;plotly::mutate&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::is.discrete&#39; by &#39;Hmisc::is.discrete&#39;
-when loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::summarize&#39; by &#39;Hmisc::summarize&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plotly::subplot&#39; by &#39;Hmisc::subplot&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;GenomicRanges::sort&#39; by &#39;globaltest::sort&#39;
-when loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plotly::last_plot&#39; by &#39;ggplot2::last_plot&#39;
-when loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;globaltest::model.matrix&#39; by
-&#39;stats::model.matrix&#39; when loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;globaltest::p.adjust&#39; by &#39;stats::p.adjust&#39;
-when loading &#39;ChAMP&#39;</code></pre>
-<pre class="r"><code>library(minfi)
+library(ChAMP)
+library(minfi)
 library(paletteer)
 library(limma)
 library(BiocParallel)
@@ -885,64 +875,7 @@ p &lt;- ggplot(dat, aes(x = rank, y = csum, colour = method)) +
     geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
     labs(colour = &quot;Method&quot;, x = &quot;Rank&quot;, y = &quot;Cumulative no. immune sets&quot;)
 p</code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-6-1.png" width="864" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-6-1">
-Past versions of unnamed-chunk-6-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-6-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-6-1.png" target="_blank">d930b45</a>
-</td>
-<td>
-JovMaksimovic
-</td>
-<td>
-2020-04-27
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>immuneGO &lt;- readRDS(here(&quot;data/RNAseq-GO.rds&quot;))
-immuneGO %&gt;% group_by(contrast) %&gt;%
-    mutate(rank = 1:n()) %&gt;%
-    filter(rank &lt;= 100) -&gt; topSets
-    
-dat %&gt;% arrange(contrast, method, P.DE) %&gt;%
-    group_by(contrast, method) %&gt;%
-    mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %&gt;%
-    mutate(rank = 1:n()) %&gt;%
-    filter(rank &lt;= 100) -&gt; sub
-
-p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
-    geom_line() +
-    facet_wrap(vars(contrast), ncol=3) +
-    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
-    labs(colour = &quot;Method&quot;, x = &quot;Rank&quot;, 
-         y = glue(&quot;Cumulative no. RNAseq sets&quot;)) +
-    theme(legend.position = &quot;bottom&quot;)
-p</code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-7-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
 Past versions of unnamed-chunk-7-1.png
@@ -979,6 +912,74 @@ JovMaksimovic
 <tr>
 <td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-7-1.png" target="_blank">d930b45</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-04-27
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>immuneGO &lt;- readRDS(here(&quot;data/RNAseq-GO.rds&quot;))
+immuneGO %&gt;% group_by(contrast) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; topSets
+    
+dat %&gt;% arrange(contrast, method, P.DE) %&gt;%
+    group_by(contrast, method) %&gt;%
+    mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; sub
+
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
+    labs(colour = &quot;Method&quot;, x = &quot;Rank&quot;, 
+         y = glue(&quot;Cumulative no. RNAseq sets&quot;)) +
+    theme(legend.position = &quot;bottom&quot;)
+p</code></pre>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/afc650b9c6be18c3d55cfab7968a66ae5f3ad6bc/docs/figure/regionAnalysis.Rmd/unnamed-chunk-8-1.png" target="_blank">afc650b</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-05-11
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-8-1.png" target="_blank">d930b45</a>
 </td>
 <td>
 JovMaksimovic
@@ -1036,13 +1037,13 @@ for(cont in unique(sub$contrast)){
 (p[[1]] / p[[2]] / p[[3]] / p[[4]] / p[[5]]) + 
     plot_annotation(title = unique(sub$contrast)[1],
                     theme = theme(plot.title = element_text(size = 10))) </code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
-Past versions of unnamed-chunk-8-1.png
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
 </button>
 </p>
-<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div id="fig-unnamed-chunk-9-1" class="collapse">
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
 <thead>
@@ -1061,7 +1062,7 @@ Date
 <tbody>
 <tr>
 <td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-8-1.png" target="_blank">d930b45</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-9-1.png" target="_blank">d930b45</a>
 </td>
 <td>
 JovMaksimovic
@@ -1077,85 +1078,11 @@ JovMaksimovic
 <pre class="r"><code>(p[[6]] / p[[7]] / p[[8]] / p[[9]] / p[[10]]) + 
     plot_annotation(title = unique(sub$contrast)[2],
                     theme = theme(plot.title = element_text(size = 10))) </code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-8-2.png" width="576" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-2">
-Past versions of unnamed-chunk-8-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-8-2.png" target="_blank">d930b45</a>
-</td>
-<td>
-JovMaksimovic
-</td>
-<td>
-2020-04-27
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-9-2.png" width="576" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>(p[[11]] / p[[12]] / p[[13]] / p[[14]] / p[[15]]) + 
     plot_annotation(title = unique(sub$contrast)[3],
                     theme = theme(plot.title = element_text(size = 10))) </code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-8-3.png" width="576" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-3">
-Past versions of unnamed-chunk-8-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-8-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-8-3.png" target="_blank">d930b45</a>
-</td>
-<td>
-JovMaksimovic
-</td>
-<td>
-2020-04-27
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-9-3.png" width="576" style="display: block; margin: auto;" /></p>
 </div>
 </div>
 <div id="compare-characteristics-of-region-wise-and-probe-wise-results" class="section level2">
@@ -1197,58 +1124,6 @@ ggplot(sub, aes(x = method, y = n, fill = method)) +
     facet_wrap(vars(contrast)) + 
     labs(fill = &quot;Method&quot;, y = &quot;No. significant CpGs&quot;, x = &quot;Method&quot;) + 
     theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
-Past versions of unnamed-chunk-9-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-9-1.png" target="_blank">d930b45</a>
-</td>
-<td>
-JovMaksimovic
-</td>
-<td>
-2020-04-27
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<pre class="r"><code>flatAnn &lt;- loadFlatAnnotation(anno)
-
-dat %&gt;% group_by(contrast, method) %&gt;%
-    inner_join(flatAnn, by = c(&quot;cpgs&quot; = &quot;cpg&quot;)) %&gt;% 
-    group_by(contrast, method) %&gt;%
-    dplyr::select(group_cols(), entrezid) %&gt;%
-    distinct() %&gt;%
-    tally() -&gt; sub
-
-ggplot(sub, aes(x = method, y = n, fill = method)) +
-    geom_bar(stat = &quot;identity&quot;, show.legend = FALSE) +
-    facet_wrap(vars(contrast)) + 
-    labs(fill = &quot;Method&quot;, y = &quot;No. genes with sig. CpGs&quot;, x = &quot;Method&quot;) + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
 <p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-10-1">
@@ -1287,17 +1162,19 @@ JovMaksimovic
 </table>
 </div>
 </div>
-<pre class="r"><code>dat %&gt;% group_by(contrast, method) %&gt;%
-    left_join(flatAnn, by = c(&quot;cpgs&quot; = &quot;cpg&quot;)) %&gt;% 
-    group_by(contrast, method) %&gt;%
-    dplyr::select(group_cols(), entrezid, cpgs) %&gt;%
-    summarise(prop = sum(!is.na(entrezid[!duplicated(cpgs)]))/
-                  length(unique(cpgs))) -&gt; sub
+<pre class="r"><code>flatAnn &lt;- loadFlatAnnotation(anno)
 
-ggplot(sub, aes(x = method, y = prop, fill = method)) +
+dat %&gt;% group_by(contrast, method) %&gt;%
+    inner_join(flatAnn, by = c(&quot;cpgs&quot; = &quot;cpg&quot;)) %&gt;% 
+    group_by(contrast, method) %&gt;%
+    dplyr::select(group_cols(), entrezid) %&gt;%
+    distinct() %&gt;%
+    tally() -&gt; sub
+
+ggplot(sub, aes(x = method, y = n, fill = method)) +
     geom_bar(stat = &quot;identity&quot;, show.legend = FALSE) +
     facet_wrap(vars(contrast)) + 
-    labs(fill = &quot;Method&quot;, y = &quot;Prop. sig. CpGs mapped to genes&quot;, x = &quot;Method&quot;) + 
+    labs(fill = &quot;Method&quot;, y = &quot;No. genes with sig. CpGs&quot;, x = &quot;Method&quot;) + 
     theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
 <p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -1340,17 +1217,16 @@ JovMaksimovic
 <pre class="r"><code>dat %&gt;% group_by(contrast, method) %&gt;%
     left_join(flatAnn, by = c(&quot;cpgs&quot; = &quot;cpg&quot;)) %&gt;% 
     group_by(contrast, method) %&gt;%
-    dplyr::select(group_cols(), group, cpgs) %&gt;%
-    group_by(contrast, method, group) %&gt;%
-    tally() -&gt; sub
+    dplyr::select(group_cols(), entrezid, cpgs) %&gt;%
+    summarise(prop = sum(!is.na(entrezid[!duplicated(cpgs)]))/
+                  length(unique(cpgs))) -&gt; sub
 
-ggplot(sub, aes(x = group, y = n, fill = method)) +
-    geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;) +
-    facet_wrap(vars(contrast), nrow = 3, ncol = 1, scales = &quot;free_y&quot;) + 
-    labs(fill = &quot;Method&quot;, y = &quot;No. sig. CpGs mapped to genomic features&quot;, 
-         x = &quot;Feature&quot;) + 
+ggplot(sub, aes(x = method, y = prop, fill = method)) +
+    geom_bar(stat = &quot;identity&quot;, show.legend = FALSE) +
+    facet_wrap(vars(contrast)) + 
+    labs(fill = &quot;Method&quot;, y = &quot;Prop. sig. CpGs mapped to genes&quot;, x = &quot;Method&quot;) + 
     theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-12-1.png" width="576" style="display: block; margin: auto;" /></p>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-12-1">
 Past versions of unnamed-chunk-12-1.png
@@ -1388,22 +1264,20 @@ JovMaksimovic
 </table>
 </div>
 </div>
-</div>
-<div id="cpg-overlap-between-region-wise-and-probe-wise-approaches" class="section level2">
-<h2>CpG overlap between region-wise and probe-wise approaches</h2>
-<p>Compare the CpGs covered by the different approaches, for the three contrasts.</p>
-<pre class="r"><code>p &lt;- vector(&quot;list&quot;, ncol(cont.matrix))
+<pre class="r"><code>dat %&gt;% group_by(contrast, method) %&gt;%
+    left_join(flatAnn, by = c(&quot;cpgs&quot; = &quot;cpg&quot;)) %&gt;% 
+    group_by(contrast, method) %&gt;%
+    dplyr::select(group_cols(), group, cpgs) %&gt;%
+    group_by(contrast, method, group) %&gt;%
+    tally() -&gt; sub
 
-for(i in 1:ncol(cont.matrix)){
-    dat %&gt;% filter(contrast == colnames(cont.matrix)[i]) -&gt; tmp
-    tmp &lt;- split(tmp$cpgs, f = tmp$method)
-    p[[i]] &lt;- upset(fromList(tmp), order.by = &quot;freq&quot;, keep.order = TRUE, 
-               sets = names(tmp))
-    
-}
-
-p[[1]]</code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+ggplot(sub, aes(x = group, y = n, fill = method)) +
+    geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;) +
+    facet_wrap(vars(contrast), nrow = 3, ncol = 1, scales = &quot;free_y&quot;) + 
+    labs(fill = &quot;Method&quot;, y = &quot;No. sig. CpGs mapped to genomic features&quot;, 
+         x = &quot;Feature&quot;) + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))</code></pre>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-13-1.png" width="576" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
 Past versions of unnamed-chunk-13-1.png
@@ -1441,97 +1315,15 @@ JovMaksimovic
 </table>
 </div>
 </div>
-<pre class="r"><code>p[[2]]</code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-13-2.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-2">
-Past versions of unnamed-chunk-13-2.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-13-2" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-13-2.png" target="_blank">d930b45</a>
-</td>
-<td>
-JovMaksimovic
-</td>
-<td>
-2020-04-27
-</td>
-</tr>
-</tbody>
-</table>
 </div>
-</div>
-<pre class="r"><code>p[[3]]</code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-13-3.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-3">
-Past versions of unnamed-chunk-13-3.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-13-3" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-13-3.png" target="_blank">d930b45</a>
-</td>
-<td>
-JovMaksimovic
-</td>
-<td>
-2020-04-27
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="gene-overlap-between-region-wise-and-probe-wise-approaches" class="section level2">
-<h2>Gene overlap between region-wise and probe-wise approaches</h2>
-<p>Compare the genes covered by the different approaches, for the three contrasts.</p>
+<div id="cpg-overlap-between-region-wise-and-probe-wise-approaches" class="section level2">
+<h2>CpG overlap between region-wise and probe-wise approaches</h2>
+<p>Compare the CpGs covered by the different approaches, for the three contrasts.</p>
 <pre class="r"><code>p &lt;- vector(&quot;list&quot;, ncol(cont.matrix))
 
 for(i in 1:ncol(cont.matrix)){
-    dat %&gt;% filter(contrast == colnames(cont.matrix)[i]) %&gt;%
-        left_join(flatAnn, by = c(&quot;cpgs&quot; = &quot;cpg&quot;)) %&gt;% 
-        dplyr::select(method, entrezid) %&gt;%
-        distinct() -&gt; tmp
-
-    tmp &lt;- split(tmp$entrezid, f = tmp$method)
+    dat %&gt;% filter(contrast == colnames(cont.matrix)[i]) -&gt; tmp
+    tmp &lt;- split(tmp$cpgs, f = tmp$method)
     p[[i]] &lt;- upset(fromList(tmp), order.by = &quot;freq&quot;, keep.order = TRUE, 
                sets = names(tmp))
     
@@ -1655,6 +1447,30 @@ JovMaksimovic
 </div>
 </div>
 </div>
+<div id="gene-overlap-between-region-wise-and-probe-wise-approaches" class="section level2">
+<h2>Gene overlap between region-wise and probe-wise approaches</h2>
+<p>Compare the genes covered by the different approaches, for the three contrasts.</p>
+<pre class="r"><code>p &lt;- vector(&quot;list&quot;, ncol(cont.matrix))
+
+for(i in 1:ncol(cont.matrix)){
+    dat %&gt;% filter(contrast == colnames(cont.matrix)[i]) %&gt;%
+        left_join(flatAnn, by = c(&quot;cpgs&quot; = &quot;cpg&quot;)) %&gt;% 
+        dplyr::select(method, entrezid) %&gt;%
+        distinct() -&gt; tmp
+
+    tmp &lt;- split(tmp$entrezid, f = tmp$method)
+    p[[i]] &lt;- upset(fromList(tmp), order.by = &quot;freq&quot;, keep.order = TRUE, 
+               sets = names(tmp))
+    
+}
+
+p[[1]]</code></pre>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-15-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p[[2]]</code></pre>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-15-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p[[3]]</code></pre>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-15-3.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
 <div id="effect-of-dmr-cut-offs-i.e.num-probes-in-region-and-absolute-delta-beta" class="section level2">
 <h2>Effect of DMR cut offs i.e. num probes in region and absolute delta beta</h2>
 <pre class="r"><code>outFile &lt;- here(&quot;data/dmrcate-params.rds&quot;)
@@ -1703,63 +1519,6 @@ p &lt;- ggplot(dat, aes(x = rank, y = csum, colour = params)) +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
     labs(colour = &quot;Parameters&quot;, x = &quot;Rank&quot;, y = &quot;Cumulative no. immune sets&quot;)
-p</code></pre>
-<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-16-1.png" width="864" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
-Past versions of unnamed-chunk-16-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-16-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d930b455591d30a5786df482c43f615069c8bf8e/docs/figure/regionAnalysis.Rmd/unnamed-chunk-16-1.png" target="_blank">d930b45</a>
-</td>
-<td>
-JovMaksimovic
-</td>
-<td>
-2020-04-27
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<p>Examine effect of changing DMR parameter cut offs on gene set rankings on GO categories derived from RNAseq analysis.</p>
-<pre class="r"><code>immuneGO &lt;- readRDS(here(&quot;data/RNAseq-GO.rds&quot;))
-immuneGO %&gt;% group_by(contrast) %&gt;%
-    mutate(rank = 1:n()) %&gt;%
-    filter(rank &lt;= 100) -&gt; topSets
-    
-dmrParams %&gt;% arrange(contrast, params, P.DE) %&gt;%
-    group_by(contrast, params) %&gt;%
-    mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %&gt;%
-    mutate(rank = 1:n()) %&gt;%
-    filter(rank &lt;= 100) -&gt; sub
-
-p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = params)) +
-    geom_line() +
-    facet_wrap(vars(contrast), ncol=3) +
-    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
-    labs(colour = &quot;Parameters&quot;, x = &quot;Rank&quot;, 
-         y = glue(&quot;Cumulative no. RNAseq sets&quot;))
 p</code></pre>
 <p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-17-1.png" width="864" style="display: block; margin: auto;" /></p>
 <p>
@@ -1810,6 +1569,26 @@ JovMaksimovic
 </table>
 </div>
 </div>
+<p>Examine effect of changing DMR parameter cut offs on gene set rankings on GO categories derived from RNAseq analysis.</p>
+<pre class="r"><code>immuneGO &lt;- readRDS(here(&quot;data/RNAseq-GO.rds&quot;))
+immuneGO %&gt;% group_by(contrast) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; topSets
+    
+dmrParams %&gt;% arrange(contrast, params, P.DE) %&gt;%
+    group_by(contrast, params) %&gt;%
+    mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; sub
+
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = params)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
+    labs(colour = &quot;Parameters&quot;, x = &quot;Rank&quot;, 
+         y = glue(&quot;Cumulative no. RNAseq sets&quot;))
+p</code></pre>
+<p><img src="figure/regionAnalysis.Rmd/unnamed-chunk-18-1.png" width="864" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -1818,16 +1597,21 @@ JovMaksimovic
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.6.3 (2020-02-29)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
-Running under: macOS Mojave 10.14.6
+<pre><code>R version 3.6.1 (2019-07-05)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 7 (Core)
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+BLAS:   /config/RStudio/R/3.6.1/lib64/R/lib/libRblas.so
+LAPACK: /config/RStudio/R/3.6.1/lib64/R/lib/libRlapack.so
 
 locale:
-[1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+ [1] LC_CTYPE=en_AU.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_AU.UTF-8        LC_COLLATE=en_AU.UTF-8    
+ [5] LC_MONETARY=en_AU.UTF-8    LC_MESSAGES=en_AU.UTF-8   
+ [7] LC_PAPER=en_AU.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_AU.UTF-8 LC_IDENTIFICATION=C       
 
 attached base packages:
 [1] stats4    parallel  stats     graphics  grDevices utils     datasets 
@@ -1835,39 +1619,39 @@ attached base packages:
 
 other attached packages:
  [1] TxDb.Hsapiens.UCSC.hg19.knownGene_3.2.2   
- [2] GenomicFeatures_1.38.2                    
- [3] tibble_3.0.1                              
+ [2] GenomicFeatures_1.36.4                    
+ [3] tibble_2.1.3                              
  [4] patchwork_1.0.0                           
  [5] dplyr_0.8.5                               
  [6] UpSetR_1.4.0                              
- [7] glue_1.4.0                                
+ [7] glue_1.4.1                                
  [8] ggplot2_3.3.0                             
  [9] missMethyl_1.20.4                         
-[10] reshape2_1.4.4                            
+[10] reshape2_1.4.3                            
 [11] paletteer_1.1.0                           
 [12] ChAMP_2.16.2                              
-[13] DT_0.13                                   
+[13] DT_0.9                                    
 [14] IlluminaHumanMethylationEPICmanifest_0.3.0
 [15] Illumina450ProbeVariants.db_1.22.0        
 [16] DMRcate_2.0.7                             
 [17] FEM_3.14.0                                
-[18] graph_1.64.0                              
-[19] org.Hs.eg.db_3.10.0                       
-[20] impute_1.60.0                             
+[18] graph_1.62.0                              
+[19] org.Hs.eg.db_3.8.2                        
+[20] impute_1.58.0                             
 [21] igraph_1.2.5                              
 [22] corrplot_0.84                             
-[23] marray_1.64.0                             
+[23] marray_1.62.0                             
 [24] limma_3.42.2                              
 [25] Matrix_1.2-18                             
-[26] AnnotationDbi_1.48.0                      
+[26] AnnotationDbi_1.46.1                      
 [27] ChAMPdata_2.18.0                          
 [28] minfi_1.32.0                              
-[29] bumphunter_1.28.0                         
-[30] locfit_1.5-9.4                            
+[29] bumphunter_1.26.0                         
+[30] locfit_1.5-9.1                            
 [31] iterators_1.0.12                          
 [32] foreach_1.5.0                             
 [33] Biostrings_2.54.0                         
-[34] XVector_0.26.0                            
+[34] XVector_0.24.0                            
 [35] SummarizedExperiment_1.16.1               
 [36] DelayedArray_0.12.3                       
 [37] BiocParallel_1.20.1                       
@@ -1879,63 +1663,63 @@ other attached packages:
 [43] S4Vectors_0.24.4                          
 [44] BiocGenerics_0.32.0                       
 [45] here_0.1                                  
-[46] workflowr_1.6.1                           
+[46] workflowr_1.6.2                           
 
 loaded via a namespace (and not attached):
   [1] rappdirs_0.3.1                                     
-  [2] rtracklayer_1.46.0                                 
-  [3] R.methodsS3_1.8.0                                  
+  [2] rtracklayer_1.44.4                                 
+  [3] R.methodsS3_1.7.1                                  
   [4] wateRmelon_1.30.0                                  
-  [5] tidyr_1.0.2                                        
-  [6] acepack_1.4.1                                      
-  [7] bit64_0.9-7                                        
-  [8] knitr_1.28                                         
-  [9] R.utils_2.9.2                                      
- [10] data.table_1.12.8                                  
- [11] rpart_4.1-15                                       
- [12] doParallel_1.0.15                                  
- [13] RCurl_1.98-1.2                                     
- [14] GEOquery_2.54.1                                    
- [15] AnnotationFilter_1.10.0                            
- [16] preprocessCore_1.48.0                              
- [17] RSQLite_2.2.0                                      
- [18] combinat_0.0-8                                     
- [19] bit_1.1-15.2                                       
- [20] xml2_1.3.2                                         
- [21] httpuv_1.5.2                                       
- [22] assertthat_0.2.1                                   
- [23] IlluminaHumanMethylation450kmanifest_0.4.0         
- [24] viridis_0.5.1                                      
- [25] IlluminaHumanMethylationEPICanno.ilm10b4.hg19_0.6.0
+  [5] pkgmaker_0.27                                      
+  [6] tidyr_1.0.3                                        
+  [7] acepack_1.4.1                                      
+  [8] bit64_0.9-7                                        
+  [9] knitr_1.28                                         
+ [10] R.utils_2.9.0                                      
+ [11] data.table_1.12.8                                  
+ [12] rpart_4.1-15                                       
+ [13] doParallel_1.0.15                                  
+ [14] RCurl_1.95-4.12                                    
+ [15] GEOquery_2.54.1                                    
+ [16] AnnotationFilter_1.8.0                             
+ [17] preprocessCore_1.48.0                              
+ [18] RSQLite_2.1.2                                      
+ [19] combinat_0.0-8                                     
+ [20] bit_1.1-14                                         
+ [21] xml2_1.3.2                                         
+ [22] httpuv_1.5.2                                       
+ [23] assertthat_0.2.1                                   
+ [24] IlluminaHumanMethylation450kmanifest_0.4.0         
+ [25] viridis_0.5.1                                      
  [26] isva_1.9                                           
- [27] xfun_0.13                                          
- [28] hms_0.5.3                                          
- [29] evaluate_0.14                                      
- [30] DNAcopy_1.60.0                                     
- [31] promises_1.1.0                                     
- [32] scrime_1.3.5                                       
- [33] progress_1.2.2                                     
- [34] dendextend_1.13.4                                  
- [35] dbplyr_1.4.3                                       
- [36] DBI_1.1.0                                          
- [37] htmlwidgets_1.5.1                                  
- [38] reshape_0.8.8                                      
- [39] purrr_0.3.4                                        
- [40] ROC_1.62.0                                         
- [41] ellipsis_0.3.0                                     
- [42] backports_1.1.6                                    
+ [27] IlluminaHumanMethylationEPICanno.ilm10b4.hg19_0.6.0
+ [28] xfun_0.13                                          
+ [29] hms_0.5.3                                          
+ [30] evaluate_0.14                                      
+ [31] DNAcopy_1.58.0                                     
+ [32] promises_1.1.0                                     
+ [33] scrime_1.3.5                                       
+ [34] progress_1.2.2                                     
+ [35] dendextend_1.13.4                                  
+ [36] dbplyr_1.4.2                                       
+ [37] DBI_1.0.0                                          
+ [38] htmlwidgets_1.3                                    
+ [39] reshape_0.8.8                                      
+ [40] purrr_0.3.4                                        
+ [41] ROC_1.62.0                                         
+ [42] backports_1.1.7                                    
  [43] permute_0.9-5                                      
- [44] annotate_1.64.0                                    
+ [44] annotate_1.62.0                                    
  [45] biomaRt_2.42.1                                     
- [46] vctrs_0.2.4                                        
- [47] ensembldb_2.10.2                                   
- [48] withr_2.2.0                                        
+ [46] vctrs_0.3.0                                        
+ [47] ensembldb_2.8.0                                    
+ [48] withr_2.1.2                                        
  [49] globaltest_5.40.0                                  
- [50] Gviz_1.30.3                                        
- [51] BSgenome_1.54.0                                    
- [52] checkmate_2.0.0                                    
- [53] GenomicAlignments_1.22.1                           
- [54] prettyunits_1.1.1                                  
+ [50] Gviz_1.28.3                                        
+ [51] BSgenome_1.52.0                                    
+ [52] checkmate_1.9.4                                    
+ [53] GenomicAlignments_1.20.1                           
+ [54] prettyunits_1.0.2                                  
  [55] mclust_5.4.6                                       
  [56] cluster_2.1.0                                      
  [57] RPMM_1.25                                          
@@ -1944,128 +1728,127 @@ loaded via a namespace (and not attached):
  [60] crayon_1.3.4                                       
  [61] genefilter_1.68.0                                  
  [62] labeling_0.3                                       
- [63] edgeR_3.28.1                                       
+ [63] edgeR_3.26.8                                       
  [64] pkgconfig_2.0.3                                    
  [65] palr_0.2.0                                         
  [66] nlme_3.1-147                                       
- [67] ProtGenerics_1.18.0                                
+ [67] ProtGenerics_1.16.0                                
  [68] pals_1.6                                           
- [69] nnet_7.3-14                                        
- [70] rlang_0.4.5                                        
+ [69] nnet_7.3-12                                        
+ [70] rlang_0.4.6                                        
  [71] lifecycle_0.2.0                                    
  [72] nleqslv_3.3.2                                      
- [73] affyio_1.56.0                                      
- [74] BiocFileCache_1.10.2                               
- [75] AnnotationHub_2.18.0                               
- [76] dichromat_2.0-0                                    
- [77] rprojroot_1.3-2                                    
- [78] rngtools_1.5                                       
- [79] IlluminaHumanMethylation450kanno.ilmn12.hg19_0.6.0 
- [80] base64_2.0                                         
- [81] Rhdf5lib_1.8.0                                     
- [82] base64enc_0.1-3                                    
- [83] geneLenDataBase_1.22.0                             
- [84] whisker_0.4                                        
- [85] viridisLite_0.3.0                                  
- [86] png_0.1-7                                          
+ [73] registry_0.5-1                                     
+ [74] affyio_1.54.0                                      
+ [75] BiocFileCache_1.10.2                               
+ [76] AnnotationHub_2.18.0                               
+ [77] dichromat_2.0-0                                    
+ [78] rprojroot_1.3-2                                    
+ [79] rngtools_1.4                                       
+ [80] IlluminaHumanMethylation450kanno.ilmn12.hg19_0.6.0 
+ [81] base64_2.0                                         
+ [82] Rhdf5lib_1.6.1                                     
+ [83] base64enc_0.1-3                                    
+ [84] geneLenDataBase_1.20.0                             
+ [85] whisker_0.4                                        
+ [86] viridisLite_0.3.0                                  
  [87] oompaBase_3.2.9                                    
  [88] bitops_1.0-6                                       
- [89] R.oo_1.23.0                                        
- [90] KernSmooth_2.23-17                                 
- [91] blob_1.2.1                                         
+ [89] R.oo_1.22.0                                        
+ [90] KernSmooth_2.23-15                                 
+ [91] blob_1.2.0                                         
  [92] DelayedMatrixStats_1.8.0                           
- [93] doRNG_1.8.2                                        
- [94] qvalue_2.18.0                                      
+ [93] doRNG_1.7.1                                        
+ [94] qvalue_2.16.0                                      
  [95] stringr_1.4.0                                      
  [96] nor1mix_1.3-0                                      
  [97] readr_1.3.1                                        
- [98] jpeg_0.1-8.1                                       
- [99] scales_1.1.0                                       
-[100] memoise_1.1.0                                      
-[101] magrittr_1.5                                       
-[102] plyr_1.8.6                                         
-[103] zlibbioc_1.32.0                                    
-[104] compiler_3.6.3                                     
+ [98] scales_1.1.1                                       
+ [99] memoise_1.1.0                                      
+[100] magrittr_1.5                                       
+[101] plyr_1.8.6                                         
+[102] bibtex_0.4.2                                       
+[103] zlibbioc_1.30.0                                    
+[104] compiler_3.6.1                                     
 [105] RColorBrewer_1.1-2                                 
 [106] illuminaio_0.28.0                                  
 [107] clue_0.3-57                                        
 [108] JADE_2.0-3                                         
-[109] Rsamtools_2.2.3                                    
+[109] Rsamtools_2.0.1                                    
 [110] DSS_2.34.0                                         
-[111] affy_1.64.0                                        
+[111] affy_1.62.0                                        
 [112] IlluminaHumanMethylationEPICanno.ilm10b2.hg19_0.6.0
-[113] htmlTable_1.13.3                                   
+[113] htmlTable_1.13.2                                   
 [114] Formula_1.2-3                                      
 [115] MASS_7.3-51.6                                      
-[116] mgcv_1.8-31                                        
-[117] tidyselect_1.0.0                                   
+[116] mgcv_1.8-29                                        
+[117] tidyselect_0.2.5                                   
 [118] stringi_1.4.6                                      
 [119] yaml_2.2.1                                         
 [120] askpass_1.1                                        
-[121] latticeExtra_0.6-29                                
-[122] grid_3.6.3                                         
-[123] VariantAnnotation_1.32.0                           
-[124] tools_3.6.3                                        
+[121] latticeExtra_0.6-28                                
+[122] grid_3.6.1                                         
+[123] VariantAnnotation_1.30.1                           
+[124] tools_3.6.1                                        
 [125] ruv_0.9.7.1                                        
 [126] rstudioapi_0.11                                    
-[127] foreign_0.8-76                                     
-[128] git2r_0.26.1                                       
+[127] foreign_0.8-72                                     
+[128] git2r_0.27.1                                       
 [129] bsseq_1.22.0                                       
 [130] gridExtra_2.3                                      
 [131] farver_2.0.3                                       
 [132] digest_0.6.25                                      
 [133] BiocManager_1.30.10                                
-[134] shiny_1.4.0.2                                      
+[134] shiny_1.3.2                                        
 [135] quadprog_1.5-8                                     
 [136] Rcpp_1.0.4.6                                       
 [137] siggenes_1.60.0                                    
 [138] BiocVersion_3.10.1                                 
 [139] later_1.0.0                                        
 [140] httr_1.4.1                                         
-[141] biovizBase_1.34.1                                  
+[141] biovizBase_1.32.0                                  
 [142] lumi_2.38.0                                        
 [143] colorspace_1.4-1                                   
-[144] XML_3.99-0.3                                       
+[144] XML_3.98-1.20                                      
 [145] fs_1.4.1                                           
-[146] splines_3.6.3                                      
-[147] statmod_1.4.34                                     
-[148] rematch2_2.1.1                                     
+[146] splines_3.6.1                                      
+[147] statmod_1.4.32                                     
+[148] rematch2_2.1.0                                     
 [149] kpmt_0.1.0                                         
-[150] multtest_2.42.0                                    
-[151] mapproj_1.2.7                                      
+[150] multtest_2.40.0                                    
+[151] mapproj_1.2.6                                      
 [152] shinythemes_1.1.2                                  
-[153] plotly_4.9.2.1                                     
+[153] plotly_4.9.0                                       
 [154] jcolors_0.0.4                                      
 [155] xtable_1.8-4                                       
 [156] jsonlite_1.6.1                                     
 [157] scico_1.1.0                                        
 [158] R6_2.4.1                                           
-[159] Hmisc_4.4-0                                        
-[160] pillar_1.4.3                                       
+[159] Hmisc_4.2-0                                        
+[160] pillar_1.4.4                                       
 [161] htmltools_0.4.0                                    
 [162] mime_0.9                                           
-[163] fastmap_1.0.1                                      
-[164] interactiveDisplayBase_1.24.0                      
-[165] beanplot_1.2                                       
-[166] codetools_0.2-16                                   
-[167] maps_3.3.0                                         
-[168] lattice_0.20-41                                    
-[169] sva_3.34.0                                         
-[170] curl_4.3                                           
-[171] BiasedUrn_1.07                                     
-[172] gtools_3.8.2                                       
-[173] GO.db_3.10.0                                       
-[174] openssl_1.4.1                                      
-[175] survival_3.1-12                                    
-[176] rmarkdown_2.1                                      
-[177] methylumi_2.32.0                                   
-[178] fastICA_1.2-2                                      
-[179] munsell_0.5.0                                      
-[180] rhdf5_2.30.1                                       
-[181] GenomeInfoDbData_1.2.2                             
-[182] goseq_1.38.0                                       
-[183] HDF5Array_1.14.4                                   
-[184] gtable_0.3.0                                       </code></pre>
+[163] interactiveDisplayBase_1.22.0                      
+[164] beanplot_1.2                                       
+[165] codetools_0.2-16                                   
+[166] maps_3.3.0                                         
+[167] lattice_0.20-41                                    
+[168] sva_3.34.0                                         
+[169] curl_4.3                                           
+[170] BiasedUrn_1.07                                     
+[171] gtools_3.8.1                                       
+[172] GO.db_3.8.2                                        
+[173] openssl_1.4.1                                      
+[174] survival_2.44-1.1                                  
+[175] rmarkdown_2.1                                      
+[176] methylumi_2.30.0                                   
+[177] fastICA_1.2-2                                      
+[178] munsell_0.5.0                                      
+[179] rhdf5_2.30.1                                       
+[180] GenomeInfoDbData_1.2.1                             
+[181] goseq_1.36.0                                       
+[182] HDF5Array_1.14.4                                   
+[183] gtable_0.3.0                                       </code></pre>
 </div>
 </div>
 </div>

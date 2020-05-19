@@ -9,11 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Jovana Maksimovic" />
+<meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
-<meta name="date" content="2020-12-05" />
+<meta name="date" content="2020-05-19" />
 
-<title>Untitled</title>
+<title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -378,9 +378,10 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Untitled</h1>
-<h4 class="author">Jovana Maksimovic</h4>
-<h4 class="date">12/05/2020</h4>
+<h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
+<h3 class="subtitle">Comparing the run-time of different methods</h3>
+<h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
+<h4 class="date">May 19, 2020</h4>
 
 </div>
 
@@ -405,7 +406,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-05-15
+<strong>Last updated:</strong> 2020-05-19
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -496,16 +497,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree68a0f24f7acb1a1be1d1d154739e0022d1733735targetblank68a0f24a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/68a0f24f7acb1a1be1d1d154739e0022d1733735" target="_blank">68a0f24</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree63b001118e0fc05c673ae0a35fac7a0d85b5ca50targetblank63b0011a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/63b001118e0fc05c673ae0a35fac7a0d85b5ca50" target="_blank">63b0011</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree68a0f24f7acb1a1be1d1d154739e0022d1733735targetblank68a0f24a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree63b001118e0fc05c673ae0a35fac7a0d85b5ca50targetblank63b0011a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/68a0f24f7acb1a1be1d1d154739e0022d1733735" target="_blank">68a0f24</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/63b001118e0fc05c673ae0a35fac7a0d85b5ca50" target="_blank">63b0011</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -563,6 +564,40 @@ Message
 Rmd
 </td>
 <td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/63b001118e0fc05c673ae0a35fac7a0d85b5ca50/analysis/runTimeComparison.Rmd" target="_blank">63b0011</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-19
+</td>
+<td>
+wflow_publish(c(“analysis/exploreArrayBias450.Rmd”, “analysis/exploreArrayBiasEPIC.Rmd”,
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/f2da7f99969ab14f267f78072bbee83baec2c0d6/docs/runTimeComparison.html" target="_blank">f2da7f9</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-15
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/68a0f24f7acb1a1be1d1d154739e0022d1733735/analysis/runTimeComparison.Rmd" target="_blank">68a0f24</a>
 </td>
 <td>
@@ -612,51 +647,8 @@ library(ChAMPdata)
 library(tictoc)
 library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 library(EnsDb.Hsapiens.v75)
-library(ChAMP)</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::edges&#39; by &#39;graph::edges&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::intersection&#39; by
-&#39;graph::intersection&#39; when loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::degree&#39; by &#39;graph::degree&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::union&#39; by &#39;graph::union&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;limma::plotMA&#39; by &#39;BiocGenerics::plotMA&#39;
-when loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::path&#39; by &#39;BiocGenerics::path&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;Matrix::which&#39; by &#39;BiocGenerics::which&#39; when
-loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;igraph::normalize&#39; by
-&#39;BiocGenerics::normalize&#39; when loading &#39;FEM&#39;</code></pre>
-<pre><code>Warning: replacing previous import
-&#39;GenomicRanges::.__C__GenomicRanges_OR_GenomicRangesList&#39; by
-&#39;rtracklayer::.__C__GenomicRanges_OR_GenomicRangesList&#39; when loading &#39;BSgenome&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;minfi::getMeth&#39; by &#39;bsseq::getMeth&#39; when
-loading &#39;DMRcate&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::summarise&#39; by &#39;plotly::summarise&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::rename&#39; by &#39;plotly::rename&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::arrange&#39; by &#39;plotly::arrange&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::mutate&#39; by &#39;plotly::mutate&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::is.discrete&#39; by &#39;Hmisc::is.discrete&#39;
-when loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plyr::summarize&#39; by &#39;Hmisc::summarize&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plotly::subplot&#39; by &#39;Hmisc::subplot&#39; when
-loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;GenomicRanges::sort&#39; by &#39;globaltest::sort&#39;
-when loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;plotly::last_plot&#39; by &#39;ggplot2::last_plot&#39;
-when loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;globaltest::model.matrix&#39; by
-&#39;stats::model.matrix&#39; when loading &#39;ChAMP&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;globaltest::p.adjust&#39; by &#39;stats::p.adjust&#39;
-when loading &#39;ChAMP&#39;</code></pre>
-<pre class="r"><code>library(methylGSA)</code></pre>
+library(ChAMP)
+library(methylGSA)</code></pre>
 <div id="compare-run-time-of-different-methods" class="section level1">
 <h1>Compare run-time of different methods</h1>
 <div id="setup-inputs" class="section level2">
@@ -703,7 +695,7 @@ if(!file.exists(inFile)){
         timing &lt;- bind_rows(timing, log)
         
         tic(&quot;mgsa.glm&quot;)
-        res &lt;- methylglm(cpg.pval = tfit$p.value[,1],
+        res &lt;- methylglm(cpg.pval = tfit$p.value[,i],
                          FullAnnot = anno, minsize = minsize, maxsize = maxsize,
                          GS.list = symbol, GS.idtype = &quot;SYMBOL&quot;)
         toc(log = TRUE, quiet = TRUE)
@@ -714,7 +706,7 @@ if(!file.exists(inFile)){
         timing &lt;- bind_rows(timing, log)
         
         tic(&quot;mgsa.ora&quot;)
-        res &lt;- methylRRA(cpg.pval = tfit$p.value[,1],
+        res &lt;- methylRRA(cpg.pval = tfit$p.value[,i],
                          method = &quot;ORA&quot;, FullAnnot = anno, minsize = minsize,
                          maxsize = maxsize, GS.list = symbol,
                          GS.idtype = &quot;SYMBOL&quot;)
@@ -726,7 +718,7 @@ if(!file.exists(inFile)){
         timing &lt;- bind_rows(timing, log)
         
         tic(&quot;mgsa.gsea&quot;)
-        res &lt;- methylRRA(cpg.pval = tfit$p.value[,1],
+        res &lt;- methylRRA(cpg.pval = tfit$p.value[,i],
                          method = &quot;GSEA&quot;, FullAnnot = anno, minsize = minsize,
                          maxsize = maxsize, GS.list = symbol,
                          GS.idtype = &quot;SYMBOL&quot;)
@@ -758,12 +750,127 @@ if(!file.exists(inFile)){
     
 }</code></pre>
 <p>Plot run-time results.</p>
-<pre class="r"><code>timing %&gt;% mutate(time = as.integer(time)) -&gt; dat
+<pre class="r"><code>timing %&gt;% mutate(time = as.integer(time)) %&gt;%
+    mutate(method = ifelse(method == &quot;gometh&quot;, &quot;mmethyl.gometh&quot;, 
+                           method)) -&gt; dat
 
-ggplot(dat, aes(x = method, y = time/60, fill = contrast)) + 
+p1 &lt;- ggplot(dat, aes(x = method, y = time/60, fill = contrast)) + 
     geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
-    labs(x = &quot;Method&quot;, y = &quot;Run time (minutes)&quot;, fill = &quot;Contrast&quot;)</code></pre>
+    labs(x = &quot;Method&quot;, y = &quot;Run time (minutes)&quot;, fill = &quot;Contrast&quot;)
+p1</code></pre>
 <p><img src="figure/runTimeComparison.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/f2da7f99969ab14f267f78072bbee83baec2c0d6/docs/figure/runTimeComparison.Rmd/unnamed-chunk-4-1.png" target="_blank">f2da7f9</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-15
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<pre class="r"><code>inFile &lt;- here(&quot;data/run-time-mcores.rds&quot;)
+
+if(!file.exists(inFile)){
+    
+    data(&quot;PathwayList&quot;)
+    keep &lt;- sapply(PathwayList, function(x) any(x %in% transIDs$symbol))
+    symbol &lt;- suppressMessages(lapply(PathwayList[keep], function(x){
+        tmp &lt;- unlist(transIDs$symbol[transIDs$symbol %in% x], use.names = FALSE)
+        tmp[!is.na(tmp)]
+    }))
+    
+    load(here(&quot;data/input.RData&quot;))
+    anno &lt;- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+    multi &lt;- NULL
+    
+    for(i in 1:ncol(tfit$contrasts)){
+        
+        tic(&quot;mgsa.glm.3&quot;)
+        res &lt;- methylglm(cpg.pval = tfit$p.value[,i],
+                         FullAnnot = anno, minsize = minsize, maxsize = maxsize,
+                         GS.list = symbol, GS.idtype = &quot;SYMBOL&quot;, parallel = TRUE,
+                         BPPARAM = BiocParallel::MulticoreParam(workers = 3))
+        toc(log = TRUE, quiet = TRUE)
+        tmp &lt;- strsplit2(tic.log(format = TRUE)[[1]], &quot; &quot;)
+        log &lt;- data.frame(method = gsub(&quot;:&quot;, &quot;&quot;, tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi &lt;- bind_rows(multi, log)
+        
+        tic(&quot;mgsa.glm.6&quot;)
+        res &lt;- methylglm(cpg.pval = tfit$p.value[,i],
+                         FullAnnot = anno, minsize = minsize, maxsize = maxsize,
+                         GS.list = symbol, GS.idtype = &quot;SYMBOL&quot;, parallel = TRUE,
+                         BPPARAM = BiocParallel::MulticoreParam(workers = 6))
+        toc(log = TRUE, quiet = TRUE)
+        tmp &lt;- strsplit2(tic.log(format = TRUE)[[1]], &quot; &quot;)
+        log &lt;- data.frame(method = gsub(&quot;:&quot;, &quot;&quot;, tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi &lt;- bind_rows(multi, log)
+        
+        tic(&quot;mgsa.glm.9&quot;)
+        res &lt;- methylglm(cpg.pval = tfit$p.value[,i],
+                         FullAnnot = anno, minsize = minsize, maxsize = maxsize,
+                         GS.list = symbol, GS.idtype = &quot;SYMBOL&quot;, parallel = TRUE,
+                         BPPARAM = BiocParallel::MulticoreParam(workers = 9))
+        toc(log = TRUE, quiet = TRUE)
+        tmp &lt;- strsplit2(tic.log(format = TRUE)[[1]], &quot; &quot;)
+        log &lt;- data.frame(method = gsub(&quot;:&quot;, &quot;&quot;, tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi &lt;- bind_rows(multi, log)
+        
+    }
+    saveRDS(multi, file = inFile)
+    
+} else {
+    multi &lt;- readRDS(inFile)
+}</code></pre>
+<p>Plot run-time results.</p>
+<pre class="r"><code>multi %&gt;% mutate(time = as.integer(time)) %&gt;%
+    mutate(cores = limma::strsplit2(method, &quot;.&quot;, fixed=TRUE)[,3])-&gt; dat
+
+p2 &lt;- ggplot(dat, aes(x = cores, y = time/60, fill = contrast)) + 
+    geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
+    labs(x = &quot;No. cores&quot;, y = &quot;Run time (minutes)&quot;, fill = &quot;Contrast&quot;) +
+    ggtitle(&quot;Using multiple cores for mgsa.glm&quot;) 
+p2</code></pre>
+<p><img src="figure/runTimeComparison.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Combining single core and multi-core plots.</p>
+<pre class="r"><code>layout &lt;- c(area(t = 0, l = 1, b = 5, r = 4),
+            area(t = 2, l = 3, b = 3, r = 4))
+p1 + p2 + theme(text = element_text(size = 8), legend.position = &quot;none&quot;) + 
+    plot_layout(design = layout, guides = &quot;collect&quot;)</code></pre>
+<p><img src="figure/runTimeComparison.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">

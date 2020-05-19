@@ -9,8 +9,9 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
-<meta name="author" content="Jovana Maksimovic" />
+<meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
+<meta name="date" content="2020-05-19" />
 
 <title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
@@ -378,8 +379,9 @@ div.tocify {
 
 
 <h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
-<h4 class="author">Jovana Maksimovic</h4>
-<h4 class="date">7/2/2019</h4>
+<h3 class="subtitle">Comparing the false discovery rate of different methods</h3>
+<h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
+<h4 class="date">May 19, 2020</h4>
 
 </div>
 
@@ -404,7 +406,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-04-17
+<strong>Last updated:</strong> 2020-05-19
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -414,7 +416,7 @@ div.tocify {
 </p>
 <p>
 This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
-  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.1). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
 </p>
 <hr>
 </div>
@@ -495,16 +497,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree0fec41a56b56c7fda4f7d0c470e43c463d3e6b39targetblank0fec41aa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/0fec41a56b56c7fda4f7d0c470e43c463d3e6b39" target="_blank">0fec41a</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree63b001118e0fc05c673ae0a35fac7a0d85b5ca50targetblank63b0011a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/63b001118e0fc05c673ae0a35fac7a0d85b5ca50" target="_blank">63b0011</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree0fec41a56b56c7fda4f7d0c470e43c463d3e6b39targetblank0fec41aa" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree63b001118e0fc05c673ae0a35fac7a0d85b5ca50targetblank63b0011a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/0fec41a56b56c7fda4f7d0c470e43c463d3e6b39" target="_blank">0fec41a</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/63b001118e0fc05c673ae0a35fac7a0d85b5ca50" target="_blank">63b0011</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -519,9 +521,6 @@ Ignored files:
     Ignored:    output/FDR-analysis/
     Ignored:    output/compare-methods/
     Ignored:    output/random-cpg-sims/
-
-Unstaged changes:
-    Deleted:    analysis/nullAnalysis.Rmd
 
 </code></pre>
 <p>
@@ -560,6 +559,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/63b001118e0fc05c673ae0a35fac7a0d85b5ca50/analysis/fdrAnalysis.Rmd" target="_blank">63b0011</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-19
+</td>
+<td>
+wflow_publish(c(“analysis/exploreArrayBias450.Rmd”, “analysis/exploreArrayBiasEPIC.Rmd”,
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/7af677cb07312789ef4e488aecb0498f155ab2ce/docs/fdrAnalysis.html" target="_blank">7af677c</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-17
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -631,36 +664,16 @@ library(dplyr)
 library(curatedTCGAData)
 library(MultiAssayExperiment)
 library(TCGAutils)
-library(DMRcate)</code></pre>
-<pre><code>Warning: replacing previous import
-&#39;GenomicRanges::.__C__GenomicRanges_OR_GenomicRangesList&#39; by
-&#39;rtracklayer::.__C__GenomicRanges_OR_GenomicRangesList&#39; when loading &#39;BSgenome&#39;</code></pre>
-<pre><code>Warning: replacing previous import &#39;minfi::getMeth&#39; by &#39;bsseq::getMeth&#39; when
-loading &#39;DMRcate&#39;</code></pre>
-<pre class="r"><code>library(patchwork)
+library(DMRcate)
+library(patchwork)
 source(here(&quot;code/utility.R&quot;))</code></pre>
 <div id="load-data" class="section level1">
 <h1>Load data</h1>
 <p>We are using publicly available kidney clear cell carcinoma (KIRC) 450k data from The Cancer Genome Atlas (TCGA). We are using only the normal samples to look at false discovery rate control by various methylation gene set testing methods.</p>
 <p>Download the data using the <code>curatedTCGAData</code> Bioconductor package and then extract the normal samples. The data seems to have already been normalised(?) so we will only remove poor probes (&gt;1 NA), SNP, multi-mapping and sex-chromosome probes.</p>
 <pre class="r"><code>kirc &lt;- curatedTCGAData(diseaseCode = &quot;KIRC&quot;, assays = &quot;Methylation_methyl450&quot;, 
-                        dry.run = FALSE)</code></pre>
-<pre><code>snapshotDate(): 2019-10-22</code></pre>
-<pre><code>see ?curatedTCGAData and browseVignettes(&#39;curatedTCGAData&#39;) for documentation</code></pre>
-<pre><code>loading from cache</code></pre>
-<pre><code>require(&quot;rhdf5&quot;)</code></pre>
-<pre><code>see ?curatedTCGAData and browseVignettes(&#39;curatedTCGAData&#39;) for documentation</code></pre>
-<pre><code>loading from cache</code></pre>
-<pre><code>see ?curatedTCGAData and browseVignettes(&#39;curatedTCGAData&#39;) for documentation</code></pre>
-<pre><code>loading from cache</code></pre>
-<pre><code>see ?curatedTCGAData and browseVignettes(&#39;curatedTCGAData&#39;) for documentation</code></pre>
-<pre><code>loading from cache</code></pre>
-<pre><code>see ?curatedTCGAData and browseVignettes(&#39;curatedTCGAData&#39;) for documentation</code></pre>
-<pre><code>loading from cache</code></pre>
-<pre><code>harmonizing input:
-  removing 6576 sampleMap rows not in names(experiments)
-  removing 218 colData rownames not in sampleMap &#39;primary&#39;</code></pre>
-<pre class="r"><code>kirc &lt;- splitAssays(kirc, c(&quot;11&quot;)) # extract only the normal samples
+                        dry.run = FALSE)
+kirc &lt;- splitAssays(kirc, c(&quot;11&quot;)) # extract only the normal samples
 exp &lt;- experiments(kirc)[[1]]
 meta &lt;- colData(kirc)
 betas &lt;- as.matrix(assay(exp))
@@ -668,23 +681,6 @@ colnames(betas) &lt;- substr(colnames(betas), 1, 12)
 m &lt;- match(colnames(betas), meta$patientID)
 meta &lt;- meta[m, ]
 head(meta[, 1:5])</code></pre>
-<pre><code>DataFrame with 6 rows and 5 columns
-                patientID years_to_birth vital_status days_to_death
-              &lt;character&gt;      &lt;integer&gt;    &lt;integer&gt;     &lt;integer&gt;
-TCGA-A3-3357 TCGA-A3-3357             62            0            NA
-TCGA-A3-3367 TCGA-A3-3367             72            0            NA
-TCGA-A3-3370 TCGA-A3-3370             48            0            NA
-TCGA-A3-3373 TCGA-A3-3373             54            0            NA
-TCGA-A3-3376 TCGA-A3-3376             51            1          1696
-TCGA-A3-3385 TCGA-A3-3385             46            0            NA
-             days_to_last_followup
-                         &lt;integer&gt;
-TCGA-A3-3357                  2688
-TCGA-A3-3367                  2270
-TCGA-A3-3370                  2274
-TCGA-A3-3373                  1621
-TCGA-A3-3376                    NA
-TCGA-A3-3385                  1993</code></pre>
 <pre class="r"><code>betasNoNA &lt;- betas[rowSums(is.na(betas)) == 0, ]
 mds &lt;- plotMDS(betasNoNA, gene.selection = &quot;common&quot;, plot = FALSE)
 dat &lt;- tibble(x = mds$x, y = mds$y, gender = meta$gender)
@@ -693,7 +689,44 @@ ggplot(dat, aes(x = x, y = y, colour = gender)) +
   geom_point() +
   labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 2&quot;, 
        colour = &quot;Gender&quot;)</code></pre>
-<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/7af677cb07312789ef4e488aecb0498f155ab2ce/docs/figure/fdrAnalysis.Rmd/unnamed-chunk-3-1.png" target="_blank">7af677c</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>betasFlt &lt;- rmSNPandCH(betasNoNA, rmXY = TRUE, rmcrosshyb = TRUE)
 mds &lt;- plotMDS(betasFlt, gene.selection = &quot;common&quot;, plot = FALSE)
 dat &lt;- tibble(x = mds$x, y = mds$y, gender = meta$gender)
@@ -702,7 +735,44 @@ ggplot(dat, aes(x = x, y = y, colour = gender)) +
   geom_point() +
   labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 2&quot;, 
        colour = &quot;Gender&quot;)</code></pre>
-<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/7af677cb07312789ef4e488aecb0498f155ab2ce/docs/figure/fdrAnalysis.Rmd/unnamed-chunk-4-1.png" target="_blank">7af677c</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>dat$age &lt;- meta$years_to_birth
 dat$race &lt;- sub(&quot; or&quot;, &quot;\nor&quot;, meta$race)
 dat$ethnicity &lt;- sub(&quot; or&quot;, &quot;\nor&quot;, meta$ethnicity)
@@ -726,7 +796,44 @@ c &lt;- ggplot(dat, aes(x = x, y = y, colour = ethnicity)) +
   theme(legend.text = element_text(size = 7))
 
 (b + c) / a</code></pre>
-<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-4-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-5-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/7af677cb07312789ef4e488aecb0498f155ab2ce/docs/figure/fdrAnalysis.Rmd/unnamed-chunk-5-1.png" target="_blank">7af677c</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-17
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>dat &lt;- as_tibble(melt(betasFlt))
 colnames(dat) &lt;- c(&quot;cpg&quot;, &quot;ID&quot;, &quot;beta&quot;)
 
@@ -735,7 +842,7 @@ p &lt;- ggplot(dat, aes(x = beta)) +
             show.legend = FALSE)
 
 p + labs(x = &quot;Beta value&quot;, y = &quot;Density&quot;)</code></pre>
-<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 </div>
 <div id="fdr-analysis" class="section level1">
 <h1>FDR analysis</h1>
@@ -760,7 +867,7 @@ p + stat_summary(geom = &quot;point&quot;, size = 1, color = &quot;white&quot;,
   geom_hline(yintercept=0.05, linetype=&quot;dashed&quot;, color = &quot;red&quot;) +
   labs(y=&quot;Prop. gene sets with p-value &lt; 0.05&quot;, x=&quot;No. samples&quot;,
        fill=&quot;Method&quot;)</code></pre>
-<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-8-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p><img src="figure/fdrAnalysis.Rmd/unnamed-chunk-9-1.png" width="864" style="display: block; margin: auto;" /></p>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -792,11 +899,11 @@ attached base packages:
 other attached packages:
  [1] DMRcatedata_2.2.1           ExperimentHub_1.12.0       
  [3] AnnotationHub_2.18.0        BiocFileCache_1.10.2       
- [5] dbplyr_1.4.2                rhdf5_2.28.0               
+ [5] dbplyr_1.4.2                rhdf5_2.30.1               
  [7] patchwork_1.0.0             DMRcate_2.0.7              
  [9] TCGAutils_1.6.2             curatedTCGAData_1.8.1      
-[11] MultiAssayExperiment_1.12.6 dplyr_0.8.3                
-[13] tibble_2.1.3                glue_1.4.0                 
+[11] MultiAssayExperiment_1.12.6 dplyr_0.8.5                
+[13] tibble_2.1.3                glue_1.4.1                 
 [15] ggplot2_3.3.0               missMethyl_1.20.4          
 [17] reshape2_1.4.3              limma_3.42.2               
 [19] paletteer_1.1.0             minfi_1.32.0               
@@ -808,14 +915,14 @@ other attached packages:
 [31] Biobase_2.46.0              GenomicRanges_1.38.0       
 [33] GenomeInfoDb_1.22.1         IRanges_2.20.2             
 [35] S4Vectors_0.24.4            BiocGenerics_0.32.0        
-[37] here_0.1                    workflowr_1.6.1            
+[37] here_0.1                    workflowr_1.6.2            
 
 loaded via a namespace (and not attached):
   [1] rappdirs_0.3.1                                     
   [2] rtracklayer_1.44.4                                 
   [3] R.methodsS3_1.7.1                                  
   [4] pkgmaker_0.27                                      
-  [5] tidyr_1.0.2                                        
+  [5] tidyr_1.0.3                                        
   [6] acepack_1.4.1                                      
   [7] bit64_0.9-7                                        
   [8] knitr_1.28                                         
@@ -829,7 +936,7 @@ loaded via a namespace (and not attached):
  [16] preprocessCore_1.48.0                              
  [17] RSQLite_2.1.2                                      
  [18] bit_1.1-14                                         
- [19] xml2_1.3.1                                         
+ [19] xml2_1.3.2                                         
  [20] httpuv_1.5.2                                       
  [21] assertthat_0.2.1                                   
  [22] IlluminaHumanMethylation450kmanifest_0.4.0         
@@ -845,12 +952,12 @@ loaded via a namespace (and not attached):
  [32] DBI_1.0.0                                          
  [33] htmlwidgets_1.3                                    
  [34] reshape_0.8.8                                      
- [35] purrr_0.3.3                                        
- [36] backports_1.1.6                                    
+ [35] purrr_0.3.4                                        
+ [36] backports_1.1.7                                    
  [37] permute_0.9-5                                      
  [38] annotate_1.62.0                                    
  [39] biomaRt_2.42.1                                     
- [40] vctrs_0.2.4                                        
+ [40] vctrs_0.3.0                                        
  [41] ensembldb_2.8.0                                    
  [42] withr_2.1.2                                        
  [43] Gviz_1.28.3                                        
@@ -872,7 +979,7 @@ loaded via a namespace (and not attached):
  [59] palr_0.2.0                                         
  [60] nnet_7.3-12                                        
  [61] pals_1.6                                           
- [62] rlang_0.4.5                                        
+ [62] rlang_0.4.6                                        
  [63] lifecycle_0.2.0                                    
  [64] registry_0.5-1                                     
  [65] dichromat_2.0-0                                    
@@ -896,7 +1003,7 @@ loaded via a namespace (and not attached):
  [83] nor1mix_1.3-0                                      
  [84] readr_1.3.1                                        
  [85] IlluminaHumanMethylationEPICmanifest_0.3.0         
- [86] scales_1.1.0                                       
+ [86] scales_1.1.1                                       
  [87] memoise_1.1.0                                      
  [88] magrittr_1.5                                       
  [89] plyr_1.8.6                                         
@@ -909,7 +1016,7 @@ loaded via a namespace (and not attached):
  [96] DSS_2.34.0                                         
  [97] htmlTable_1.13.2                                   
  [98] Formula_1.2-3                                      
- [99] MASS_7.3-51.5                                      
+ [99] MASS_7.3-51.6                                      
 [100] tidyselect_0.2.5                                   
 [101] stringi_1.4.6                                      
 [102] yaml_2.2.1                                         
@@ -921,7 +1028,7 @@ loaded via a namespace (and not attached):
 [108] ruv_0.9.7.1                                        
 [109] rstudioapi_0.11                                    
 [110] foreign_0.8-72                                     
-[111] git2r_0.26.1                                       
+[111] git2r_0.27.1                                       
 [112] bsseq_1.22.0                                       
 [113] gridExtra_2.3                                      
 [114] farver_2.0.3                                       
@@ -952,7 +1059,7 @@ loaded via a namespace (and not attached):
 [139] scico_1.1.0                                        
 [140] R6_2.4.1                                           
 [141] Hmisc_4.2-0                                        
-[142] pillar_1.4.3                                       
+[142] pillar_1.4.4                                       
 [143] htmltools_0.4.0                                    
 [144] mime_0.9                                           
 [145] interactiveDisplayBase_1.22.0                      
@@ -970,7 +1077,7 @@ loaded via a namespace (and not attached):
 [157] methylumi_2.30.0                                   
 [158] munsell_0.5.0                                      
 [159] GenomeInfoDbData_1.2.1                             
-[160] HDF5Array_1.14.3                                   
+[160] HDF5Array_1.14.4                                   
 [161] gtable_0.3.0                                       </code></pre>
 </div>
 </div>
