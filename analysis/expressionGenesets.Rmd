@@ -25,6 +25,8 @@ source(here("code/utility.R"))
 
 # Data import
 
+The dataset used to generate the RNAseq "truth" gene sets is avoilable from GEO at [GSE107011](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE107011) or SRA at [SRP125125](https://www.ncbi.nlm.nih.gov/sra?term=SRP125125).
+
 The data was quasi-mapped and quantified using Salmon (v1.2.1) with the hg19_cdna Ensembl human transcriptome.  
 
 Load sample information and file names.

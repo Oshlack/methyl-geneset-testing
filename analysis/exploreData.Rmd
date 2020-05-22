@@ -150,7 +150,7 @@ mdat %>% dplyr::select(-cpg) %>%
     group_by(variable, entrezid, promoter) %>%
     #summarise(coef = coefficient[which.max(abs(coefficient))]) -> mdat
     summarise(coef = median(coefficient)) %>%
-    filter(promoter == "prom") -> mdat
+    dplyr::filter(promoter == "prom") -> mdat
 
 mdat %>% inner_join(rdat, by = c("entrezid", "variable")) %>%
     mutate(colour = ifelse(FDR < 0.05, "Sig.", "Not sig.")) -> dat
