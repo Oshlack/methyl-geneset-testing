@@ -114,9 +114,11 @@ if(!file.exists(outFile)){
         
         keep <- (abs(dmrList[[i]]$meandiff) > 0.1 & dmrList[[i]]$no.cpgs >=3)
         
-        overlaps <- findOverlaps(hg19Genes, dmrList[[i]][keep, ])
+        overlaps <- findOverlaps(hg19Genes, dmrList[[i]][keep, ], 
+                                 minoverlap = 1)
         sigGenes <- hg19Genes$gene_id[from(overlaps)]
-        tmp <- topGO(goana(sigGenes), number = Inf)
+        tmp <- topGO(goana(sigGenes, universe = hg19Genes$gene_id), 
+                     number = Inf)
         tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
         tmp$method <- "goana"
         tmp$contrast <- colnames(cont.matrix)[i]
@@ -138,9 +140,8 @@ if(!file.exists(outFile)){
         tmp$contrast <- colnames(cont.matrix)[i]
         dmrGo <- bind_rows(dmrGo, tmp)
         
-        tmp <- topGSA(gometh(rownames(topTreat(tfit, coef = i, num = 5000, 
-                                               p.value = pval)), anno = anno, 
-                             array.type = "EPIC"), number = Inf)
+        tmp <- topGSA(gometh(rownames(topTreat(tfit, coef = i, num = 5000)), 
+                             anno = anno, array.type = "EPIC"), number = Inf)
         tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
         tmp$method <- "gometh-probe-top"
         tmp$contrast <- colnames(cont.matrix)[i]
@@ -165,12 +166,13 @@ if(!file.exists(outFile)){
 
 ### Compare GOregion with other approaches
 
-```{r, fig.width=9}
+```{r}
 immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"), 
                             stringsAsFactors = FALSE, header = FALSE, 
                             col.names = "GOID"))
 
 dmrGo %>% arrange(contrast, method, P.DE) %>%
+    filter(method %in% c("goana", "goregion-gometh", "goregion-hgt")) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
     mutate(rank = 1:n()) %>%
@@ -180,7 +182,8 @@ p <- ggplot(dat, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets")
+    labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
+    theme(legend.position = "bottom")
 p
 ```
 
@@ -191,6 +194,7 @@ immuneGO %>% group_by(contrast) %>%
     filter(rank <= 100) -> topSets
     
 dat %>% arrange(contrast, method, P.DE) %>%
+    filter(method %in% c("goana", "goregion-gometh", "goregion-hgt")) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
@@ -208,13 +212,14 @@ p
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
-```{r, fig.height=11, fig.width=6}
+```{r, fig.height=9, fig.width=6}
 terms <- missMethyl:::.getGO()$idTable
 nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList, 
                                                    length)), 
                              var = "ID")
 
-dat %>% arrange(contrast, method, P.DE) %>% 
+dat %>% arrange(contrast, method, P.DE) %>%
+    filter(method %in% c("goana", "goregion-gometh", "goregion-hgt")) %>%
     group_by(contrast, method) %>%
     mutate(FDR = p.adjust(P.DE, method = "BH")) %>%
     filter(rank <= 10) %>% 
@@ -250,13 +255,118 @@ for(cont in unique(sub$contrast)){
     }
 }
 
-(p[[1]] / p[[2]] / p[[3]] / p[[4]] / p[[5]]) + 
+(p[[1]] / p[[2]] / p[[3]]) + 
     plot_annotation(title = unique(sub$contrast)[1],
                     theme = theme(plot.title = element_text(size = 10))) 
-(p[[6]] / p[[7]] / p[[8]] / p[[9]] / p[[10]]) + 
+(p[[4]] / p[[5]] / p[[6]]) + 
     plot_annotation(title = unique(sub$contrast)[2],
                     theme = theme(plot.title = element_text(size = 10))) 
-(p[[11]] / p[[12]] / p[[13]] / p[[14]] / p[[15]]) + 
+(p[[7]] / p[[8]] / p[[9]]) + 
+    plot_annotation(title = unique(sub$contrast)[3],
+                    theme = theme(plot.title = element_text(size = 10))) 
+```
+
+### Compare GOregion with probe-wise analysis
+
+```{r}
+immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"), 
+                            stringsAsFactors = FALSE, header = FALSE, 
+                            col.names = "GOID"))
+
+dmrGo %>% arrange(contrast, method, P.DE) %>%
+    filter(method %in% c("goregion-gometh", "gometh-probe-top", 
+                         "gometh-probe-fdr")) %>%
+    group_by(contrast, method) %>%
+    mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> dat
+
+p <- ggplot(dat, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
+    theme(legend.position = "bottom")
+p
+```
+
+```{r}
+immuneGO <- readRDS(here("data/RNAseq-GO.rds"))
+immuneGO %>% group_by(contrast) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> topSets
+    
+dat %>% arrange(contrast, method, P.DE) %>%
+    filter(method %in% c("goregion-gometh", "gometh-probe-top", 
+                         "gometh-probe-fdr")) %>%
+    group_by(contrast, method) %>%
+    mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> sub
+
+p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Method", x = "Rank", 
+         y = glue("Cumulative no. RNAseq sets")) +
+    theme(legend.position = "bottom")
+p
+```
+
+Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
+
+```{r, fig.height=9, fig.width=6}
+terms <- missMethyl:::.getGO()$idTable
+nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList, 
+                                                   length)), 
+                             var = "ID")
+
+dat %>% arrange(contrast, method, P.DE) %>%
+    filter(method %in% c("goregion-gometh", "gometh-probe-top", 
+                         "gometh-probe-fdr")) %>%
+    group_by(contrast, method) %>%
+    mutate(FDR = p.adjust(P.DE, method = "BH")) %>%
+    filter(rank <= 10) %>% 
+    inner_join(terms, by = c("GO" = "GOID")) %>%
+    inner_join(nGenes, by = c("GO" = "ID")) -> sub
+
+p <- vector("list", length(unique(sub$contrast)) * length(unique(sub$method)))
+i = 1
+for(cont in unique(sub$contrast)){
+    c = 1
+    for(meth in unique(sub$method)){
+        tmp <- sub %>% filter(contrast == cont & method == meth) %>%
+            mutate(rank = factor(rank), 
+                   rank = factor(rank, levels = rev(levels(rank))))
+        
+        p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
+            geom_point(aes(size = n), alpha = 0.5, 
+                colour = scales::hue_pal()(length(unique(sub$method)))[c]) +
+            scale_y_discrete(labels = rev(tmp$TERM)) +
+            labs(y = "", size = "No. genes", title = meth) +
+            theme(axis.text.y = element_text(size = 6),
+                  plot.title = element_text(size = 8),
+                  legend.position = "right", 
+                  legend.key.size = unit(0.25, "cm"),
+                  legend.text = element_text(size = 6),
+                  legend.title = element_text(size = 8),
+                  axis.text.x = element_text(size = 6),
+                  axis.title.x = element_text(size = 8)) + 
+            coord_cartesian(xlim = c(-log10(0.99), -log10(10^-100))) +
+            geom_vline(xintercept = -log10(0.05), linetype = "dashed")
+        i = i + 1
+        c = c + 1
+    }
+}
+
+(p[[1]] / p[[2]] / p[[3]]) + 
+    plot_annotation(title = unique(sub$contrast)[1],
+                    theme = theme(plot.title = element_text(size = 10))) 
+(p[[4]] / p[[5]] / p[[6]]) + 
+    plot_annotation(title = unique(sub$contrast)[2],
+                    theme = theme(plot.title = element_text(size = 10))) 
+(p[[7]] / p[[8]] / p[[9]]) + 
     plot_annotation(title = unique(sub$contrast)[3],
                     theme = theme(plot.title = element_text(size = 10))) 
 ```
@@ -272,26 +382,28 @@ cpgs <- GRanges(seqnames = anno$chr,
 dat <- NULL
 
 for(i in 1:ncol(cont.matrix)){
-  overlaps <- findOverlaps(cpgs, dmrList[[i]])
-  tmp <- data.frame(cpgs = cpgs$name[from(overlaps)],
-                    method = "dmrcate", 
-                    contrast = colnames(cont.matrix)[i],
-                    stringsAsFactors = FALSE)
-  dat <- bind_rows(dat, tmp)
-  
-  tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = 5000)),
-                    method = "probe-top",
-                    contrast = colnames(cont.matrix)[i],
-                    stringsAsFactors = FALSE)
-  dat <- bind_rows(dat, tmp)
-  
-  tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
-                                             p.value = pval)),
-                    method = "probe-fdr",
-                    contrast = colnames(cont.matrix)[i],
-                    stringsAsFactors = FALSE)
-  dat <- bind_rows(dat, tmp)
-  
+    keep <- (abs(dmrList[[i]]$meandiff) > 0.1 & dmrList[[i]]$no.cpgs >=3)
+    
+    overlaps <- findOverlaps(cpgs, dmrList[[i]][keep,])
+    tmp <- data.frame(cpgs = cpgs$name[from(overlaps)],
+                      method = "dmrcate", 
+                      contrast = colnames(cont.matrix)[i],
+                      stringsAsFactors = FALSE)
+    dat <- bind_rows(dat, tmp)
+    
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = 5000)),
+                      method = "probe-top",
+                      contrast = colnames(cont.matrix)[i],
+                      stringsAsFactors = FALSE)
+    dat <- bind_rows(dat, tmp)
+    
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
+                                               p.value = pval)),
+                      method = "probe-fdr",
+                      contrast = colnames(cont.matrix)[i],
+                      stringsAsFactors = FALSE)
+    dat <- bind_rows(dat, tmp)
+    
 }
 
 dat %>% group_by(contrast, method) %>% tally() -> sub
