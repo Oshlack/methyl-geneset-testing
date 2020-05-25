@@ -134,7 +134,7 @@ if(!file.exists(outFile)){
         dmrGo <- bind_rows(dmrGo, tmp)
         
         tmp <- topGSA(goregion(dmrList[[i]][keep, ], anno = anno, 
-                               array.type = "EPIC"), 
+                               array.type = "EPIC", plot.bias = TRUE), 
                       number = Inf)
         tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
         tmp$method <- "goregion-gometh"
@@ -161,6 +161,18 @@ if(!file.exists(outFile)){
     
 } else {
     dmrGo <- readRDS(outFile)
+    
+}
+```
+
+### Probe bias in DMRs
+
+```{r}
+for(i in 1:length(dmrList)){
+    keep <- (abs(dmrList[[i]]$meandiff) > 0.1 & dmrList[[i]]$no.cpgs >=3)
+    tmp <- goregion(dmrList[[i]][keep, ], anno = anno, array.type = "EPIC", 
+                    plot.bias = TRUE)
+    title(colnames(cont.matrix)[i])
     
 }
 ```
