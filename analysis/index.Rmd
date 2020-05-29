@@ -39,7 +39,11 @@ Analysis
     * Analyse an EPIC array sorted blood cell dataset using various gene set 
       testing methods. Compare the run-time of the different methods.
 
-7. [Evaluate GOregion](regionAnalysis.html)
+7. [Effect of gene set size parameters on methylGSA](methylGSAParamSweep.html)
+    * Analyse an EPIC array sorted blood cell dataset using various gene set 
+      testing methods. Compare the run-time of the different methods.
+      
+8. [Evaluate GOregion](regionAnalysis.html)
     * Evalulate GOregion, our extension of gometh for geneset testing of 
       differentially methylated regions (DMRs) identified by DMR finding software.
       
