@@ -3,8 +3,8 @@
 args <- commandArgs(trailingOnly=TRUE)
 method <- args[1]
 input <- args[2]
-min <- args[3]
-max <- args[4]
+minsz <- as.numeric(args[3])
+maxsz <- as.numeric(args[4])
 outDir <- args[5]
 
 library(EnsDb.Hsapiens.v75)
@@ -45,22 +45,20 @@ for(i in 1:ncol(tfit$contrasts)){
 
     if(method == "glm"){
         out <- try(methylglm(cpg.pval = tfit$p.value[,i],
-                             FullAnnot = ann, minsize = min,
-                             maxsize = max, GS.list = symbol,
-                             GS.idtype = "SYMBOL", parallel = TRUE,
-                             BPPARAM = MulticoreParam(workers = 10)),
-                   silent = TRUE)
+                             FullAnnot = ann, minsize = minsz,
+                             maxsize = maxsz, GS.list = symbol,
+                             GS.idtype = "SYMBOL"), silent = TRUE)
 
     } else if (method == "ora"){
         out <- try(methylRRA(cpg.pval = tfit$p.value[,i],
-                             method = "ORA", FullAnnot = ann, minsize = min,
-                             maxsize = max, GS.list = symbol,
+                             method = "ORA", FullAnnot = ann, minsize = minsz,
+                             maxsize = maxsz, GS.list = symbol,
                              GS.idtype = "SYMBOL"), silent = TRUE)
 
     } else if (method == "gsea") {
         out <- try(methylRRA(cpg.pval = tfit$p.value[,i],
-                             method = "GSEA", FullAnnot = ann, minsize = min,
-                             maxsize = max, GS.list = symbol,
+                             method = "GSEA", FullAnnot = ann, minsize = minsz,
+                             maxsize = maxsz, GS.list = symbol,
                              GS.idtype = "SYMBOL"), silent = TRUE)
 
     }
@@ -75,7 +73,7 @@ for(i in 1:ncol(tfit$contrasts)){
         tmp <- data.frame(ID = NA, Size = NA, pvalue = NA, padj = NA,
                           method = method, time = as.numeric(runtime),
                           contrast = colnames(tfit$contrasts)[i],
-                          minsize = min, maxsize = max,
+                          minsize = minsz, maxsize = maxsz, error = out[1],
                           stringsAsFactors = FALSE)
 
     } else {
@@ -83,8 +81,9 @@ for(i in 1:ncol(tfit$contrasts)){
         tmp$method <- method
         tmp$time <- as.numeric(runtime)
         tmp$contrast <- colnames(tfit$contrasts)[i]
-        tmp$minsize <- min
-        tmp$maxsize <- max
+        tmp$minsize <- minsz
+        tmp$maxsize <- maxsz
+        tmp$error <- NA
         tmp <- data.frame(tmp, stringsAsFactors = FALSE)
 
     }
@@ -94,6 +93,6 @@ for(i in 1:ncol(tfit$contrasts)){
 }
 
 cat("Saving results\n")
-outFile <- glue::glue("{outDir}/{method}.{min}.{max}.rds")
+outFile <- glue::glue("{outDir}/{method}.{minsz}.{maxsz}.rds")
 saveRDS(result, file = outFile)
 cat("Results saved\n")

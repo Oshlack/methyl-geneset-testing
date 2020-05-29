@@ -27,10 +27,12 @@ for (method in methods) {
         cat(glue::glue("#SBATCH --output={outDir}/{method}.{min}.{max}.out"), "\n")
         cat(glue::glue("#SBATCH --error={outDir}/{method}.{min}.{max}.err"), "\n")
         cat("#SBATCH --time=12:00:00\n")
-        cat("#SBATCH --mem=16384\n")
-        if(method == "glm"){
-            cat(glue::glue("#SBATCH --ntasks=1"), "\n")
-            cat(glue::glue("#SBATCH --cpus-per-task=10"), "\n")
+        if(method == "gsea"){
+            cat("#SBATCH --mem=32767\n")
+
+        } else {
+            cat("#SBATCH --mem=16384\n")
+
         }
         cat("#\n")
         cat("module load R/3.6.0\n")
