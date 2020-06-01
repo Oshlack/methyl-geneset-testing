@@ -82,9 +82,9 @@ Identify differentially methylated regions using the DMRcate package.
 outFile <- here("data/dmrcate-results.rds")
 
 if(!file.exists(outFile)){
-  dmrList <- vector("list", ncol(fitSum))
+  dmrList <- vector("list", ncol(cont.matrix))
 
-  for(i in 1:ncol(fitSum)){
+  for(i in 1:ncol(cont.matrix)){
     cpgAnn <- cpg.annotate("array", mVals, what = "M", arraytype = "EPIC",
                            analysis.type = "differential", design = design, 
                            contrasts = TRUE, cont.matrix = cont.matrix, 
@@ -92,6 +92,8 @@ if(!file.exists(outFile)){
     dmrList[[i]] <- extractRanges(dmrcate(cpgAnn))
 
   }
+  
+  names(dmrList) <- colnames(cont.matrix)
   saveRDS(dmrList, file = outFile)
   
 } else {
@@ -528,6 +530,22 @@ p[[3]]
 grid.text(colnames(cont.matrix)[3],x = 0.65, y=0.95, gp=gpar(fontsize=16))
 ```
 
+### Effect of restricting B-cell vs NK probe-fdr CpGs by genomic region
+
+```{r}
+keep <- (abs(dmrList[[i]]$meandiff) > 0.1 & dmrList[[i]]$no.cpgs >=3)
+
+tmp <- topGSA(gometh(rownames(topTreat(tfit, coef = i, num = Inf, 
+                                       p.value = pval)), anno = anno, 
+                     array.type = "EPIC"), number = Inf)
+tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
+tmp$method <- "gometh-probe-fdr"
+tmp$contrast <- colnames(cont.matrix)[i]
+dmrGo <- bind_rows(dmrGo, tmp)
+```
+
+
+
 ## Effect of DMR cut offs i.e. num probes in region and absolute delta beta
 
 ```{r}
@@ -563,7 +581,7 @@ if(!file.exists(outFile)){
 }
 ```
 
-Examine effect of changing DMr parameter cut offs on gene set rankings of GO categories in "immune system process".
+Examine effect of changing DMR parameter cut offs on gene set rankings of GO categories in "immune system process".
 
 ```{r, fig.width=9}
 immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"), 
