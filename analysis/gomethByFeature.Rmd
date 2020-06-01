@@ -1,5 +1,6 @@
 ---
 title: 'Gene set testing for Illumina HumanMethylation Arrays'
+subtitle: "Restricting significant CpGs by genomic features"
 author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
@@ -9,14 +10,19 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 library(here)
+library(glue)
 library(limma)
 library(tidyverse)
 library(patchwork)
+if(packageVersion("missMethyl") != "1.21.5"){
+    devtools::install_github("Oshlack/missMethyl", ref = "genomic-features")
+}
+library(missMethyl)
 ```
 
-# Test selecting by genomic feature in gometh
+# Test restricting significant CpGs by genomic feature in gometh
 
 Load methylation blood cell comparison input data and annotation.
 
@@ -25,91 +31,237 @@ load(here("data/input.RData"))
 anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 ```
 
-Run gometh without and with restricting significant CpGs by genomic features.
+## Effect of restricting by genomic features on No. Sig. CpGs
 
-```{r}
-go <- NULL
+For this dataset and these comparisons, restricting the significant CpGs by genomic feature reduces their numbers more dramatically than changing the FDR threshold from 0.05 to 0.01.
+
+```{r, message=FALSE}
+flatAnn <- missMethyl:::.getFlatAnnotation("EPIC", anno = anno)
+
+dat <- NULL
 for(i in 1:ncol(tfit$contrasts)){
-    top <- topTreat(tfit, coef = i, number = 5000)
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = 5000)),
+                      cut = "Top 5000",
+                      features = "ALL",
+                      contrast = colnames(tfit$contrasts)[i],
+                      stringsAsFactors = FALSE)
+    dat <- bind_rows(dat, tmp)
     
-    feats <- "ALL"
-    tmp <- gometh(sig.cpg = rownames(top), all.cpg = rownames(tfit$coefficients), 
-                  collection = "GO", array.type = "EPIC", anno = anno,
-                  genomic.features = feats)
-    tmp <- topGSA(tmp, number = Inf)
-    tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
-    tmp <- rownames_to_column(tmp, var = "ID")
-    tmp$contrast <- colnames(tfit$contrasts)[i] 
-    tmp$features <- paste(feats,collapse = ".")
-    go <- bind_rows(go, tmp)
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
+                                               p.value = 0.05)),
+                      cut = "FDR < 0.05",
+                      features = "ALL",
+                      contrast = colnames(tfit$contrasts)[i],
+                      stringsAsFactors = FALSE)
+    dat <- bind_rows(dat, tmp)
     
-    feats <- c("TSS200","TSS1500","1stExon","5'UTR")
-    tmp <- gometh(sig.cpg = rownames(top), all.cpg = rownames(tfit$coefficients), 
-                  collection = "GO", array.type = "EPIC", anno = anno,
-                  genomic.features = feats)
-    tmp <- topGSA(tmp, number = Inf)
-    tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
-    tmp <- rownames_to_column(tmp, var = "ID")
-    tmp$contrast <- colnames(tfit$contrasts)[i] 
-    tmp$features <- paste(feats,collapse = ".")
-    go <- bind_rows(go, tmp)
+    feats <- c("TSS200","TSS1500","1stExon")
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
+                                               p.value = 0.05)),
+                      cut = "FDR < 0.05",
+                      features = paste(feats,collapse = "."),
+                      contrast = colnames(tfit$contrasts)[i],
+                      stringsAsFactors = FALSE)
+    tmp %>% filter(cpgs %in% flatAnn$cpg[flatAnn$group %in% feats]) -> tmp
+    dat <- bind_rows(dat, tmp)
     
     feats <- c("Body","ExonBnd")
-    tmp <- gometh(sig.cpg = rownames(top), all.cpg = rownames(tfit$coefficients), 
-                  collection = "GO", array.type = "EPIC", anno = anno,
-                  genomic.features = feats)
-    tmp <- topGSA(tmp, number = Inf)
-    tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
-    tmp <- rownames_to_column(tmp, var = "ID")
-    tmp$contrast <- colnames(tfit$contrasts)[i] 
-    tmp$features <- paste(feats,collapse = ".")
-    go <- bind_rows(go, tmp)
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
+                                               p.value = 0.05)),
+                      cut = "FDR < 0.05",                      
+                      features = paste(feats, collapse = "."),
+                      contrast = colnames(tfit$contrasts)[i],
+                      stringsAsFactors = FALSE)
+    tmp %>% filter(cpgs %in% flatAnn$cpg[flatAnn$group %in% feats]) -> tmp
+    dat <- bind_rows(dat, tmp)
+    
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
+                                               p.value = 0.01)),
+                      cut = "FDR < 0.01",
+                      features = "ALL",
+                      contrast = colnames(tfit$contrasts)[i],
+                      stringsAsFactors = FALSE)
+    dat <- bind_rows(dat, tmp)
+    
+    feats <- c("TSS200","TSS1500","1stExon")
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
+                                               p.value = 0.01)),
+                      cut = "FDR < 0.01",
+                      features = paste(feats,collapse = "."),
+                      contrast = colnames(tfit$contrasts)[i],
+                      stringsAsFactors = FALSE)
+    tmp %>% filter(cpgs %in% flatAnn$cpg[flatAnn$group %in% feats]) -> tmp
+    dat <- bind_rows(dat, tmp)
+    
+    feats <- c("Body","ExonBnd")
+    tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
+                                               p.value = 0.01)),
+                      cut = "FDR < 0.01",                      
+                      features = paste(feats, collapse = "."),
+                      contrast = colnames(tfit$contrasts)[i],
+                      stringsAsFactors = FALSE)
+    tmp %>% filter(cpgs %in% flatAnn$cpg[flatAnn$group %in% feats]) -> tmp
+    dat <- bind_rows(dat, tmp)
+}
+
+dat %>% mutate(method = paste(features, cut, sep=".")) %>% 
+    group_by(contrast, method) %>% tally() -> sub
+
+ggplot(sub, aes(x = method, y = n, fill = method)) +
+    geom_bar(stat = "identity", show.legend = FALSE) +
+    facet_wrap(vars(contrast)) + 
+    labs(fill = "Method", y = "No. significant CpGs", x = "Method") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Run gometh without and with restricting significant CpGs by genomic features. Examine imact on geneset testing results of restricting Cpgs significant at FDR < 0.05 to only certain genomic features. 
+
+```{r}
+outFile <- here("data/genomic-feature-go.rds")
+
+if(!file.exists(outFile)){
+    go <- NULL
+    
+    for(i in 1:ncol(tfit$contrasts)){
+        top <- topTreat(tfit, coef = i, number = 5000)
+        
+        feats <- "ALL"
+        tmp <- gometh(sig.cpg = rownames(top), 
+                      all.cpg = rownames(tfit$coefficients), 
+                      collection = "GO", array.type = "EPIC", anno = anno,
+                      genomic.features = feats)
+        tmp <- topGSA(tmp, number = Inf)
+        tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+        tmp <- rownames_to_column(tmp, var = "ID")
+        tmp$contrast <- colnames(tfit$contrasts)[i] 
+        tmp$features <- paste(feats,collapse = ".")
+        tmp$cut <- "Top 5000"
+        go <- bind_rows(go, tmp)
+        
+        feats <- "ALL"
+        tmp <- gometh(sig.cpg = rownames(topTreat(tfit, coef = i, number = Inf,
+                                                  p.value = 0.05)), 
+                      all.cpg = rownames(tfit$coefficients), 
+                      collection = "GO", array.type = "EPIC", anno = anno,
+                      genomic.features = feats)
+        tmp <- topGSA(tmp, number = Inf)
+        tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+        tmp <- rownames_to_column(tmp, var = "ID")
+        tmp$contrast <- colnames(tfit$contrasts)[i] 
+        tmp$features <- paste(feats,collapse = ".")
+        tmp$cut <- "FDR < 0.05"
+        go <- bind_rows(go, tmp)
+        
+        feats <- c("TSS200","TSS1500","1stExon")
+        tmp <- gometh(sig.cpg = rownames(topTreat(tfit, coef = i, number = Inf,
+                                                  p.value = 0.05)), 
+                      all.cpg = rownames(tfit$coefficients), 
+                      collection = "GO", array.type = "EPIC", anno = anno,
+                      genomic.features = feats)
+        tmp <- topGSA(tmp, number = Inf)
+        tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+        tmp <- rownames_to_column(tmp, var = "ID")
+        tmp$contrast <- colnames(tfit$contrasts)[i] 
+        tmp$features <- paste(feats,collapse = ".")
+        tmp$cut <- "FDR < 0.05"
+        go <- bind_rows(go, tmp)
+        
+        feats <- c("Body","ExonBnd")
+        tmp <- gometh(sig.cpg = rownames(topTreat(tfit, coef = i, number = Inf,
+                                                  p.value = 0.05)), 
+                      all.cpg = rownames(tfit$coefficients), 
+                      collection = "GO", array.type = "EPIC", anno = anno,
+                      genomic.features = feats)
+        tmp <- topGSA(tmp, number = Inf)
+        tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+        tmp <- rownames_to_column(tmp, var = "ID")
+        tmp$contrast <- colnames(tfit$contrasts)[i] 
+        tmp$features <- paste(feats,collapse = ".")
+        tmp$cut <- "FDR < 0.05"
+        go <- bind_rows(go, tmp)
+        
+    }
+    saveRDS(go, file = outFile)
+    
+} else {
+    go <- readRDS(outFile)
+    
 }
 ```
 
+## Gene set testing results with/without restriction by genomic feature 
+
 ```{r}
-inFile <- here("data/dmrcate-go.rds")
-dmrGo <- readRDS(inFile)
+immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"), 
+                            stringsAsFactors = FALSE, header = FALSE, 
+                            col.names = "GOID"))
+
+go %>% mutate(method = paste(cut, features, sep="; ")) %>% 
+    arrange(contrast, method, P.DE) %>%
+    group_by(contrast, method) %>%
+    mutate(csum = cumsum(ID %in% immuneGO$GOID)) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> dat
+
+p <- ggplot(dat, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
+    theme(legend.position = "bottom", 
+          legend.text = element_text(size = 8)) +
+    guides(col = guide_legend(nrow = 2))
+p
 ```
 
 ```{r}
-inFile <- here("data/dmrcate-results.rds")
-dmrList <- readRDS(inFile)
-load(here("data/input.RData"))
-anno <- loadAnnotation("EPIC")
+immuneGO <- readRDS(here("data/RNAseq-GO.rds"))
+immuneGO %>% group_by(contrast) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> topSets
 
-keep <- (abs(dmrList$BcellvNK$meandiff) > 0.1 & dmrList$BcellvNK$no.cpgs >=3)
+go %>% mutate(method = paste(cut, features, sep="; ")) %>%
+    arrange(contrast, method, P.DE) %>%
+    group_by(contrast, method) %>%
+    mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
+    mutate(rank = 1:n()) %>%
+    filter(rank <= 100) -> sub
 
-tmp <- topGSA(gometh(rownames(topTreat(tfit, coef = "BcellvNK", num = Inf, 
-                                       p.value = 0.05)), anno = anno, 
-                     array.type = "EPIC"), number = Inf, )
-tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
-tmp$method <- "gometh-probe-fdr"
-tmp$contrast <- "BcellvNK"
-dmrGo <- bind_rows(dmrGo, tmp)
+p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3) +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Method", x = "Rank", 
+         y = glue("Cumulative no. RNAseq sets")) +
+    theme(legend.position = "bottom", 
+          legend.text = element_text(size = 8)) +
+    guides(col = guide_legend(nrow = 2))
+p
 ```
 
-Plot results.
+Examine what the top 10 ranked gene sets are and how many genes they contain, for each approach and comparison.
 
 ```{r, fig.height=11, fig.width=6}
-go %>% group_by(contrast, features) %>%
+go %>% mutate(method = paste(cut, features, sep="; ")) %>% 
+    arrange(contrast, method, P.DE) %>%
+    group_by(contrast, method) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 10) -> sub
 
-p <- vector("list", length(unique(sub$contrast)) * length(unique(sub$features)))
+p <- vector("list", length(unique(sub$contrast)) * length(unique(sub$method)))
 i = 1
 for(cont in unique(sub$contrast)){
     c = 1
-    for(feat in unique(sub$features)){
-        tmp <- sub %>% filter(contrast == cont & features == feat) %>%
+    for(meth in unique(sub$method)){
+        tmp <- sub %>% filter(contrast == cont & method == meth) %>%
             mutate(rank = factor(rank), 
                    rank = factor(rank, levels = rev(levels(rank))))
         
         p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
             geom_point(aes(size = N), alpha = 0.5, 
-                colour = scales::hue_pal()(length(unique(sub$features)))[c]) +
+                colour = scales::hue_pal()(length(unique(sub$method)))[c]) +
             scale_y_discrete(labels = rev(tmp$TERM)) +
-            labs(y = "", size = "No. genes", title = feat) +
+            labs(y = "", size = "No. genes", title = meth) +
             theme(axis.text.y = element_text(size = 6),
                   plot.title = element_text(size = 8),
                   legend.position = "right", 
@@ -118,20 +270,20 @@ for(cont in unique(sub$contrast)){
                   legend.title = element_text(size = 8),
                   axis.text.x = element_text(size = 6),
                   axis.title.x = element_text(size = 8)) + 
-            coord_cartesian(xlim = c(-log10(0.99), -log10(10^-100))) +
+            coord_cartesian(xlim = c(-log10(0.99), -log10(10^-30))) +
             geom_vline(xintercept = -log10(0.05), linetype = "dashed")
         i = i + 1
         c = c + 1
     }
 }
 
-(p[[1]] / p[[2]] / p[[3]]) + 
+(p[[1]] / p[[2]] / p[[3]] / p[[4]]) + 
     plot_annotation(title = unique(sub$contrast)[1],
                     theme = theme(plot.title = element_text(size = 10))) 
-(p[[4]] / p[[5]] / p[[6]]) + 
+(p[[5]] / p[[6]] / p[[7]] / p[[8]]) + 
     plot_annotation(title = unique(sub$contrast)[2],
                     theme = theme(plot.title = element_text(size = 10))) 
-(p[[7]] / p[[8]] / p[[9]]) + 
+(p[[9]] / p[[10]] / p[[11]] / p[[12]]) + 
     plot_annotation(title = unique(sub$contrast)[3],
                     theme = theme(plot.title = element_text(size = 10))) 
 ```

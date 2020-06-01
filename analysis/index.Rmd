@@ -46,6 +46,11 @@ Analysis
 8. [Evaluate GOregion](regionAnalysis.html)
     * Evalulate GOregion, our extension of gometh for geneset testing of 
       differentially methylated regions (DMRs) identified by DMR finding software.
+
+9. [Restricting Sig. CpGs in GOmeth by genomic region](gomethByFeature.html)
+    * Evalulate the impact of on gene set testing using GOmeth of restricting 
+      significant CpGs based on genomic feature using the EPIC sorted blood cell 
+      dataset.
       
 Licenses
 --------
