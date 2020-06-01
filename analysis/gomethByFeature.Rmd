@@ -67,6 +67,28 @@ for(i in 1:ncol(tfit$contrasts)){
 }
 ```
 
+```{r}
+inFile <- here("data/dmrcate-go.rds")
+dmrGo <- readRDS(inFile)
+```
+
+```{r}
+inFile <- here("data/dmrcate-results.rds")
+dmrList <- readRDS(inFile)
+load(here("data/input.RData"))
+anno <- loadAnnotation("EPIC")
+
+keep <- (abs(dmrList$BcellvNK$meandiff) > 0.1 & dmrList$BcellvNK$no.cpgs >=3)
+
+tmp <- topGSA(gometh(rownames(topTreat(tfit, coef = "BcellvNK", num = Inf, 
+                                       p.value = 0.05)), anno = anno, 
+                     array.type = "EPIC"), number = Inf, )
+tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
+tmp$method <- "gometh-probe-fdr"
+tmp$contrast <- "BcellvNK"
+dmrGo <- bind_rows(dmrGo, tmp)
+```
+
 Plot results.
 
 ```{r, fig.height=11, fig.width=6}
