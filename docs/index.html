@@ -325,7 +325,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-05-29
+<strong>Last updated:</strong> 2020-06-01
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -356,30 +356,35 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree49cf1670562da834f16a26dd224cc38fb074216atargetblank49cf167a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/49cf1670562da834f16a26dd224cc38fb074216a" target="_blank">49cf167</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree4e771035387622cad43bb9ebd7c6a8327c36efdctargetblank4e77103a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/4e771035387622cad43bb9ebd7c6a8327c36efdc" target="_blank">4e77103</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree49cf1670562da834f16a26dd224cc38fb074216atargetblank49cf167a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree4e771035387622cad43bb9ebd7c6a8327c36efdctargetblank4e77103a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/49cf1670562da834f16a26dd224cc38fb074216a" target="_blank">49cf167</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/4e771035387622cad43bb9ebd7c6a8327c36efdc" target="_blank">4e77103</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
+    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    code/.job/
     Ignored:    code/old/
     Ignored:    data/
+    Ignored:    output/.DS_Store
+    Ignored:    output/450K.rds
+    Ignored:    output/CD4vCD8.GO.csv
+    Ignored:    output/CD4vCD8.KEGG.csv
+    Ignored:    output/EPIC.rds
     Ignored:    output/FDR-analysis/
     Ignored:    output/compare-methods/
-    Ignored:    output/methylgsa-params/
     Ignored:    output/random-cpg-sims/
 
 </code></pre>
@@ -419,6 +424,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/4e771035387622cad43bb9ebd7c6a8327c36efdc/analysis/index.Rmd" target="_blank">4e77103</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-06-01
+</td>
+<td>
+wflow_publish(c(“analysis/index.Rmd”, “analysis/gomethByFeature.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/922496602738ae496a3b3caff5183b0c0fd4140e/docs/index.html" target="_blank">9224966</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-29
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -701,6 +740,10 @@ Start workflowr project.
 <li><a href="regionAnalysis.html">Evaluate GOregion</a>
 <ul>
 <li>Evalulate GOregion, our extension of gometh for geneset testing of differentially methylated regions (DMRs) identified by DMR finding software.</li>
+</ul></li>
+<li><a href="gomethByFeature.html">Restricting Sig. CpGs in GOmeth by genomic region</a>
+<ul>
+<li>Evalulate the impact of on gene set testing using GOmeth of restricting significant CpGs based on genomic feature using the EPIC sorted blood cell dataset.</li>
 </ul></li>
 </ol>
 </div>
