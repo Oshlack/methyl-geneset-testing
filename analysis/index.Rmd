@@ -52,6 +52,15 @@ Analysis
       significant CpGs based on genomic feature using the EPIC sorted blood cell 
       dataset.
       
+```{r}
+library(glue)
+prefix <- "https://atlassian.petermac.org.au/bitbucket/pages/OS/methyl-geneset-testing/master/browse/output/"
+fig <- "Fig-1A.pdf"
+link <- glue("{prefix}{fig}")
+```
+
+[Figure 1A](`r cat(link)`)
+
 Licenses
 --------
 
