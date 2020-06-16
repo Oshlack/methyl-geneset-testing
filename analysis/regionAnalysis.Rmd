@@ -187,7 +187,8 @@ immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"),
                             col.names = "GOID"))
 
 dmrGo %>% arrange(contrast, method, P.DE) %>%
-    filter(method %in% c("goana", "goregion-gometh", "goregion-hgt")) %>%
+    filter(method %in% c("goana", "goregion-gometh")) %>%
+    mutate(method = unname((dict[method]))) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
     mutate(rank = 1:n()) %>%
@@ -198,7 +199,8 @@ p <- ggplot(dat, aes(x = rank, y = csum, colour = method)) +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -209,7 +211,6 @@ immuneGO %>% group_by(contrast) %>%
     filter(rank <= 100) -> topSets
     
 dat %>% arrange(contrast, method, P.DE) %>%
-    filter(method %in% c("goana", "goregion-gometh", "goregion-hgt")) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
@@ -221,20 +222,20 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", 
          y = glue("Cumulative no. RNAseq sets")) +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
-```{r, fig.height=9, fig.width=6}
+```{r, fig.height=7, fig.width=6}
 terms <- missMethyl:::.getGO()$idTable
 nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList, 
                                                    length)), 
                              var = "ID")
 
 dat %>% arrange(contrast, method, P.DE) %>%
-    filter(method %in% c("goana", "goregion-gometh", "goregion-hgt")) %>%
     group_by(contrast, method) %>%
     mutate(FDR = p.adjust(P.DE, method = "BH")) %>%
     filter(rank <= 10) %>% 
@@ -252,7 +253,7 @@ for(cont in unique(sub$contrast)){
         
         p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
             geom_point(aes(size = n), alpha = 0.5, 
-                colour = scales::hue_pal()(length(unique(sub$method)))[c]) +
+                colour = methodCols[meth]) +
             scale_y_discrete(labels = rev(tmp$TERM)) +
             labs(y = "", size = "No. genes", title = meth) +
             theme(axis.text.y = element_text(size = 6),
@@ -270,13 +271,13 @@ for(cont in unique(sub$contrast)){
     }
 }
 
-(p[[1]] / p[[2]] / p[[3]]) + 
+(p[[1]] / p[[2]]) + 
     plot_annotation(title = unique(sub$contrast)[1],
                     theme = theme(plot.title = element_text(size = 10))) 
-(p[[4]] / p[[5]] / p[[6]]) + 
+(p[[3]] / p[[4]]) + 
     plot_annotation(title = unique(sub$contrast)[2],
                     theme = theme(plot.title = element_text(size = 10))) 
-(p[[7]] / p[[8]] / p[[9]]) + 
+(p[[5]] / p[[6]]) + 
     plot_annotation(title = unique(sub$contrast)[3],
                     theme = theme(plot.title = element_text(size = 10))) 
 ```
@@ -291,6 +292,7 @@ immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"),
 dmrGo %>% arrange(contrast, method, P.DE) %>%
     filter(method %in% c("goregion-gometh", "gometh-probe-top", 
                          "gometh-probe-fdr")) %>%
+    mutate(method = unname((dict[method]))) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
     mutate(rank = 1:n()) %>%
@@ -301,7 +303,8 @@ p <- ggplot(dat, aes(x = rank, y = csum, colour = method)) +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -312,8 +315,6 @@ immuneGO %>% group_by(contrast) %>%
     filter(rank <= 100) -> topSets
     
 dat %>% arrange(contrast, method, P.DE) %>%
-    filter(method %in% c("goregion-gometh", "gometh-probe-top", 
-                         "gometh-probe-fdr")) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% topSets$ID[topSets$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
@@ -325,7 +326,8 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", 
          y = glue("Cumulative no. RNAseq sets")) +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -338,8 +340,6 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList,
                              var = "ID")
 
 dat %>% arrange(contrast, method, P.DE) %>%
-    filter(method %in% c("goregion-gometh", "gometh-probe-top", 
-                         "gometh-probe-fdr")) %>%
     group_by(contrast, method) %>%
     mutate(FDR = p.adjust(P.DE, method = "BH")) %>%
     filter(rank <= 10) %>% 
@@ -357,7 +357,7 @@ for(cont in unique(sub$contrast)){
         
         p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
             geom_point(aes(size = n), alpha = 0.5, 
-                colour = scales::hue_pal()(length(unique(sub$method)))[c]) +
+                colour = methodCols[meth]) +
             scale_y_discrete(labels = rev(tmp$TERM)) +
             labs(y = "", size = "No. genes", title = meth) +
             theme(axis.text.y = element_text(size = 6),
@@ -401,33 +401,38 @@ for(i in 1:ncol(cont.matrix)){
     
     overlaps <- findOverlaps(cpgs, dmrList[[i]][keep,])
     tmp <- data.frame(cpgs = cpgs$name[from(overlaps)],
-                      method = "dmrcate", 
+                      method = "DMRcate", 
                       contrast = colnames(cont.matrix)[i],
                       stringsAsFactors = FALSE)
     dat <- bind_rows(dat, tmp)
     
     tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = 5000)),
-                      method = "probe-top",
+                      method = "Top 5000",
                       contrast = colnames(cont.matrix)[i],
                       stringsAsFactors = FALSE)
     dat <- bind_rows(dat, tmp)
     
     tmp <- data.frame(cpgs = rownames(topTreat(tfit, coef = i, num = Inf, 
                                                p.value = pval)),
-                      method = "probe-fdr",
+                      method = "FDR < 0.05",
                       contrast = colnames(cont.matrix)[i],
                       stringsAsFactors = FALSE)
     dat <- bind_rows(dat, tmp)
     
 }
 
-dat %>% group_by(contrast, method) %>% tally() -> sub
+dat %>% group_by(contrast, method) %>% 
+    tally() -> sub
 
+selectCols <- c("#ff6b97", "#48bf8e", "#a41415")
+names(selectCols) <- unique(dat$method)
+    
 ggplot(sub, aes(x = method, y = n, fill = method)) +
     geom_bar(stat = "identity", show.legend = FALSE) +
     facet_wrap(vars(contrast)) + 
-    labs(fill = "Method", y = "No. significant CpGs", x = "Method") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    labs(y = "No. significant CpGs", x = "Sig. CpGs selected using") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) + 
+    scale_fill_manual(values = selectCols)
 ```
 
 ```{r}
@@ -443,8 +448,9 @@ dat %>% group_by(contrast, method) %>%
 ggplot(sub, aes(x = method, y = n, fill = method)) +
     geom_bar(stat = "identity", show.legend = FALSE) +
     facet_wrap(vars(contrast)) + 
-    labs(fill = "Method", y = "No. genes with sig. CpGs", x = "Method") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    labs(y = "No. genes with sig. CpGs", x = "Sig. CpGs selected using") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    scale_fill_manual(values = selectCols)
 ```
 
 ```{r}
@@ -458,8 +464,9 @@ dat %>% group_by(contrast, method) %>%
 ggplot(sub, aes(x = method, y = prop, fill = method)) +
     geom_bar(stat = "identity", show.legend = FALSE) +
     facet_wrap(vars(contrast)) + 
-    labs(fill = "Method", y = "Prop. sig. CpGs mapped to genes", x = "Method") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    labs(y = "Prop. sig. CpGs mapped to genes", x = "Sig. CpGs selected using") + 
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    scale_fill_manual(values = selectCols)
 ```
 
 ```{r, fig.height=7, fig.width=6}
@@ -473,9 +480,10 @@ dat %>% group_by(contrast, method) %>%
 ggplot(sub, aes(x = group, y = n, fill = method)) +
     geom_bar(stat = "identity", position = "dodge") +
     facet_wrap(vars(contrast), nrow = 3, ncol = 1, scales = "free_y") + 
-    labs(fill = "Method", y = "No. sig. CpGs mapped to genomic features", 
+    labs(fill = "Sig. CpGs selected using", y = "No. sig. CpGs mapped to genomic features", 
          x = "Feature") + 
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+    scale_fill_manual(values = selectCols)
 ```
 
 ## CpG overlap between region-wise and probe-wise approaches
@@ -488,9 +496,10 @@ p <- vector("list", ncol(cont.matrix))
 for(i in 1:ncol(cont.matrix)){
     dat %>% filter(contrast == colnames(cont.matrix)[i]) -> tmp
     tmp <- split(tmp$cpgs, f = tmp$method)
-    p[[i]] <- upset(fromList(tmp), order.by = "freq", keep.order = TRUE, 
-               sets = names(tmp), sets.bar.color = c("#f46864", "#25b138", 
-                                                     "#5495fc"))
+    p[[i]] <- upset(fromList(tmp), keep.order = TRUE, sets = sort(names(tmp)), 
+                    sets.bar.color = unname(selectCols[sort(names(tmp))]),
+                    order.by = "freq", 
+                    sets.x.label = "No. significant CpGs")
     
 }
 
@@ -516,9 +525,10 @@ for(i in 1:ncol(cont.matrix)){
         distinct() -> tmp
 
     tmp <- split(tmp$entrezid, f = tmp$method)
-    p[[i]] <- upset(fromList(tmp), order.by = "freq", keep.order = TRUE, 
-               sets = names(tmp), sets.bar.color = c("#f46864", "#25b138", 
-                                                     "#5495fc"))
+    p[[i]] <- upset(fromList(tmp), keep.order = TRUE, sets = sort(names(tmp)), 
+                    sets.bar.color = unname(selectCols[sort(names(tmp))]),
+                    order.by = "freq", 
+                    sets.x.label = "No. genes with sig. CpGs")
     
 }
 
@@ -529,22 +539,6 @@ grid.text(colnames(cont.matrix)[2],x = 0.65, y=0.95, gp=gpar(fontsize=16))
 p[[3]]
 grid.text(colnames(cont.matrix)[3],x = 0.65, y=0.95, gp=gpar(fontsize=16))
 ```
-
-### Effect of restricting B-cell vs NK probe-fdr CpGs by genomic region
-
-```{r}
-keep <- (abs(dmrList[[i]]$meandiff) > 0.1 & dmrList[[i]]$no.cpgs >=3)
-
-tmp <- topGSA(gometh(rownames(topTreat(tfit, coef = i, num = Inf, 
-                                       p.value = pval)), anno = anno, 
-                     array.type = "EPIC"), number = Inf)
-tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
-tmp$method <- "gometh-probe-fdr"
-tmp$contrast <- colnames(cont.matrix)[i]
-dmrGo <- bind_rows(dmrGo, tmp)
-```
-
-
 
 ## Effect of DMR cut offs i.e. num probes in region and absolute delta beta
 
@@ -566,7 +560,7 @@ if(!file.exists(outFile)){
                                        array.type = "EPIC"), 
                               number = Inf)
                 tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
-                tmp$params <- glue("|Beta| = {j}; No. CpGs = {k}")
+                tmp$params <- glue("|\u0394\u03B2| = {j}; #CpGs = {k}")
                 tmp$contrast <- colnames(cont.matrix)[i]
                 dmrParams <- bind_rows(dmrParams, tmp)
             }

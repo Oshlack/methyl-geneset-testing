@@ -125,15 +125,19 @@ if(file.exists(inFile)) dat <- as_tibble(readRDS(inFile))
 The plots below shows that MethylGSA-ORA does not control the false discovery rate very well as the median proportion of p-value 0.05 for the 100 simulations is greater than 0.5. MethylGSA-GSEA does better, although its median false discovery rate is still relatively high at around 0.25. MethylGSA-GLM has good false discovery rate control with median FDR at around 0.05. ChAMP-ebGSEA is only slightly anti-conservative using both the wicox test (WT) and known population median test (KPMT) with a median FDR at around 0.06-0.08. MissMethyl-gometh is very consistent although somewhat conservative with a median FDR at around 0.02-0.03. 
 
 ```{r, fig.width=9}  
-dat %>% group_by(simNo, sampleNo, method) %>%
-  summarise(psig = sum(pvalue < 0.05)/length(pvalue)) -> psigData
+dat %>% mutate(method = unname(dict[method])) %>%
+    group_by(simNo, sampleNo, method) %>% 
+    summarise(psig = sum(pvalue < 0.05)/length(pvalue)) %>%
+    mutate(sampleOrd = as.integer(sampleNo)) -> sigDat
 
-p <- ggplot(psigData, aes(x = sampleNo, y = psig, fill = method)) + 
+p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig, 
+                          fill = method)) +
     geom_violin(scale = "width", width = 0.8)
-p + stat_summary(geom = "point", size = 1, color = "white", 
+p + stat_summary(geom = "point", size = 1, color = "white",
                  position = position_dodge(0.8),
                  show.legend = FALSE, fun = median) +
-  geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
-  labs(y="Prop. gene sets with p-value < 0.05", x="No. samples",
-       fill="Method")
+    geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
+    labs(y="Prop. gene sets with p-value < 0.05", x="No. samples per group",
+         fill="Method") +
+    scale_fill_manual(values = methodCols)
 ```

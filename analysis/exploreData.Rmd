@@ -37,13 +37,13 @@ We are using publicly available EPIC data [GSE110554](https://www.ncbi.nlm.nih.g
 # load data
 dataFile <- here("data/GSE110554-data.RData")
 if(file.exists(dataFile)){
-  # load processed data and sample information
-  load(dataFile)
+    # load processed data and sample information
+    load(dataFile)
 } else {
-  # get data from experiment hub, normalise, filter and save objects
-  readData(dataFile)
-  # load processed data and sample information
-  load(dataFile)
+    # get data from experiment hub, normalise, filter and save objects
+    readData(dataFile)
+    # load processed data and sample information
+    load(dataFile)
 }
 ```
 
@@ -53,8 +53,9 @@ if(file.exists(dataFile)){
 # plot mean detection p-values across all samples
 dat <- tibble::tibble(mean = colMeans(detP), cellType = targets$CellType)
 ggplot(dat, aes(y = mean, x = cellType, fill = cellType)) +
-  geom_bar(stat = "identity") +
-  labs(fill = "Cell Type")
+    geom_bar(stat = "identity") +
+    labs(fill = "Cell Type") +
+    scale_fill_brewer(palette = "Dark2")
 ```
 
 ```{r}
@@ -66,8 +67,9 @@ dat <- dplyr::bind_cols(dat, cellType = rep(targets$CellType,
                                             each = nrow(bVals)))
 
 ggplot(dat, aes(x = bVal, colour = cellType)) +
-  geom_density() +
-  labs(colour = "Cell Type")
+    geom_density() +
+    labs(colour = "Cell Type") +
+    scale_color_brewer(palette = "Dark2")
 ```
 
 ```{r}
@@ -76,8 +78,9 @@ p <- plotMDS(getM(fltGr), top=1000, gene.selection="common", plot = FALSE)
 dat <- tibble::tibble(x = p$x, y = p$y, cellType = targets$CellType)
 
 ggplot(dat, aes(x = x, y = y, colour = cellType)) +
-  geom_point() +
-  labs(colour = "Cell Type")
+    geom_point() +
+    labs(colour = "Cell Type") +
+    scale_colour_brewer(palette = "Dark2")
 ```
 
 MDS plots using *only* the CpGs that map to genes.
@@ -91,8 +94,9 @@ p <- plotMDS(geneM, top=1000, gene.selection="common", plot = FALSE)
 dat <- tibble::tibble(x = p$x, y = p$y, cellType = targets$CellType)
 
 ggplot(dat, aes(x = x, y = y, colour = cellType)) +
-  geom_point() +
-  labs(colour = "Cell Type")
+    geom_point() +
+    labs(colour = "Cell Type") +
+    scale_colour_brewer(palette = "Dark2")
 ```
 
 # Statistical analysis
@@ -214,9 +218,10 @@ dat <- as_tibble(dplyr::bind_rows(res))
 ```
 
 ```{r}
-sub <- dat %>% filter(method %in% c("mmethyl.hgt", "mmethyl.gometh"))
+dat %>% filter(grepl("mmethyl", method)) %>%
+    mutate(method = unname(dict[method])) -> subDat
 
-ggplot(sub, aes(x = pvalue, colour = sub)) +
+ggplot(subDat, aes(x = pvalue, colour = sub)) +
     geom_density() +
     facet_grid(cols = vars(contrast), rows = vars(method)) +
     labs(colour = "Sig. CpG Selection", x = "P-value", y = "Density") +
@@ -238,6 +243,7 @@ cpgEgGo %>%
 
 dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>% 
     inner_join(medCpgEgGo, by = c("ID" = "GO")) -> sub
 
 bins <- rbin_quantiles(sub, ID, med, bins = 12)
@@ -258,7 +264,9 @@ p <- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = method)) +
                                    size = 7),
         legend.position = "bottom") +
   labs(x = "Med. No. CpGs per Gene per GO Cat. (binned)",
-       y = "Prop. GO Cat. with p-value < 0.05")
+       y = "Prop. GO Cat. with p-value < 0.05",
+       colour = "Method") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -271,6 +279,7 @@ immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"),
 
 dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(ID %in% immuneGO$GOID)) %>% 
@@ -282,7 +291,8 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -296,6 +306,7 @@ immuneGO %>% group_by(contrast) %>%
     
 dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
@@ -308,7 +319,8 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", 
          y = glue("Cumulative no. RNAseq sets")) +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -322,6 +334,7 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList,
 
 dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(FDR = p.adjust(pvalue, method = "BH")) %>%
@@ -341,7 +354,7 @@ for(cont in unique(sub$contrast)){
         
         p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
             geom_point(aes(size = n), alpha = 0.5, 
-                colour = scales::hue_pal()(length(unique(sub$method)))[c]) +
+                colour = methodCols[meth]) +
             scale_y_discrete(labels = rev(tmp$TERM)) +
             labs(y = "", size = "No. genes", title = meth) +
             theme(axis.text.y = element_text(size = 6),
@@ -374,13 +387,15 @@ P-value histograms for the different methods for all contrasts on GO categories.
 
 ```{r, fig.height=8, fig.width=7}
 dat %>% filter(set == "GO") %>%
-    filter(sub %in% c("n","c1")) -> sub 
+    filter(sub %in% c("n","c1")) %>%
+    mutate(method = unname(dict[method])) -> subDat 
     
-ggplot(sub, aes(pvalue, fill = method)) +
+ggplot(subDat, aes(pvalue, fill = method)) +
     geom_histogram(binwidth = 0.025) +
     facet_grid(cols = vars(contrast), rows = vars(method)) +
     theme(legend.position = "bottom") +
-    labs(x = "P-value", y = "Frequency", fill = "Method")
+    labs(x = "P-value", y = "Frequency", fill = "Method") +
+    scale_fill_manual(values = methodCols)
 ```
 
 ### Compare gometh results using different DM CpG significance cutoffs
@@ -391,7 +406,8 @@ immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"),
                             col.names = "GOID"))
 
 dat %>% filter(set == "GO") %>%
-    filter(grepl("mmethyl", method)) %>% 
+    filter(grepl("mmethyl", method)) %>%
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
     mutate(csum = cumsum(ID %in% immuneGO$GOID)) %>% 
@@ -417,7 +433,8 @@ immuneGO %>% group_by(contrast) %>%
     filter(rank <= 100) -> topSets
 
 dat %>% filter(set == "GO") %>%
-    filter(grepl("mmethyl", method)) %>% 
+    filter(grepl("mmethyl", method)) %>%
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
     mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
@@ -451,6 +468,7 @@ immuneKEGG$PID <- paste0("path:hsa0",immuneKEGG$ID)
 
 dat %>% filter(set == "KEGG") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(ID %in% immuneKEGG$PID)) %>%
@@ -462,7 +480,8 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -475,7 +494,8 @@ immuneKEGG %>% group_by(contrast) %>%
     filter(rank <= 100) -> topSets
 
 dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) %>% 
+    filter(sub %in% c("n","c1")) %>%
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(ID %in% topSets$PID[topSets$contrast %in% contrast])) %>%
@@ -487,7 +507,8 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") + 
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -501,6 +522,7 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getKEGG()$idLis
 
 dat %>% filter(set == "KEGG") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(FDR = p.adjust(pvalue, method = "BH")) %>%
@@ -520,7 +542,7 @@ for(cont in unique(sub$contrast)){
         
         p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
             geom_point(aes(size = n), alpha = 0.5, 
-                colour = scales::hue_pal()(length(unique(sub$method)))[c]) +
+                colour = methodCols[meth]) +
             scale_y_discrete(labels = rev(tmp$Description)) +
             labs(y = "", size = "No. genes", title = meth) +
             theme(axis.text.y = element_text(size = 6),
@@ -553,13 +575,15 @@ P-value histograms for the different methods for all contrasts on KEGG pathways.
 
 ```{r, fig.height=8, fig.width=7}
 dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) -> sub 
+    filter(sub %in% c("n","c1")) %>%
+    mutate(method = unname(dict[method])) -> subDat 
     
-ggplot(sub, aes(pvalue, fill = method)) +
+ggplot(subDat, aes(pvalue, fill = method)) +
     geom_histogram(binwidth = 0.025) +
     facet_grid(cols = vars(contrast), rows = vars(method)) +
     theme(legend.position = "bottom") +
-    labs(x = "P-value", y = "Frequency", fill = "Method")
+    labs(x = "P-value", y = "Frequency", fill = "Method") +
+    scale_fill_manual(values = methodCols)
 ```
 
 ### Compare gometh results using different DM CpG significance cutoffs
@@ -572,6 +596,7 @@ immuneKEGG$PID <- paste0("path:hsa0",immuneKEGG$ID)
 
 dat %>% filter(set == "KEGG") %>%
     filter(grepl("mmethyl", method)) %>% 
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
     mutate(csum = cumsum(ID %in% immuneKEGG$PID)) %>% 
@@ -598,6 +623,7 @@ immuneKEGG %>% group_by(contrast) %>%
 
 dat %>% filter(set == "KEGG") %>%
     filter(grepl("mmethyl", method)) %>% 
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
     mutate(csum = cumsum(ID %in% topSets$PID[topSets$contrast %in% contrast])) %>%
@@ -630,6 +656,7 @@ immuneBROAD %>% group_by(contrast) %>%
 
 dat %>% filter(set == "BROAD") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
@@ -641,7 +668,8 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -655,6 +683,7 @@ immuneBROAD %>% group_by(contrast) %>%
 
 dat %>% filter(set == "BROAD") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
@@ -666,7 +695,8 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
-    theme(legend.position = "bottom")
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols)
 p
 ```
 
@@ -678,6 +708,7 @@ nGenes <- rownames_to_column(data.frame(n = sapply(PathwayList,
 
 dat %>% filter(set == "BROAD") %>%
     filter(sub %in% c("n","c1")) %>% 
+    mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
     mutate(FDR = p.adjust(pvalue, method = "BH")) %>%
@@ -696,7 +727,7 @@ for(cont in unique(sub$contrast)){
         
         p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
             geom_point(aes(size = n), alpha = 0.5, 
-                colour = scales::hue_pal()(length(unique(sub$method)))[c]) +
+                colour = methodCols[meth]) +
             scale_y_discrete(labels = rev(tmp$ID)) +
             labs(y = "", size = "No. genes", title = meth) +
             theme(axis.text.y = element_text(size = 6),
@@ -728,13 +759,15 @@ P-value histograms for the different methods for all contrasts on BROAD gene set
 
 ```{r, fig.height=10, fig.width=7}
 dat %>% filter(set == "BROAD") %>%
-    filter(sub %in% c("n","c1")) -> sub 
+    filter(sub %in% c("n","c1")) %>%
+    mutate(method = unname(dict[method])) -> subDat 
     
-ggplot(sub, aes(pvalue, fill = method)) +
+ggplot(subDat, aes(pvalue, fill = method)) +
     geom_histogram(binwidth = 0.025) +
     facet_grid(cols = vars(contrast), rows = vars(method)) +
     theme(legend.position = "bottom") +
-    labs(x = "P-value", y = "Frequency", fill = "Method")
+    labs(x = "P-value", y = "Frequency", fill = "Method") +
+    scale_fill_manual(values = methodCols)
 ```
 
 ### Compare gometh results using different DM CpG significance cutoffs
@@ -747,6 +780,7 @@ immuneBROAD %>% group_by(contrast) %>%
 
 dat %>% filter(set == "BROAD") %>%
     filter(grepl("mmethyl", method)) %>% 
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
     mutate(csum = cumsum(ID %in% topSets$ID)) %>% 
@@ -773,6 +807,7 @@ immuneBROAD %>% group_by(contrast) %>%
 
 dat %>% filter(set == "BROAD") %>%
     filter(grepl("mmethyl", method)) %>% 
+    mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
     mutate(csum = cumsum(ID %in% topSets$ID)) %>% 

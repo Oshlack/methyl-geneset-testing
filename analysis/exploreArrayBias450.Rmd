@@ -134,16 +134,18 @@ The following boxplots show what proportion of the 100 simulations, at each leve
 
 ```{r}
 dat <- readRDS(here("output/random-cpg-sims/450K.rds"))
-#dat$noCpgs <- factor(dat$noCpgs, levels = c(50, 100, 500, 1000, 5000, 10000))
 
-dat %>% group_by(simNo, noCpgs, method) %>% 
-  summarise(pSig = sum(P.DE < 0.05)/length(P.DE)) -> sigDat
+dat %>% filter(method %in% names(dict)) %>%
+    mutate(method = unname(dict[method])) %>%
+    group_by(simNo, noCpgs, method) %>% 
+    summarise(pSig = sum(P.DE < 0.05)/length(P.DE)) -> sigDat
 
 p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) + 
-  geom_violin() +
-  geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
-  labs(y="Prop. GO cat. with p-value < 0.05", x="No. randomly sampled CpGs",
-       fill="Method")
+    geom_violin() +
+    geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
+    labs(y="Prop. GO cat. with p-value < 0.05", x="No. randomly sampled CpGs",
+         fill="Method") +
+    scale_fill_manual(values = methodCols)
 p
 ```
 
@@ -153,41 +155,47 @@ QQ plots of randomly selected simulations at each level of CpGs sampled.
 set.seed(42)
 s <- sample(1:100, 3)
 dat %>% filter(simNo %in% s) %>%
-  arrange(simNo, noCpgs, method, P.DE) %>%
-  group_by(simNo, noCpgs, method) %>%
-  mutate(exp = 1:n()/n()) -> subDat
+    filter(method %in% names(dict)) %>%
+    mutate(method = unname(dict[method])) %>%
+    arrange(simNo, noCpgs, method, P.DE) %>%
+    group_by(simNo, noCpgs, method) %>%
+    mutate(exp = 1:n()/n()) -> subDat
 
 p <- ggplot(subDat, aes(x=-log10(exp), y=-log10(P.DE), color=method)) + 
-  geom_point(shape = 1, size = 0.5) + 
-  facet_grid(noCpgs ~ simNo, scales = "free_y")
+    geom_point(shape = 1, size = 0.5) + 
+    facet_grid(noCpgs ~ simNo, scales = "free_y") +
+    scale_color_manual(values = methodCols)
 
 p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
-            linetype="dashed", color = "black") +
-  labs(y=expression(Observed~~-log[10](italic(p))), 
-       x=expression(Expected~~-log[10](italic(p))),
-       color="Method") +
-  theme(legend.position="bottom", strip.text.x = element_blank()) 
+              linetype="dashed", color = "black") +
+    labs(y=expression(Observed~~-log[10](italic(p))), 
+         x=expression(Expected~~-log[10](italic(p))),
+         color="Method") +
+    theme(legend.position="bottom", strip.text.x = element_blank())
 ```
 
 Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.
 
 ```{r}
-dat %>% filter(P.DE < 0.05) -> sigDat
 goFreq <- as_tibble(unique(cpgEgGo[,c("GO","Freq")]))
 
-sigDat %>% inner_join(goFreq, by=c("GO" = "GO")) %>%
-  group_by(simNo, noCpgs, method, GO) %>%
-  summarise(avgFreq=mean(Freq)) %>% 
-  group_by(simNo, noCpgs, method) %>%
-  summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
+dat %>% filter(method %in% names(dict)) %>%
+    mutate(method = unname(dict[method])) %>% 
+    filter(P.DE < 0.05) %>%
+    inner_join(goFreq, by=c("GO" = "GO")) %>%
+    group_by(simNo, noCpgs, method, GO) %>%
+    summarise(avgFreq=mean(Freq)) %>% 
+    group_by(simNo, noCpgs, method) %>%
+    summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
 
 p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
-  geom_violin()
+    geom_violin()
 p + stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
-                show.legend = FALSE, fun = median) +
-  labs(y="Median avg. no. CpGs/gene/GO cat.", 
-       x="No. randomly sampled CpGs",
-       fill="Adj. type")
+                 show.legend = FALSE, fun = median) +
+    labs(y="Median avg. no. CpGs/gene/GO cat.", 
+         x="No. randomly sampled CpGs",
+         fill="Method")  +
+    scale_fill_manual(values = methodCols)
 ```
 
 
