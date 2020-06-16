@@ -275,3 +275,41 @@ gsaseq <- function(sig.de, universe, collection, plot.bias=FALSE,
     graphics::lines(stats::lowess(avgbias,propDM),col=4,lwd=2)
 }
 
+methodPal <- c("#a0e85b",
+               "#154e56",
+               "#61cab8",
+               "#218841",
+               "#bfd6fa",
+               "#333a9e",
+               "#5794d7",
+               "#996ddb",
+               "#a113b2",
+               "#e9b4f5",
+               "#a1085c",
+               "#f75ef0")
+
+dict <- c("mgsa.glm" = "mGLM",
+          "mgsa.ora" = "mRRA (ORA)",
+          "mgsa.gsea" = "mRRA (GSEA)",
+          "champ.wt" = "ebGSEA (WT)",
+          "champ.kpmt" = "ebGSEA (KPMT)",
+          "hgt" = "HGT",
+          "hgt.cpg" = "HGT-mod",
+          "hgt.cpg.fc.ec" = "GOmeth",
+          "goregion-gometh" = "GOregion",
+          "goana" = "HGT",
+          "mmethyl.gm1000" = "GOmeth (1000)",
+          "mmethyl.gm5000" = "GOmeth (5000)",
+          "mmethyl.gometh" = "GOmeth",
+          "mmethyl.hgt" = "HGT",
+          "gometh" = "GOmeth",
+          "champ.ebgsea" = "ebGSEA",
+          "mgsa.glm.3" = "mGLM",
+          "mgsa.glm.6" = "mGLM",
+          "mgsa.glm.3" = "mGLM",
+          "gometh-probe-top" = "GOmeth (5000)",
+          "gometh-probe-fdr" = "GOmeth (FDR < 0.05)")
+
+methodCols <- methodPal[c(1,2,3,5,6,7,8,12,9,7,11,12,12,7,
+                          12,5,1,1,1,12,10,9,12,10)]
+names(methodCols) <- unname(dict)
