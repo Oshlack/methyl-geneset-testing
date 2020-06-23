@@ -72,16 +72,31 @@ ggplot(dat, aes(x = bVal, colour = cellType)) +
     scale_color_brewer(palette = "Dark2")
 ```
 
+### Figure 4A {.tabset}
+#### View
 ```{r}
 # MDS plots to look at largest sources of variation
 p <- plotMDS(getM(fltGr), top=1000, gene.selection="common", plot = FALSE)
 dat <- tibble::tibble(x = p$x, y = p$y, cellType = targets$CellType)
 
-ggplot(dat, aes(x = x, y = y, colour = cellType)) +
-    geom_point() +
-    labs(colour = "Cell Type") +
-    scale_colour_brewer(palette = "Dark2")
+p <- ggplot(dat, aes(x = x, y = y, colour = cellType)) +
+    geom_point(size = 3) +
+    labs(colour = "Cell type") +
+    scale_colour_brewer(palette = "Dark2") +
+    labs(x = "Principal component 1", y = "Principal component 2")
+p
 ```
+
+#### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/Fig-4A.pdf")
+
+pdf(file = fig, width = 9)
+p
+dev.off()
+```
+
+### {-}
 
 MDS plots using *only* the CpGs that map to genes.
 
@@ -94,7 +109,7 @@ p <- plotMDS(geneM, top=1000, gene.selection="common", plot = FALSE)
 dat <- tibble::tibble(x = p$x, y = p$y, cellType = targets$CellType)
 
 ggplot(dat, aes(x = x, y = y, colour = cellType)) +
-    geom_point() +
+    geom_point(size = 3) +
     labs(colour = "Cell Type") +
     scale_colour_brewer(palette = "Dark2")
 ```
@@ -127,7 +142,29 @@ fitSum <- summary(decideTests(tfit, p.value = pval))
 fitSum
 ```
 
-```{r, fig.height=6, fig.width=7}
+## Figure 1B {.tabset}
+### View
+
+```{r}
+tmp <- gometh(rownames(topTreat(tfit, coef = "CD4vCD8", num = 5000)), 
+              anno = ann, array.type = "EPIC", plot.bias = TRUE)
+```
+
+### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/Fig-1B.pdf")
+
+pdf(file = fig, width = 9)
+tmp <- gometh(rownames(topTreat(tfit, coef = "CD4vCD8", num = 5000)), 
+              anno = ann, array.type = "EPIC", plot.bias = TRUE)
+dev.off()
+```
+
+## {-}
+
+How correlated is differential methylation with differential expression for the same contrasts (same cell types but not identical samples)?
+
+```{r, fig.height=6, fig.width=7, warning=FALSE, message=FALSE}
 rfit <- readRDS(here("data/rnaseq-fit.rds"))
 rdat <- rownames_to_column(data.frame(rfit$coefficients), var = "gene_id")
 
@@ -168,16 +205,30 @@ ggplot(dat, aes(x = coef, y = coefficient, colour = colour)) +
          y = "Gene expression Log FC", color = "Diff. Gene Exp.")
 ```
 
+## Supp. Figure X1
+### View
 Examine only the independent contrasts.
 
 ```{r}
 dat <- melt(fitSum[rownames(fitSum) != "NotSig", ])
 colnames(dat) <- c("dir","comp","num")
 
-ggplot(dat, aes(x = comp, y = num, fill = dir)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  labs(x = "Comparison", y = "No. DM CpGs (FDR < 0.05)", fill = "Direction")
+p <- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(x = "Comparison", y = "No. DM CpGs (FDR < 0.05)", fill = "Direction") +
+    scale_fill_brewer(palette = "Set1", direction = -1)
+p
 ```
+### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/SFig-X1.pdf")
+
+pdf(file = fig, width = 9)
+p
+dev.off()
+```
+
+## {-}
 
 ## Compare performance of different gene set testing methods
 
@@ -236,6 +287,9 @@ ggplot(subDat, aes(x = pvalue, colour = sub)) +
 cpgEgGo <- cpgsEgGoFreqs(flatAnn)
 ```
 
+### Supp. Figure X2
+#### View
+
 ```{r, fig.width=7}
 cpgEgGo %>% 
   group_by(GO) %>%
@@ -257,7 +311,7 @@ sub %>% group_by(contrast, method, bin) %>%
   summarise(prop = sum(pvalue < 0.05)/n()) -> pdat
 
 p <- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = method)) +
-  geom_line() +
+  geom_line(size = 1.25) +
   facet_wrap(vars(contrast), ncol = 3) +
   scale_x_continuous(breaks = as.numeric(levels(pdat$bin)), labels = binLabs) +
   theme(axis.text.x = element_text(angle=45, hjust = 1, vjust = 1,
@@ -269,6 +323,17 @@ p <- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = method)) +
     scale_color_manual(values = methodCols)
 p
 ```
+
+#### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/SFig-X2.pdf")
+
+pdf(file = fig, width = 9)
+p
+dev.off()
+```
+
+### {-}
 
 As we are comparing immune cells, we expect GO categories related to the immune system and its processes to be highly ranked. To evalue this, we downloaded all of the child terms for the GO category "immune system process" (GO:002376) from AminGO 2;  [http://amigo.geneontology.org/amigo/term/GO:0002376](http://amigo.geneontology.org/amigo/term/GO:0002376). 
 
@@ -299,17 +364,17 @@ p
 Examine results when top ranked 100 GO terms from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
 ```{r, fig.width=7}
-immuneGO <- readRDS(here("data/RNAseq-GO.rds"))
-immuneGO %>% group_by(contrast) %>%
+rnaseqGO <- readRDS(here("data/RNAseq-GO.rds"))
+rnaseqGO %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topSets
+    filter(rank <= 100) -> topGOSets
     
 dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
     mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
+    mutate(csum = cumsum(ID %in% topGOSets$ID[topGOSets$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> sub
 
@@ -317,16 +382,88 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
     facet_wrap(vars(contrast), ncol=3) +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", 
+    labs(colou = "Method", x = "Rank", 
          y = glue("Cumulative no. RNAseq sets")) +
     theme(legend.position = "bottom") +
     scale_color_manual(values = methodCols)
 p
 ```
 
+### Figure 4B, Supp. Figure 4B, Supp. Figure 5B {.tabset}
+#### View
+
+```{r}
+p <- vector("list", length(unique(dat$contrast)))
+
+for(i in 1:length(unique(dat$contrast))){
+    cont <- sort(unique(dat$contrast))[i]
+    
+    dat %>% filter(set == "GO") %>%
+        filter(sub %in% c("n","c1")) %>%
+        filter(contrast == cont) %>%
+        mutate(method = unname(dict[method])) %>% 
+        arrange(method, pvalue) %>%
+        group_by(method) %>%
+        mutate(rank = 1:n()) %>%
+        filter(rank <= 100) %>%
+        summarise(prop = sum(ID %in% immuneGO$GOID)/n()) %>%
+        mutate(truth = "ISP Terms") -> immuneSum
+    
+    dat %>% filter(set == "GO") %>%
+        filter(sub %in% c("n","c1")) %>%
+        filter(contrast == cont) %>%
+        mutate(method = unname(dict[method])) %>% 
+        arrange(method, pvalue) %>%
+        group_by(method) %>%
+        mutate(rank = 1:n()) %>%
+        filter(rank <= 100) %>%
+        summarise(prop = sum(ID %in% topGOSets$ID[topGOSets$contrast %in% 
+                                                      cont])/n()) %>%
+        mutate(truth = "RNAseq Terms") -> rnaseqSum
+    
+    truthSum <- bind_rows(immuneSum, rnaseqSum)
+    
+    p[[i]] <- ggplot(truthSum, aes(x = truth, y = prop, fill = method)) + 
+        geom_bar(stat = "identity", position = "dodge") +
+        labs(fill = "Method", 
+             x = "Truth set", 
+             y = "Prop. 'truth' terms in top 100") +
+        scale_fill_manual(values = methodCols) +
+        ggtitle(cont)
+}
+
+p[[1]]
+p[[2]]
+p[[3]]
+```
+
+#### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/Fig-4B.pdf")
+
+pdf(file = fig, width = 9)
+p[[1]]
+dev.off()
+
+fig <- here("output/SFig-4B.pdf")
+
+pdf(file = fig, width = 9)
+p[[2]]
+dev.off()
+
+fig <- here("output/SFig-5B.pdf")
+
+pdf(file = fig, width = 9)
+p[[3]]
+dev.off()
+```
+
+### Figure 4C-G, Supp. Figure 4C-G, Supp Figure 5C-G {.tabset}
+#### View
+
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
-```{r, fig.height=11, fig.width=6}
+```{r, fig.height=7, fig.width=9}
 terms <- missMethyl:::.getGO()$idTable
 nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList, 
                                                    length)), 
@@ -343,45 +480,74 @@ dat %>% filter(set == "GO") %>%
     inner_join(terms, by = c("ID" = "GOID")) %>%
     inner_join(nGenes) -> sub
 
-p <- vector("list", length(unique(sub$contrast)) * length(unique(sub$method)))
-i = 1
-for(cont in unique(sub$contrast)){
-    c = 1
-    for(meth in unique(sub$method)){
-        tmp <- sub %>% filter(contrast == cont & method == meth) %>%
-            mutate(rank = factor(rank), 
-                   rank = factor(rank, levels = rev(levels(rank))))
+p <- vector("list", length(unique(sub$contrast)))
+for(i in 1:length(unique(sub$contrast))){
+    cont <- sort(unique(sub$contrast))[i]
+    sub %>% filter(contrast == cont) %>%
+        arrange(method, -rank) %>%
+        ungroup() %>%
+        mutate(idx = as.factor(1:n())) -> tmp
+    
+    ord <- unlist(lapply(1:length(unique(tmp$method)), function(i){
+        c((i*10):(i*10-9))
+    }))
+    termLabs <- substr(tmp$TERM[ord], 1, 50)
+    names(termLabs) <- tmp$idx[ord]
+    
+    rnaTruth <- tmp$ID[ord] %in% topGOSets$ID[topGOSets$contrast %in% cont]
+    ispTruth <- tmp$ID[ord] %in% immuneGO$GOID
+    sumTruth <- rnaTruth + ispTruth
+    
+    truthCol <- ifelse(sumTruth == 2, "purple", 
+                       ifelse(sumTruth == 1 & rnaTruth == 1, "red",
+                              ifelse(sumTruth == 1 & ispTruth == 1, "blue", 
+                                     "black")))
         
-        p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
-            geom_point(aes(size = n), alpha = 0.5, 
-                colour = methodCols[meth]) +
-            scale_y_discrete(labels = rev(tmp$TERM)) +
-            labs(y = "", size = "No. genes", title = meth) +
-            theme(axis.text.y = element_text(size = 6),
-                  plot.title = element_text(size = 8),
-                  legend.position = "right", 
-                  legend.key.size = unit(0.25, "cm"),
-                  legend.text = element_text(size = 6),
-                  legend.title = element_text(size = 8),
-                  axis.text.x = element_text(size = 6),
-                  axis.title.x = element_text(size = 8)) + 
-            coord_cartesian(xlim = c(-log10(0.99), -log10(10^-100))) +
-            geom_vline(xintercept = -log10(0.05), linetype = "dashed")
-        i = i + 1
-        c = c + 1
-    }
+    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx)) +
+        geom_point(aes(size = n), alpha = 0.8, 
+                   colour = methodCols[tmp$method]) +
+        scale_size(limits = c(min(sub$n), max(sub$n))) +
+        facet_wrap(vars(method), ncol = 2, scales = "free") +
+        scale_y_discrete(labels = termLabs) +
+        labs(y = "", size = "No. genes") +
+        theme(axis.text.y = element_text(size = 8),
+              plot.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 10),
+              axis.text.x = element_text(size = 8),
+              axis.title.x = element_text(size = 10)) +
+        geom_vline(xintercept = -log10(0.05), linetype = "dashed") +
+        ggtitle(cont)  
 }
 
-(p[[1]] / p[[2]] / p[[3]] / p[[4]] / p[[5]]) + 
-    plot_annotation(title = unique(sub$contrast)[1],
-                    theme = theme(plot.title = element_text(size = 10))) 
-(p[[6]] / p[[7]] / p[[8]] / p[[9]] / p[[10]]) + 
-    plot_annotation(title = unique(sub$contrast)[2],
-                    theme = theme(plot.title = element_text(size = 10))) 
-(p[[11]] / p[[12]] / p[[13]] / p[[14]] / p[[15]]) + 
-    plot_annotation(title = unique(sub$contrast)[3],
-                    theme = theme(plot.title = element_text(size = 10))) 
+p[[1]]
+p[[2]]
+p[[3]]
 ```
+
+#### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/Fig-4C-G.pdf")
+
+pdf(file = fig, width = 9)
+p[[1]]
+dev.off()
+
+fig <- here("output/SFig-4C-G.pdf")
+
+pdf(file = fig, width = 9)
+p[[2]]
+dev.off()
+
+fig <- here("output/SFig-5C-G.pdf")
+
+pdf(file = fig, width = 9)
+p[[3]]
+dev.off()
+```
+
+### {-}
 
 P-value histograms for the different methods for all contrasts on GO categories.
 
@@ -401,10 +567,6 @@ ggplot(subDat, aes(pvalue, fill = method)) +
 ### Compare gometh results using different DM CpG significance cutoffs
 
 ```{r, fig.width=7, fig.height=8}
-immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"),
-                            stringsAsFactors = FALSE, header = FALSE,
-                            col.names = "GOID"))
-
 dat %>% filter(set == "GO") %>%
     filter(grepl("mmethyl", method)) %>%
     mutate(method = unname(dict[method])) %>%
@@ -427,17 +589,13 @@ p
 ```
 
 ```{r, fig.width=7, fig.height=8}
-immuneGO <- readRDS(here("data/RNAseq-GO.rds"))
-immuneGO %>% group_by(contrast) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topSets
-
 dat %>% filter(set == "GO") %>%
     filter(grepl("mmethyl", method)) %>%
     mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
-    mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
+    mutate(csum = cumsum(ID %in% topGOSets$ID[topGOSets$contrast %in% 
+                                                  contrast])) %>%
     mutate(rank = 1:n()) %>%
     mutate(cut = ifelse(sub == "c1", "Top 5000", 
                         ifelse(sub == "c2", "Top 10000",
@@ -488,17 +646,17 @@ p
 Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
 ```{r, fig.width=7}
-immuneKEGG <- readRDS(here("data/RNAseq-KEGG.rds"))
-immuneKEGG %>% group_by(contrast) %>%
+rnaseqKEGG <- readRDS(here("data/RNAseq-KEGG.rds"))
+rnaseqKEGG %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topSets
+    filter(rank <= 100) -> topKEGG
 
 dat %>% filter(set == "KEGG") %>%
     filter(sub %in% c("n","c1")) %>%
     mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% topSets$PID[topSets$contrast %in% contrast])) %>%
+    mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> sub
 
@@ -514,7 +672,7 @@ p
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
-```{r, fig.height=11, fig.width=6}
+```{r, fig.height=7, fig.width=9}
 terms <- missMethyl:::.getKEGG()$idTable
 nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getKEGG()$idList, 
                                                    length)), 
@@ -531,45 +689,41 @@ dat %>% filter(set == "KEGG") %>%
     inner_join(terms, by = c("ID" = "PathwayID")) %>%
     inner_join(nGenes) -> sub
 
-p <- vector("list", length(unique(sub$contrast)) * length(unique(sub$method)))
-i = 1
-for(cont in unique(sub$contrast)){
-    c = 1
-    for(meth in unique(sub$method)){
-        tmp <- sub %>% filter(contrast == cont & method == meth) %>%
-            mutate(rank = factor(rank), 
-                   rank = factor(rank, levels = rev(levels(rank))))
-        
-        p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
-            geom_point(aes(size = n), alpha = 0.5, 
-                colour = methodCols[meth]) +
-            scale_y_discrete(labels = rev(tmp$Description)) +
-            labs(y = "", size = "No. genes", title = meth) +
-            theme(axis.text.y = element_text(size = 6),
-                  plot.title = element_text(size = 8),
-                  legend.position = "right", 
-                  legend.key.size = unit(0.25, "cm"),
-                  legend.text = element_text(size = 6),
-                  legend.title = element_text(size = 8),
-                  axis.text.x = element_text(size = 6),
-                  axis.title.x = element_text(size = 8)) + 
-            coord_cartesian(xlim = c(-log10(0.99), -log10(10^-15))) +
-            geom_vline(xintercept = -log10(0.05), linetype = "dashed")
-        i = i + 1
-        c = c + 1
-    }
+p <- vector("list", length(unique(sub$contrast)))
+for(i in 1:length(unique(sub$contrast))){
+    cont <- unique(sub$contrast)[i]
+    sub %>% filter(contrast == cont) %>%
+        arrange(method, -rank) %>%
+        ungroup() %>%
+        mutate(idx = as.factor(1:n())) -> tmp
+    
+    ord <- unlist(lapply(1:length(unique(tmp$method)), function(i){
+        c((i*10):(i*10-9))
+    }))
+    termLabs <- substr(tmp$Description[ord], 1, 50)
+    names(termLabs) <- tmp$idx[ord]
+    
+    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx)) +
+        geom_point(aes(size = n), alpha = 0.8, colour = methodCols[tmp$method]) +
+        facet_wrap(vars(method), ncol = 2, scales = "free") +
+        scale_y_discrete(labels = termLabs) +
+        labs(y = "", size = "No. genes") +
+        theme(axis.text.y = element_text(size = 8),
+              plot.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 10),
+              axis.text.x = element_text(size = 8),
+              axis.title.x = element_text(size = 10)) +
+        geom_vline(xintercept = -log10(0.05), linetype = "dashed") +
+        ggtitle(cont)  
 }
 
-(p[[1]] / p[[2]] / p[[3]] / p[[4]] / p[[5]]) + 
-    plot_annotation(title = unique(sub$contrast)[1],
-                    theme = theme(plot.title = element_text(size = 10))) 
-(p[[6]] / p[[7]] / p[[8]] / p[[9]] / p[[10]]) + 
-    plot_annotation(title = unique(sub$contrast)[2],
-                    theme = theme(plot.title = element_text(size = 10))) 
-(p[[11]] / p[[12]] / p[[13]] / p[[14]] / p[[15]]) + 
-    plot_annotation(title = unique(sub$contrast)[3],
-                    theme = theme(plot.title = element_text(size = 10))) 
+p[[1]]
+p[[2]]
+p[[3]]
 ```
+
 
 P-value histograms for the different methods for all contrasts on KEGG pathways.
 
@@ -589,11 +743,6 @@ ggplot(subDat, aes(pvalue, fill = method)) +
 ### Compare gometh results using different DM CpG significance cutoffs
 
 ```{r, fig.width=7, fig.height=8}
-immuneKEGG <- read.csv(here("data/kegg-immune-related-pathways.csv"), 
-                            stringsAsFactors = FALSE, header = FALSE, 
-                            col.names = c("ID","pathway"))
-immuneKEGG$PID <- paste0("path:hsa0",immuneKEGG$ID)
-
 dat %>% filter(set == "KEGG") %>%
     filter(grepl("mmethyl", method)) %>% 
     mutate(method = unname(dict[method])) %>%
@@ -616,17 +765,12 @@ p
 ```
 
 ```{r, fig.width=7, fig.height=8}
-immuneKEGG <- readRDS(here("data/RNAseq-KEGG.rds"))
-immuneKEGG %>% group_by(contrast) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topSets
-
 dat %>% filter(set == "KEGG") %>%
     filter(grepl("mmethyl", method)) %>% 
     mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
-    mutate(csum = cumsum(ID %in% topSets$PID[topSets$contrast %in% contrast])) %>%
+    mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
     mutate(cut = ifelse(sub == "c1", "Top 5000", 
                         ifelse(sub == "c2", "Top 10000",
@@ -646,20 +790,20 @@ p
 
 ## Test BROAD gene sets
 
-As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. We are using the top 100 ranked gene sets as identified by `camera` analysis of the corresponding RNAseq data as "truth".
+As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. Using the top 100 ranked gene sets as identified by Belinda's `gsaseq` analysis of the corresponding RNAseq data as "truth".
 
 ```{r, fig.width=7}
-immuneBROAD <- readRDS(here("data/RNAseq-BROAD.rds"))
-immuneBROAD %>% group_by(contrast) %>%
+rnaseqBROAD <- readRDS(here("data/RNAseq-BROAD-GSA.rds"))
+rnaseqBROAD %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topSets
+    filter(rank <= 100) -> topBROAD
 
 dat %>% filter(set == "BROAD") %>%
     filter(sub %in% c("n","c1")) %>% 
     mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
+    mutate(csum = cumsum(ID %in% topBROAD$ID[topBROAD$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> sub
 
@@ -673,34 +817,65 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
 p
 ```
 
-Using the top 100 ranked gene sets as identified by Belinda's `gsaseq` analysis of the corresponding RNAseq data as "truth".
+### Supp. Figure 6A, Supp. Figure 7A, Supp. Figure 8A {.tabset}
+#### View
 
-```{r, fig.width=7}
-immuneBROAD <- readRDS(here("data/RNAseq-BROAD-GSA.rds"))
-immuneBROAD %>% group_by(contrast) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topSets
+```{r}
+p <- vector("list", length(unique(dat$contrast)))
 
-dat %>% filter(set == "BROAD") %>%
-    filter(sub %in% c("n","c1")) %>% 
-    mutate(method = unname(dict[method])) %>% 
-    arrange(contrast, method, pvalue) %>%
-    group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% topSets$ID[topSets$contrast %in% contrast])) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> sub
+for(i in 1:length(unique(dat$contrast))){
+    cont <- sort(unique(dat$contrast))[i]
+    
+    dat %>% filter(set == "BROAD") %>%
+        filter(sub %in% c("n","c1")) %>%
+        filter(contrast == cont) %>%
+        mutate(method = unname(dict[method])) %>% 
+        arrange(method, pvalue) %>%
+        group_by(method) %>%
+        mutate(rank = 1:n()) %>%
+        filter(rank <= 100) %>%
+        summarise(prop = sum(ID %in% topBROAD$ID[topBROAD$contrast %in% cont])/n()) %>%
+        mutate(truth = "RNAseq Terms") -> rnaseqSum
+    
+    p[[i]] <- ggplot(rnaseqSum, aes(x = truth, y = prop, fill = method)) + 
+        geom_bar(stat = "identity", position = "dodge") +
+        labs(fill = "Method", 
+             x = "Truth set", 
+             y = "Prop. 'truth' terms in top 100") +
+        scale_fill_manual(values = methodCols) +
+        ggtitle(cont)
+}
 
-p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
-    geom_line() +
-    facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
-    geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
-    theme(legend.position = "bottom") +
-    scale_color_manual(values = methodCols)
-p
+p[[1]]
+p[[2]]
+p[[3]]
 ```
 
-```{r, fig.height=15, fig.width=8}
+#### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/SFig-6A.pdf")
+
+pdf(file = fig, width = 9)
+p[[1]]
+dev.off()
+
+fig <- here("output/SFig-7A.pdf")
+
+pdf(file = fig, width = 9)
+p[[2]]
+dev.off()
+
+fig <- here("output/SFig-8A.pdf")
+
+pdf(file = fig, width = 9)
+p[[3]]
+dev.off()
+```
+
+### Supp Figure 6B-F, 7B-F, 8B-F{.tabset}
+#### View
+
+```{r, fig.height=8, fig.width=9}
 data(PathwayList)
 nGenes <- rownames_to_column(data.frame(n = sapply(PathwayList, 
                                                    length)), 
@@ -716,45 +891,67 @@ dat %>% filter(set == "BROAD") %>%
     filter(rank <= 10) %>% 
     inner_join(nGenes) -> sub
 
-p <- vector("list", length(unique(sub$contrast)) * length(unique(sub$method)))
-i = 1
-for(cont in unique(sub$contrast)){
-    c = 1
-    for(meth in unique(sub$method)){
-        tmp <- sub %>% filter(contrast == cont & method == meth) %>%
-            mutate(rank = factor(rank), 
-                   rank = factor(rank, levels = rev(levels(rank))))
-        
-        p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = rank)) + 
-            geom_point(aes(size = n), alpha = 0.5, 
-                colour = methodCols[meth]) +
-            scale_y_discrete(labels = rev(tmp$ID)) +
-            labs(y = "", size = "No. genes", title = meth) +
-            theme(axis.text.y = element_text(size = 6),
-                  plot.title = element_text(size = 8),
-                  legend.position = "right", 
-                  legend.key.size = unit(0.25, "cm"),
-                  legend.text = element_text(size = 6),
-                  legend.title = element_text(size = 8),
-                  axis.text.x = element_text(size = 6),
-                  axis.title.x = element_text(size = 8)) + 
-            coord_cartesian(xlim = c(-log10(0.99), -log10(10^-100))) +
-            geom_vline(xintercept = -log10(0.05), linetype = "dashed")
-        i = i + 1
-        c = c + 1
-    }
+p <- vector("list", length(unique(sub$contrast)))
+for(i in 1:length(unique(sub$contrast))){
+    cont <- sort(unique(sub$contrast))[i]
+    sub %>% filter(contrast == cont) %>%
+        arrange(method, -rank) %>%
+        ungroup() %>%
+        mutate(idx = as.factor(1:n())) -> tmp
+    
+    ord <- unlist(lapply(1:length(unique(tmp$method)), function(i){
+        c((i*10):(i*10-9))
+    }))
+    termLabs <- substr(tmp$ID[ord], 1, 50)
+    names(termLabs) <- tmp$idx[ord]
+    
+    truthCol <- ifelse(termLabs %in% topBROAD$ID[topBROAD$contrast %in% cont]
+                       [1:100], "red", "black")
+    
+    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx)) +
+        geom_point(aes(size = n), alpha = 0.8, colour = methodCols[tmp$method]) +
+        facet_wrap(vars(method), ncol = 2, scales = "free") +
+        scale_y_discrete(labels = termLabs) +
+        labs(y = "", size = "No. genes") +
+        theme(axis.text.y = element_text(size = 6, colour = truthCol),
+              plot.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 10),
+              axis.text.x = element_text(size = 8),
+              axis.title.x = element_text(size = 10)) +
+        geom_vline(xintercept = -log10(0.05), linetype = "dashed") +
+        ggtitle(cont)  
 }
 
-(p[[1]] / p[[2]] / p[[3]] / p[[4]] / p[[5]] / p[[6]] / p[[7]]) + 
-    plot_annotation(title = unique(sub$contrast)[1],
-                    theme = theme(plot.title = element_text(size = 10))) 
-(p[[8]] / p[[9]] / p[[10]] / p[[11]] / p[[12]] / p[[13]] / p[[14]]) + 
-    plot_annotation(title = unique(sub$contrast)[2],
-                    theme = theme(plot.title = element_text(size = 10))) 
-(p[[15]] / p[[16]] / p[[17]] / p[[18]] / p[[19]] / p[[20]] / p[[21]]) + 
-    plot_annotation(title = unique(sub$contrast)[3],
-                    theme = theme(plot.title = element_text(size = 10))) 
+p[[1]]
+p[[2]]
+p[[3]]
 ```
+
+#### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/SFig-6B-F.pdf")
+
+pdf(file = fig, width = 9)
+p[[1]]
+dev.off()
+
+fig <- here("output/SFig-7B-F.pdf")
+
+pdf(file = fig, width = 9)
+p[[2]]
+dev.off()
+
+fig <- here("output/SFig-8B-F.pdf")
+
+pdf(file = fig, width = 9)
+p[[3]]
+dev.off()
+```
+
+### {-}
+
 P-value histograms for the different methods for all contrasts on BROAD gene sets.
 
 ```{r, fig.height=10, fig.width=7}
@@ -773,17 +970,12 @@ ggplot(subDat, aes(pvalue, fill = method)) +
 ### Compare gometh results using different DM CpG significance cutoffs
 
 ```{r, fig.width=7, fig.height=8}
-immuneBROAD <- readRDS(here("data/RNAseq-BROAD.rds"))
-immuneBROAD %>% group_by(contrast) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topSets
-
 dat %>% filter(set == "BROAD") %>%
     filter(grepl("mmethyl", method)) %>% 
     mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
-    mutate(csum = cumsum(ID %in% topSets$ID)) %>% 
+    mutate(csum = cumsum(ID %in% topBROAD$ID)) %>% 
     mutate(rank = 1:n()) %>%
     mutate(cut = ifelse(sub == "c1", "Top 5000", 
                         ifelse(sub == "c2", "Top 10000",
@@ -800,17 +992,12 @@ p
 ```
 
 ```{r, fig.width=7, fig.height=8}
-immuneBROAD <- readRDS(here("data/RNAseq-BROAD-GSA.rds"))
-immuneBROAD %>% group_by(contrast) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topSets
-
 dat %>% filter(set == "BROAD") %>%
     filter(grepl("mmethyl", method)) %>% 
     mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method, sub) %>%
-    mutate(csum = cumsum(ID %in% topSets$ID)) %>% 
+    mutate(csum = cumsum(ID %in% topBROAD$ID)) %>% 
     mutate(rank = 1:n()) %>%
     mutate(cut = ifelse(sub == "c1", "Top 5000", 
                         ifelse(sub == "c2", "Top 10000",
