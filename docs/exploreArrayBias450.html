@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
-<meta name="date" content="2020-05-19" />
+<meta name="date" content="2020-06-23" />
 
 <title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
@@ -381,7 +381,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
 <h3 class="subtitle">Exploring the biases on 450k arrays</h3>
 <h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
-<h4 class="date">May 19, 2020</h4>
+<h4 class="date">June 23, 2020</h4>
 
 </div>
 
@@ -406,7 +406,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-05-19
+<strong>Last updated:</strong> 2020-06-23
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -497,16 +497,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree63b001118e0fc05c673ae0a35fac7a0d85b5ca50targetblank63b0011a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/63b001118e0fc05c673ae0a35fac7a0d85b5ca50" target="_blank">63b0011</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreef6708bf273f9a5c27ef3b019d3ef133375101a24targetblankf6708bfa"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/f6708bf273f9a5c27ef3b019d3ef133375101a24" target="_blank">f6708bf</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree63b001118e0fc05c673ae0a35fac7a0d85b5ca50targetblank63b0011a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreef6708bf273f9a5c27ef3b019d3ef133375101a24targetblankf6708bfa" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/63b001118e0fc05c673ae0a35fac7a0d85b5ca50" target="_blank">63b0011</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/f6708bf273f9a5c27ef3b019d3ef133375101a24" target="_blank">f6708bf</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -519,8 +519,39 @@ Ignored files:
     Ignored:    code/old/
     Ignored:    data/
     Ignored:    output/FDR-analysis/
+    Ignored:    output/Fig-1A.pdf
+    Ignored:    output/Fig-1B.pdf
+    Ignored:    output/Fig-1C.pdf
+    Ignored:    output/Fig-1D.pdf
+    Ignored:    output/Fig-3A.pdf
+    Ignored:    output/Fig-3B.pdf
+    Ignored:    output/Fig-3C.pdf
+    Ignored:    output/Fig-3D.pdf
+    Ignored:    output/Fig-4A.pdf
+    Ignored:    output/Fig-4B.pdf
+    Ignored:    output/Fig-4C-G.pdf
+    Ignored:    output/SFig-1A.pdf
+    Ignored:    output/SFig-1B.pdf
+    Ignored:    output/SFig-3A.pdf
+    Ignored:    output/SFig-3B.pdf
+    Ignored:    output/SFig-4B.pdf
+    Ignored:    output/SFig-5B.pdf
+    Ignored:    output/SFig-6A.pdf
+    Ignored:    output/SFig-6B-F.pdf
+    Ignored:    output/SFig-7A.pdf
+    Ignored:    output/SFig-7B-F.pdf
+    Ignored:    output/SFig-8A.pdf
+    Ignored:    output/SFig-8B-F.pdf
+    Ignored:    output/SFig-X1.pdf
+    Ignored:    output/SFig-X2.pdf
     Ignored:    output/compare-methods/
+    Ignored:    output/methylgsa-params/
     Ignored:    output/random-cpg-sims/
+
+Unstaged changes:
+    Modified:   analysis/exploreData.Rmd
+    Modified:   analysis/fdrAnalysis.Rmd
+    Modified:   code/utility.R
 
 </code></pre>
 <p>
@@ -559,6 +590,57 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/f6708bf273f9a5c27ef3b019d3ef133375101a24/analysis/exploreArrayBias450.Rmd" target="_blank">f6708bf</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-06-23
+</td>
+<td>
+wflow_publish(c(“analysis/exploreArrayBias450.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/823b793c623dc12bb9f71222099ae26b07979770/analysis/exploreArrayBias450.Rmd" target="_blank">823b793</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-06-16
+</td>
+<td>
+UPdated analyses with label translation and new colour palette.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/22f00e9d6bf81a4a38a39d43ea7c4beaaa05b363/docs/exploreArrayBias450.html" target="_blank">22f00e9</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-19
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -693,50 +775,119 @@ source(here(&quot;code/utility.R&quot;))</code></pre>
 summary(numCpgsPerGene)</code></pre>
 <pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
    1.00   10.00   15.00   19.37   22.00 1299.00 </code></pre>
+<div id="supp.-figure-1a" class="section level3 tabset">
+<h3>Supp. Figure 1A</h3>
+<div id="view" class="section level4">
+<h4>View</h4>
 <pre class="r"><code>dat &lt;- data.frame(table(table(flatAnn$entrezid)))
+numCpgsPerGene &lt;- as.vector(table(flatAnn$entrezid))
 med &lt;- median(numCpgsPerGene)
 mod &lt;- getMode(numCpgsPerGene)
-  
-ggplot(dat, aes(x=Var1, y=Freq)) +
-  geom_segment(aes(x=Var1, xend=Var1, y=0, yend=Freq), color=&quot;darkgrey&quot;) +
-  geom_point( color=&quot;black&quot;, size=1) +
-  geom_vline(xintercept = med, linetype = &quot;dashed&quot;, color = &quot;red&quot;) +
-  annotate(&quot;text&quot;, x = med + 2, label=glue(&quot;median = {med}&quot;), y=700, colour=&quot;red&quot;, 
-            size = 3, hjust=&quot;left&quot;) +
-  geom_vline(xintercept = mod, linetype = &quot;dashed&quot;, color = &quot;blue&quot;) +
-  annotate(&quot;text&quot;, x = mod + 2, label=glue(&quot;mode = {mod}&quot;), y=760, colour=&quot;blue&quot;, 
-            size = 3, hjust=&quot;left&quot;) +
-  scale_x_discrete(breaks = c(1,10,20,30,45,55,70,80,90,100,120,135,150,160,180,
-                              200,215,250,330,429,1485)) +
-  theme(axis.text.x=element_text(angle=45, hjust=1)) +
-  xlab(&quot;No. CpGs per gene&quot;) +
-  ylab(&quot;Frequency&quot;)</code></pre>
-<p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+
+p &lt;- ggplot(dat, aes(x=Var1, y=Freq)) +
+    geom_segment(aes(x=Var1, xend=Var1, y=0, yend=Freq), color=&quot;darkgrey&quot;) +
+    geom_point( color=&quot;black&quot;, size=1) +
+    geom_vline(xintercept = med, linetype = &quot;dashed&quot;, color = &quot;red&quot;) +
+    annotate(&quot;text&quot;, x = med + 2, label=glue(&quot;median = {med}&quot;), y=720, 
+             colour=&quot;red&quot;, size = 3, hjust=&quot;left&quot;) +
+    geom_vline(xintercept = mod, linetype = &quot;dashed&quot;, color = &quot;red&quot;) +
+    annotate(&quot;text&quot;, x = mod + 2, label=glue(&quot;mode = {mod}&quot;), y=780, 
+             colour=&quot;red&quot;, size = 3, hjust=&quot;left&quot;) +
+    scale_x_discrete(breaks = c(1,5,10,20,35,50,60,70,80,90,100,125,152,202,
+                                251,350,1299)) +
+    theme(axis.text.x=element_text(angle=45, hjust=1)) +
+    xlab(&quot;No. CpGs per gene&quot;) +
+    ylab(&quot;Frequency&quot;)
+p</code></pre>
+<p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/22f00e9d6bf81a4a38a39d43ea7c4beaaa05b363/docs/figure/exploreArrayBias450.Rmd/unnamed-chunk-5-1.png" target="_blank">22f00e9</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-19
+</td>
+</tr>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/becf5e46efafdf86d06ee33f0109a11ccca4f30b/docs/figure/exploreArrayBias450.Rmd/unnamed-chunk-5-1.png" target="_blank">becf5e4</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-04-03
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="create-pdf" class="section level4">
+<h4>Create PDF</h4>
+<pre class="r"><code>fig &lt;- here(&quot;output/SFig-1A.pdf&quot;)
+
+pdf(file = fig, width = 9)
+p
+dev.off()</code></pre>
+</div>
+</div>
+<div id="supp.-figure-1b" class="section level3 tabset">
+<h3>Supp. Figure 1B</h3>
+<div id="view-1" class="section level4">
+<h4>View</h4>
 <p>The number of genes a CpG maps to can also vary, although the majority of CpGs only map to one gene.</p>
 <pre class="r"><code>dat &lt;- data.frame(table(table(flatAnn$cpg)))
-dat$Split &lt;- ifelse(dat$Freq &gt; 2500, &quot;A&quot;, 
-                    ifelse(dat$Freq &lt; 2500 &amp; dat$Freq &gt; 65,&quot;B&quot;,&quot;C&quot;))
+dat$Split &lt;- ifelse(dat$Freq &gt; 2000, &quot;A&quot;,
+                    ifelse(dat$Freq &lt; 2000 &amp; dat$Freq &gt; 50,&quot;B&quot;,&quot;C&quot;))
 
 a &lt;- ggplot(dat[dat$Split == &quot;A&quot;,], aes(x=Var1, y=Freq)) +
-  geom_bar(stat = &quot;identity&quot;) +
-  theme(axis.title.x = element_blank(), 
-        axis.text.y=element_text(angle=90, hjust=0.5)) +
-  ylab(&quot;Frequency&quot;)
+    geom_bar(stat = &quot;identity&quot;) +
+    theme(axis.title.x = element_blank(),
+          axis.text.y=element_text(angle=90, hjust=0.5)) +
+    ylab(&quot;Frequency&quot;)
 
 b &lt;- ggplot(dat[dat$Split == &quot;B&quot;,], aes(x=Var1, y=Freq)) +
-  geom_bar(stat = &quot;identity&quot;) +
-  theme(axis.title.x = element_blank(),
-        axis.title.y = element_blank())
+    geom_bar(stat = &quot;identity&quot;) +
+    theme(axis.title.x = element_blank(),
+          axis.title.y = element_blank())
 
 c &lt;- ggplot(dat[dat$Split == &quot;C&quot;,], aes(x=Var1, y=Freq)) +
-  geom_bar(stat = &quot;identity&quot;) +
-  theme(axis.title.x=element_blank(),
-        axis.title.y = element_blank()) 
+    geom_bar(stat = &quot;identity&quot;) +
+    theme(axis.title.x=element_blank(),
+          axis.title.y = element_blank())
 
-a + b + c + plot_layout(widths = c(1,2,6)) + 
-  plot_annotation(caption = &quot;No. genes mapped to a CpG&quot;,
-                  theme = theme(plot.caption = element_text(hjust = 0.5, 
-                                                            size = 12)))</code></pre>
+p &lt;- a + b + c + plot_layout(widths = c(1,2,6)) +
+    plot_annotation(caption = &quot;No. genes mapped to a CpG&quot;,
+                    theme = theme(plot.caption = element_text(hjust = 0.5,
+                                                              size = 12)))
+p</code></pre>
 <p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
 <button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
@@ -762,6 +913,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/22f00e9d6bf81a4a38a39d43ea7c4beaaa05b363/docs/figure/exploreArrayBias450.Rmd/unnamed-chunk-7-1.png" target="_blank">22f00e9</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-19
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/becf5e46efafdf86d06ee33f0109a11ccca4f30b/docs/figure/exploreArrayBias450.Rmd/unnamed-chunk-7-1.png" target="_blank">becf5e4</a>
 </td>
 <td>
@@ -775,6 +937,17 @@ Jovana Maksimovic
 </table>
 </div>
 </div>
+</div>
+<div id="create-pdf-1" class="section level4">
+<h4>Create PDF</h4>
+<pre class="r"><code>fig &lt;- here(&quot;output/SFig-1B.pdf&quot;)
+pdf(file = fig, width = 9)
+p
+dev.off()</code></pre>
+</div>
+</div>
+<div id="section" class="section level3 unnumbered">
+<h3></h3>
 <p>Explore the distribution of the average number of CpGs per gene, per GO category. First, associate GO categories with the CpG and gene data.</p>
 <pre class="r"><code>cpgEgGo &lt;- cpgsEgGoFreqs(flatAnn)
 head(cpgEgGo)</code></pre>
@@ -798,62 +971,6 @@ p &lt;- ggplot(dat, aes(x=avg)) +
   labs(x=&quot;Mean no. CpGs per gene per GO category&quot;, y = &quot;Density&quot;) +
   annotate(&quot;text&quot;, x = med + 4, label=glue(&quot;median = {med}&quot;), 
            y = 0.035, colour=&quot;red&quot;, size = 3, hjust=&quot;left&quot;)
-p</code></pre>
-<p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
-<p>
-<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
-Past versions of unnamed-chunk-9-1.png
-</button>
-</p>
-<div id="fig-unnamed-chunk-9-1" class="collapse">
-<div class="table-responsive">
-<table class="table table-condensed table-hover">
-<thead>
-<tr>
-<th>
-Version
-</th>
-<th>
-Author
-</th>
-<th>
-Date
-</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>
-<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/becf5e46efafdf86d06ee33f0109a11ccca4f30b/docs/figure/exploreArrayBias450.Rmd/unnamed-chunk-9-1.png" target="_blank">becf5e4</a>
-</td>
-<td>
-Jovana Maksimovic
-</td>
-<td>
-2020-04-03
-</td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-</div>
-<div id="null-simulations" class="section level2">
-<h2>Null simulations</h2>
-<p>Null simulation strategy: randomly select 50, 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array.</p>
-<p>The code used for the simulation can be found in /oshlack_lab/jovana.maksimovic/research/methyl-geneset-testing/code/randCpgSim.R.</p>
-<p>The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.</p>
-<pre class="r"><code>dat &lt;- readRDS(here(&quot;output/random-cpg-sims/450K.rds&quot;))
-#dat$noCpgs &lt;- factor(dat$noCpgs, levels = c(50, 100, 500, 1000, 5000, 10000))
-
-dat %&gt;% group_by(simNo, noCpgs, method) %&gt;% 
-  summarise(pSig = sum(P.DE &lt; 0.05)/length(P.DE)) -&gt; sigDat
-
-p &lt;- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) + 
-  geom_violin() +
-  geom_hline(yintercept=0.05, linetype=&quot;dashed&quot;, color = &quot;red&quot;) +
-  labs(y=&quot;Prop. GO cat. with p-value &lt; 0.05&quot;, x=&quot;No. randomly sampled CpGs&quot;,
-       fill=&quot;Method&quot;)
 p</code></pre>
 <p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-10-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -880,6 +997,17 @@ Date
 <tbody>
 <tr>
 <td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/22f00e9d6bf81a4a38a39d43ea7c4beaaa05b363/docs/figure/exploreArrayBias450.Rmd/unnamed-chunk-10-1.png" target="_blank">22f00e9</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-19
+</td>
+</tr>
+<tr>
+<td>
 <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/becf5e46efafdf86d06ee33f0109a11ccca4f30b/docs/figure/exploreArrayBias450.Rmd/unnamed-chunk-10-1.png" target="_blank">becf5e4</a>
 </td>
 <td>
@@ -893,43 +1021,143 @@ Jovana Maksimovic
 </table>
 </div>
 </div>
+</div>
+</div>
+<div id="null-simulations" class="section level2">
+<h2>Null simulations</h2>
+<p>Null simulation strategy: randomly select 50, 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array.</p>
+<p>The code used for the simulation can be found in /oshlack_lab/jovana.maksimovic/research/methyl-geneset-testing/code/randCpgSim.R.</p>
+<div id="supplementary-figure-3a" class="section level3 tabset">
+<h3>Supplementary Figure 3A</h3>
+<div id="view-2" class="section level4">
+<h4>View</h4>
+<p>The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.</p>
+<pre class="r"><code>dat &lt;- readRDS(here(&quot;output/random-cpg-sims/EPIC.rds&quot;))
+
+dat %&gt;% filter(method %in% names(dict)) %&gt;%
+    mutate(method = unname(dict[method])) %&gt;%
+    group_by(simNo, noCpgs, method) %&gt;% 
+    summarise(pSig = sum(P.DE &lt; 0.05)/length(P.DE)) -&gt; sigDat
+
+p &lt;- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) + 
+    geom_violin() +
+    geom_hline(yintercept=0.05, linetype=&quot;dashed&quot;, color = &quot;red&quot;) +
+    labs(y=&quot;Prop. GO cat. with p-value &lt; 0.05&quot;, x=&quot;No. randomly sampled CpGs&quot;,
+         fill=&quot;Method&quot;) +
+    scale_fill_manual(values = methodCols)
+p</code></pre>
+<p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/22f00e9d6bf81a4a38a39d43ea7c4beaaa05b363/docs/figure/exploreArrayBias450.Rmd/unnamed-chunk-11-1.png" target="_blank">22f00e9</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-19
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div id="create-pdf-2" class="section level3">
+<h3>Create PDF</h3>
+<pre class="r"><code>fig &lt;- here(&quot;output/SFig-3A.pdf&quot;)
+
+pdf(file = fig, width = 9)
+p
+dev.off()</code></pre>
+</div>
+</div>
+<div id="section-1" class="section level2 unnumbered">
+<h2></h2>
 <p>QQ plots of randomly selected simulations at each level of CpGs sampled.</p>
 <pre class="r"><code>set.seed(42)
 s &lt;- sample(1:100, 3)
 dat %&gt;% filter(simNo %in% s) %&gt;%
-  arrange(simNo, noCpgs, method, P.DE) %&gt;%
-  group_by(simNo, noCpgs, method) %&gt;%
-  mutate(exp = 1:n()/n()) -&gt; subDat
+    filter(method %in% names(dict)) %&gt;%
+    mutate(method = unname(dict[method])) %&gt;%
+    arrange(simNo, noCpgs, method, P.DE) %&gt;%
+    group_by(simNo, noCpgs, method) %&gt;%
+    mutate(exp = 1:n()/n()) -&gt; subDat
 
 p &lt;- ggplot(subDat, aes(x=-log10(exp), y=-log10(P.DE), color=method)) + 
-  geom_point(shape = 1, size = 0.5) + 
-  facet_grid(noCpgs ~ simNo, scales = &quot;free_y&quot;)
+    geom_point(shape = 1, size = 0.5) + 
+    facet_grid(noCpgs ~ simNo, scales = &quot;free_y&quot;) +
+    scale_color_manual(values = methodCols)
 
 p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
-            linetype=&quot;dashed&quot;, color = &quot;black&quot;) +
-  labs(y=expression(Observed~~-log[10](italic(p))), 
-       x=expression(Expected~~-log[10](italic(p))),
-       color=&quot;Method&quot;) +
-  theme(legend.position=&quot;bottom&quot;, strip.text.x = element_blank()) </code></pre>
-<p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+              linetype=&quot;dashed&quot;, color = &quot;black&quot;) +
+    labs(y=expression(Observed~~-log[10](italic(p))), 
+         x=expression(Expected~~-log[10](italic(p))),
+         color=&quot;Method&quot;) +
+    theme(legend.position=&quot;bottom&quot;, strip.text.x = element_blank())</code></pre>
+<p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="supp.-figure-3b" class="section level3 tabset">
+<h3>Supp. Figure 3B</h3>
+<div id="view-3" class="section level4">
+<h4>View</h4>
 <p>Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.</p>
-<pre class="r"><code>dat %&gt;% filter(P.DE &lt; 0.05) -&gt; sigDat
-goFreq &lt;- as_tibble(unique(cpgEgGo[,c(&quot;GO&quot;,&quot;Freq&quot;)]))
+<pre class="r"><code>goFreq &lt;- as_tibble(unique(cpgEgGo[,c(&quot;GO&quot;,&quot;Freq&quot;)]))
 
-sigDat %&gt;% inner_join(goFreq, by=c(&quot;GO&quot; = &quot;GO&quot;)) %&gt;%
-  group_by(simNo, noCpgs, method, GO) %&gt;%
-  summarise(avgFreq=mean(Freq)) %&gt;% 
-  group_by(simNo, noCpgs, method) %&gt;%
-  summarise(medAvgFreq=median(avgFreq)) -&gt; medAvgDat
+dat %&gt;% filter(method %in% names(dict)) %&gt;%
+    mutate(method = unname(dict[method])) %&gt;% 
+    filter(P.DE &lt; 0.05) %&gt;%
+    inner_join(goFreq, by=c(&quot;GO&quot; = &quot;GO&quot;)) %&gt;%
+    group_by(simNo, noCpgs, method, GO) %&gt;%
+    summarise(avgFreq=mean(Freq)) %&gt;% 
+    group_by(simNo, noCpgs, method) %&gt;%
+    summarise(medAvgFreq=median(avgFreq)) -&gt; medAvgDat
 
 p &lt;- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
-  geom_violin()
-p + stat_summary(geom=&quot;point&quot;, size=1, color=&quot;white&quot;, position = position_dodge(0.9),
-                show.legend = FALSE, fun = median) +
-  labs(y=&quot;Median avg. no. CpGs/gene/GO cat.&quot;, 
-       x=&quot;No. randomly sampled CpGs&quot;,
-       fill=&quot;Adj. type&quot;)</code></pre>
-<p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-12-1.png" width="672" style="display: block; margin: auto;" /></p>
+    geom_violin() + 
+    stat_summary(geom=&quot;point&quot;, size=1, color=&quot;white&quot;, position = position_dodge(0.9),
+                 show.legend = FALSE, fun = median) +
+    labs(y=&quot;Median avg. no. CpGs/gene/GO cat.&quot;, 
+         x=&quot;No. randomly sampled CpGs&quot;,
+         fill=&quot;Method&quot;)  +
+    scale_fill_manual(values = methodCols)
+p</code></pre>
+<p><img src="figure/exploreArrayBias450.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+<div id="create-pdf-3" class="section level4">
+<h4>Create PDF</h4>
+<pre class="r"><code>fig &lt;- here(&quot;output/SFig-3B.pdf&quot;)
+
+pdf(file = fig, width = 9)
+p
+dev.off()</code></pre>
+</div>
+</div>
+</div>
+<div id="section-2" class="section level2 unnumbered">
+<h2></h2>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
@@ -960,7 +1188,7 @@ attached base packages:
 
 other attached packages:
  [1] dplyr_0.8.5                                        
- [2] tibble_2.1.3                                       
+ [2] tibble_3.0.1                                       
  [3] ggplot2_3.3.0                                      
  [4] patchwork_1.0.0                                    
  [5] GO.db_3.8.2                                        
@@ -1004,12 +1232,12 @@ loaded via a namespace (and not attached):
  [11] annotate_1.62.0                           
  [12] askpass_1.1                               
  [13] siggenes_1.60.0                           
- [14] prettyunits_1.0.2                         
+ [14] prettyunits_1.1.1                         
  [15] colorspace_1.4-1                          
  [16] blob_1.2.0                                
  [17] rappdirs_0.3.1                            
  [18] BiasedUrn_1.07                            
- [19] xfun_0.13                                 
+ [19] xfun_0.14                                 
  [20] crayon_1.3.4                              
  [21] RCurl_1.95-4.12                           
  [22] genefilter_1.68.0                         
@@ -1017,8 +1245,8 @@ loaded via a namespace (and not attached):
  [24] IlluminaHumanMethylationEPICmanifest_0.3.0
  [25] survival_2.44-1.1                         
  [26] ruv_0.9.7.1                               
- [27] registry_0.5-1                            
- [28] gtable_0.3.0                              
+ [27] gtable_0.3.0                              
+ [28] registry_0.5-1                            
  [29] zlibbioc_1.30.0                           
  [30] Rhdf5lib_1.6.1                            
  [31] HDF5Array_1.14.4                          
@@ -1034,73 +1262,74 @@ loaded via a namespace (and not attached):
  [41] preprocessCore_1.48.0                     
  [42] httr_1.4.1                                
  [43] RColorBrewer_1.1-2                        
- [44] farver_2.0.3                              
- [45] pkgconfig_2.0.3                           
- [46] reshape_0.8.8                             
- [47] XML_3.98-1.20                             
- [48] dbplyr_1.4.2                              
- [49] reshape2_1.4.3                            
- [50] labeling_0.3                              
- [51] tidyselect_0.2.5                          
- [52] rlang_0.4.6                               
- [53] later_1.0.0                               
- [54] munsell_0.5.0                             
- [55] tools_3.6.1                               
- [56] RSQLite_2.1.2                             
- [57] evaluate_0.14                             
- [58] stringr_1.4.0                             
- [59] yaml_2.2.1                                
- [60] knitr_1.28                                
- [61] bit64_0.9-7                               
- [62] fs_1.4.1                                  
- [63] beanplot_1.2                              
- [64] scrime_1.3.5                              
- [65] methylumi_2.30.0                          
- [66] purrr_0.3.4                               
- [67] nlme_3.1-147                              
- [68] doRNG_1.7.1                               
- [69] whisker_0.4                               
- [70] nor1mix_1.3-0                             
- [71] xml2_1.3.2                                
- [72] biomaRt_2.42.1                            
- [73] compiler_3.6.1                            
- [74] curl_4.3                                  
- [75] statmod_1.4.32                            
- [76] stringi_1.4.6                             
- [77] GenomicFeatures_1.36.4                    
- [78] lattice_0.20-41                           
- [79] Matrix_1.2-18                             
- [80] IlluminaHumanMethylation450kmanifest_0.4.0
- [81] multtest_2.40.0                           
- [82] vctrs_0.3.0                               
- [83] pillar_1.4.4                              
- [84] lifecycle_0.2.0                           
- [85] data.table_1.12.8                         
- [86] bitops_1.0-6                              
- [87] httpuv_1.5.2                              
- [88] rtracklayer_1.44.4                        
- [89] R6_2.4.1                                  
- [90] promises_1.1.0                            
- [91] gridExtra_2.3                             
- [92] codetools_0.2-16                          
- [93] MASS_7.3-51.6                             
- [94] assertthat_0.2.1                          
- [95] rhdf5_2.30.1                              
- [96] openssl_1.4.1                             
- [97] pkgmaker_0.27                             
- [98] rprojroot_1.3-2                           
- [99] withr_2.1.2                               
-[100] GenomicAlignments_1.20.1                  
-[101] Rsamtools_2.0.1                           
-[102] GenomeInfoDbData_1.2.1                    
-[103] hms_0.5.3                                 
-[104] quadprog_1.5-8                            
-[105] tidyr_1.0.3                               
-[106] base64_2.0                                
-[107] rmarkdown_2.1                             
-[108] DelayedMatrixStats_1.8.0                  
-[109] illuminaio_0.28.0                         
-[110] git2r_0.27.1                              </code></pre>
+ [44] ellipsis_0.3.1                            
+ [45] farver_2.0.3                              
+ [46] pkgconfig_2.0.3                           
+ [47] reshape_0.8.8                             
+ [48] XML_3.98-1.20                             
+ [49] dbplyr_1.4.2                              
+ [50] reshape2_1.4.3                            
+ [51] labeling_0.3                              
+ [52] tidyselect_1.1.0                          
+ [53] rlang_0.4.6                               
+ [54] later_1.0.0                               
+ [55] munsell_0.5.0                             
+ [56] tools_3.6.1                               
+ [57] RSQLite_2.1.2                             
+ [58] evaluate_0.14                             
+ [59] stringr_1.4.0                             
+ [60] yaml_2.2.1                                
+ [61] knitr_1.28                                
+ [62] bit64_0.9-7                               
+ [63] fs_1.4.1                                  
+ [64] beanplot_1.2                              
+ [65] scrime_1.3.5                              
+ [66] methylumi_2.30.0                          
+ [67] purrr_0.3.4                               
+ [68] nlme_3.1-147                              
+ [69] doRNG_1.7.1                               
+ [70] whisker_0.4                               
+ [71] nor1mix_1.3-0                             
+ [72] xml2_1.3.2                                
+ [73] biomaRt_2.42.1                            
+ [74] compiler_3.6.1                            
+ [75] curl_4.3                                  
+ [76] statmod_1.4.32                            
+ [77] stringi_1.4.6                             
+ [78] GenomicFeatures_1.36.4                    
+ [79] lattice_0.20-41                           
+ [80] Matrix_1.2-18                             
+ [81] IlluminaHumanMethylation450kmanifest_0.4.0
+ [82] multtest_2.40.0                           
+ [83] vctrs_0.3.0                               
+ [84] pillar_1.4.4                              
+ [85] lifecycle_0.2.0                           
+ [86] data.table_1.12.8                         
+ [87] bitops_1.0-6                              
+ [88] httpuv_1.5.2                              
+ [89] rtracklayer_1.44.4                        
+ [90] R6_2.4.1                                  
+ [91] promises_1.1.0                            
+ [92] gridExtra_2.3                             
+ [93] codetools_0.2-16                          
+ [94] MASS_7.3-51.6                             
+ [95] assertthat_0.2.1                          
+ [96] rhdf5_2.30.1                              
+ [97] openssl_1.4.1                             
+ [98] pkgmaker_0.27                             
+ [99] rprojroot_1.3-2                           
+[100] withr_2.2.0                               
+[101] GenomicAlignments_1.20.1                  
+[102] Rsamtools_2.0.1                           
+[103] GenomeInfoDbData_1.2.1                    
+[104] hms_0.5.3                                 
+[105] quadprog_1.5-8                            
+[106] tidyr_1.1.0                               
+[107] base64_2.0                                
+[108] rmarkdown_2.1                             
+[109] DelayedMatrixStats_1.8.0                  
+[110] illuminaio_0.28.0                         
+[111] git2r_0.27.1                              </code></pre>
 </div>
 </div>
 
