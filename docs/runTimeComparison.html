@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
-<meta name="date" content="2020-05-22" />
+<meta name="date" content="2020-06-23" />
 
 <title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
@@ -381,7 +381,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
 <h3 class="subtitle">Comparing the run-time of different methods</h3>
 <h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
-<h4 class="date">May 22, 2020</h4>
+<h4 class="date">June 23, 2020</h4>
 
 </div>
 
@@ -406,7 +406,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-05-22
+<strong>Last updated:</strong> 2020-06-23
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -497,16 +497,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree95e0882fd9a613118a83df44af74c23610412e33targetblank95e0882a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/95e0882fd9a613118a83df44af74c23610412e33" target="_blank">95e0882</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreeb8b0c0ba7ec59ae66c24168e63c28e2b1dd1e446targetblankb8b0c0ba"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/b8b0c0ba7ec59ae66c24168e63c28e2b1dd1e446" target="_blank">b8b0c0b</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree95e0882fd9a613118a83df44af74c23610412e33targetblank95e0882a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreeb8b0c0ba7ec59ae66c24168e63c28e2b1dd1e446targetblankb8b0c0ba" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/95e0882fd9a613118a83df44af74c23610412e33" target="_blank">95e0882</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/b8b0c0ba7ec59ae66c24168e63c28e2b1dd1e446" target="_blank">b8b0c0b</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -519,11 +519,39 @@ Ignored files:
     Ignored:    code/old/
     Ignored:    data/
     Ignored:    output/FDR-analysis/
+    Ignored:    output/Fig-1A.pdf
+    Ignored:    output/Fig-1B.pdf
+    Ignored:    output/Fig-1C.pdf
+    Ignored:    output/Fig-1D.pdf
+    Ignored:    output/Fig-3A.pdf
+    Ignored:    output/Fig-3B.pdf
+    Ignored:    output/Fig-3C.pdf
+    Ignored:    output/Fig-3D.pdf
+    Ignored:    output/Fig-4A.pdf
+    Ignored:    output/Fig-4B.pdf
+    Ignored:    output/Fig-4C-G.pdf
+    Ignored:    output/SFig-1A.pdf
+    Ignored:    output/SFig-1B.pdf
+    Ignored:    output/SFig-3A.pdf
+    Ignored:    output/SFig-3B.pdf
+    Ignored:    output/SFig-4B.pdf
+    Ignored:    output/SFig-5B.pdf
+    Ignored:    output/SFig-6A.pdf
+    Ignored:    output/SFig-6B-F.pdf
+    Ignored:    output/SFig-7A.pdf
+    Ignored:    output/SFig-7B-F.pdf
+    Ignored:    output/SFig-8A.pdf
+    Ignored:    output/SFig-8B-F.pdf
+    Ignored:    output/SFig-X1.pdf
+    Ignored:    output/SFig-X2.pdf
     Ignored:    output/compare-methods/
+    Ignored:    output/methylgsa-params/
     Ignored:    output/random-cpg-sims/
 
-Untracked files:
-    Untracked:  code/paramSweepMethylGSA.R
+Unstaged changes:
+    Modified:   analysis/exploreArrayBias450.Rmd
+    Modified:   analysis/fdrAnalysis.Rmd
+    Modified:   code/utility.R
 
 </code></pre>
 <p>
@@ -562,6 +590,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/823b793c623dc12bb9f71222099ae26b07979770/analysis/runTimeComparison.Rmd" target="_blank">823b793</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-06-16
+</td>
+<td>
+UPdated analyses with label translation and new colour palette.
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/9cb4fea61498d845efe113e8698e0334556b7187/docs/runTimeComparison.html" target="_blank">9cb4fea</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2020-05-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -686,7 +748,8 @@ library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 library(EnsDb.Hsapiens.v75)
 library(ChAMP)
 library(methylGSA)
-library(gt)</code></pre>
+library(gt)
+source(here(&quot;code/utility.R&quot;))</code></pre>
 <div id="compare-run-time-of-different-methods" class="section level1">
 <h1>Compare run-time of different methods</h1>
 <div id="setup-inputs" class="section level2">
@@ -789,10 +852,10 @@ if(!file.exists(inFile)){
 }</code></pre>
 <p>Plot run-time results.</p>
 <pre class="r"><code>timing %&gt;% mutate(time = as.integer(time)) %&gt;%
-    mutate(method = ifelse(method == &quot;gometh&quot;, &quot;mmethyl.gometh&quot;, 
-                           method)) -&gt; dat
+    mutate(method = unname(dict[method])) -&gt; dat
 
-p1 &lt;- ggplot(dat, aes(x = method, y = time/60, fill = contrast)) + 
+p1 &lt;- ggplot(dat, aes(x = reorder(method, -time), y = time/60, 
+                      fill = contrast)) + 
     geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
     labs(x = &quot;Method&quot;, y = &quot;Run time (minutes)&quot;, fill = &quot;Contrast&quot;)
 p1</code></pre>
@@ -906,12 +969,12 @@ if(!file.exists(inFile)){
 }</code></pre>
 <p>Plot run-time results.</p>
 <pre class="r"><code>multi %&gt;% mutate(time = as.integer(time)) %&gt;%
-    mutate(cores = limma::strsplit2(method, &quot;.&quot;, fixed=TRUE)[,3])-&gt; dat
+    mutate(cores = limma::strsplit2(method, &quot;.&quot;, fixed=TRUE)[,3]) -&gt; dat
 
 p2 &lt;- ggplot(dat, aes(x = cores, y = time/60, fill = contrast)) + 
     geom_bar(position = &quot;dodge&quot;, stat = &quot;identity&quot;) +
     labs(x = &quot;No. cores&quot;, y = &quot;Run time (minutes)&quot;, fill = &quot;Contrast&quot;) +
-    ggtitle(&quot;Using multiple cores for mgsa.glm&quot;) 
+    ggtitle(&quot;Using multiple cores for mGLM&quot;) 
 p2</code></pre>
 <p><img src="figure/runTimeComparison.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
 <p>
@@ -994,16 +1057,18 @@ Jovana Maksimovic
 </table>
 </div>
 </div>
-<pre class="r"><code>timing %&gt;% group_by(method) %&gt;%
+<pre class="r"><code>timing %&gt;% mutate(method = unname(dict[method])) %&gt;% 
+    group_by(method) %&gt;%
     mutate(time = as.integer(time)) %&gt;%
     summarise(mean = mean(time)) %&gt;%
     mutate(mins = mean/60) %&gt;%
+    dplyr::select(method, mins) %&gt;%
+    arrange(mins) %&gt;%
     as_tibble() -&gt; tab
 
 tab %&gt;% gt() %&gt;%
-    fmt_number(columns = vars(mean, mins), decimals = 2) %&gt;%
+    fmt_number(columns = vars(mins), decimals = 2) %&gt;%
     cols_label(
-        mean = md(&quot;**Seconds**&quot;),
         mins = md(&quot;**Minutes**&quot;),
         method = md(&quot;**Method**&quot;)
         ) %&gt;%
@@ -1349,49 +1414,43 @@ tab %&gt;% gt() %&gt;%
 <div id="pghwmvswhb" style="overflow-x:auto;overflow-y:auto;width:auto;height:auto;"><table class="gt_table">
   <thead class="gt_header">
     <tr>
-      <th colspan="3" class="gt_heading gt_title gt_font_normal" style><strong>Average run-time across all contrasts</strong></th>
+      <th colspan="2" class="gt_heading gt_title gt_font_normal" style><strong>Average run-time across all contrasts</strong></th>
     </tr>
     <tr>
-      <th colspan="3" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Using Broad MSigDB gene sets from <code>ChAMP</code> package</th>
+      <th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style>Using Broad MSigDB gene sets from <code>ChAMP</code> package</th>
     </tr>
   </thead>
   <thead class="gt_col_headings">
     <tr>
       <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1"><strong>Method</strong></th>
-      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1"><strong>Seconds</strong></th>
       <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1"><strong>Minutes</strong></th>
     </tr>
   </thead>
   <tbody class="gt_table_body">
     <tr>
-      <td class="gt_row gt_left">champ.ebgsea</td>
-      <td class="gt_row gt_right">1,663.00</td>
-      <td class="gt_row gt_right">27.72</td>
+      <td class="gt_row gt_left">mRRA (ORA)</td>
+      <td class="gt_row gt_right">0.16</td>
     </tr>
     <tr>
-      <td class="gt_row gt_left">gometh</td>
-      <td class="gt_row gt_right">40.33</td>
+      <td class="gt_row gt_left">GOmeth</td>
       <td class="gt_row gt_right">0.67</td>
     </tr>
     <tr>
-      <td class="gt_row gt_left">mgsa.glm</td>
-      <td class="gt_row gt_right">3,042.33</td>
-      <td class="gt_row gt_right">50.71</td>
-    </tr>
-    <tr>
-      <td class="gt_row gt_left">mgsa.gsea</td>
-      <td class="gt_row gt_right">146.00</td>
+      <td class="gt_row gt_left">mRRA (GSEA)</td>
       <td class="gt_row gt_right">2.43</td>
     </tr>
     <tr>
-      <td class="gt_row gt_left">mgsa.ora</td>
-      <td class="gt_row gt_right">9.67</td>
-      <td class="gt_row gt_right">0.16</td>
+      <td class="gt_row gt_left">ebGSEA</td>
+      <td class="gt_row gt_right">27.72</td>
+    </tr>
+    <tr>
+      <td class="gt_row gt_left">mGLM</td>
+      <td class="gt_row gt_right">50.71</td>
     </tr>
   </tbody>
   <tfoot class="gt_sourcenotes">
     <tr>
-      <td class="gt_sourcenote" colspan="3"><em>*All methods were run on a single core.</em></td>
+      <td class="gt_sourcenote" colspan="2"><em>*All methods were run on a single core.</em></td>
     </tr>
   </tfoot>
   
@@ -1534,7 +1593,7 @@ loaded via a namespace (and not attached):
  [49] dendextend_1.13.4                                  
  [50] permute_0.9-5                                      
  [51] reshape_0.8.8                                      
- [52] withr_2.1.2                                        
+ [52] withr_2.2.0                                        
  [53] ggforce_0.3.1                                      
  [54] lumi_2.38.0                                        
  [55] bitops_1.0-6                                       
@@ -1547,7 +1606,7 @@ loaded via a namespace (and not attached):
  [62] clusterProfiler_3.12.0                             
  [63] DelayedMatrixStats_1.8.0                           
  [64] vctrs_0.3.0                                        
- [65] ellipsis_0.3.0                                     
+ [65] ellipsis_0.3.1                                     
  [66] generics_0.0.2                                     
  [67] urltools_1.7.3                                     
  [68] tools_3.6.1                                        
@@ -1666,7 +1725,7 @@ loaded via a namespace (and not attached):
 [181] lubridate_1.7.4                                    
 [182] GO.db_3.8.2                                        
 [183] gtools_3.8.1                                       
-[184] prettyunits_1.0.2                                  
+[184] prettyunits_1.1.1                                  
 [185] dbplyr_1.4.2                                       
 [186] R.methodsS3_1.7.1                                  
 [187] gtable_0.3.0                                       
