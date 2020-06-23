@@ -61,11 +61,11 @@ mod <- getMode(numCpgsPerGene)
 p <- ggplot(dat, aes(x=Var1, y=Freq)) +
     geom_segment(aes(x=Var1, xend=Var1, y=0, yend=Freq), color="darkgrey") +
     geom_point( color="black", size=1) +
-    geom_vline(xintercept = med, linetype = "dashed", color = "black") +
-    annotate("text", x = med + 2, label=glue("Median = {med}"), y=720, colour="black", 
+    geom_vline(xintercept = med, linetype = "dashed", color = "red") +
+    annotate("text", x = med + 2, label=glue("median = {med}"), y=720, colour="red", 
              size = 3, hjust="left") +
-    geom_vline(xintercept = mod, linetype = "dashed", color = "black") +
-    annotate("text", x = mod + 2, label=glue("Mode = {mod}"), y=780, colour="black", 
+    geom_vline(xintercept = mod, linetype = "dashed", color = "red") +
+    annotate("text", x = mod + 2, label=glue("mode = {mod}"), y=780, colour="red", 
              size = 3, hjust="left") +
     scale_x_discrete(breaks = c(1,10,20,30,45,55,70,80,90,100,120,135,150,160,180,
                                 200,215,250,330,429,1485)) +
@@ -135,13 +135,13 @@ Explore the distribution of the average number of CpGs per gene, per GO category
 ann450 <- loadAnnotation("450k")
 flatAnn450 <- loadFlatAnnotation(ann450)
 
-dat <- cpgsEgGoFreqs(flatAnn)
-dat$Array <- "EPIC"
+cpgEgGoEPIC <- cpgsEgGoFreqs(flatAnn)
+cpgEgGoEPIC$Array <- "EPIC"
 
-dat1 <- cpgsEgGoFreqs(flatAnn450)
-dat1$Array <- "450k"
+cpgEgGo450 <- cpgsEgGoFreqs(flatAnn450)
+cpgEgGo450$Array <- "450k"
 
-dat %>% bind_rows(dat1) %>% 
+cpgEgGoEPIC %>% bind_rows(cpgEgGo450) %>% 
     group_by(Array, GO) %>%
     summarise(avg = mean(Freq)) -> datSum
 
@@ -149,26 +149,27 @@ maxEPIC <- max(datSum$avg[datSum$Array == "EPIC"])
 max450 <- max(datSum$avg[datSum$Array == "450k"])
 
 bw <- 2
-platform <- c("EPIC" = "blue", "450k" = "red")
+pal <- paletteer::paletteer_d("RColorBrewer::Set1", 2)
+platform <- c("EPIC" = pal[1], "450k" = pal[2])
 p <- ggplot(datSum, aes(x=avg)) +
     geom_histogram(dat = subset(datSum, Array == "450k"),
                    alpha = 0.5, aes(fill = "450k"), binwidth = bw) +
     geom_histogram(dat = subset(datSum, Array == "EPIC"),
                    alpha = 0.5, aes(fill = "EPIC"), binwidth = bw) +
-    geom_vline(xintercept = max450, linetype="dashed", colour = "red") +
-    geom_vline(xintercept = maxEPIC, linetype="dashed", colour = "blue") +
+    geom_vline(xintercept = maxEPIC, linetype="dashed", colour = pal[1]) +
+    geom_vline(xintercept = max450, linetype="dashed", colour = pal[2]) +
     labs(x="Mean no. CpGs per gene per GO category", y = "Frequency",
          fill = "Platform") +
     annotate("text", x = maxEPIC - 4, label=glue("Max. EPIC = {maxEPIC}"),
-             y = 1500, colour="blue", size = 3, hjust="right") +
+             y = 1500, colour=pal[1], size = 2.5, hjust="right") +
     annotate("text", x = max450 - 4, label=glue("Max. 450k = {max450}"),
-             y = 2500, colour="red", size = 3, hjust="right") +
+             y = 2500, colour=pal[2], size = 2.5, hjust="right") +
     scale_fill_manual(values = platform)
 p
 ```
 
 #### Create PDF
-```{r}
+```{r, eval=FALSE}
 fig <- here("output/Fig-1C.pdf")
 
 pdf(file = fig, width = 9)
@@ -181,6 +182,9 @@ dev.off()
 Null simulation strategy: randomly select 50, 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array. 
 
 The code used for the simulation can be found in `r here("code/randCpgSim.R")`.   
+
+### Figure 3A {.tabset}
+#### View
 
 The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.
 
@@ -200,6 +204,17 @@ p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) +
     scale_fill_manual(values = methodCols)
 p
 ```
+
+### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/Fig-3A.pdf")
+
+pdf(file = fig, width = 9)
+p
+dev.off()
+```
+
+## {-}
 
 QQ plots of randomly selected simulations at each level of CpGs sampled.
 
@@ -226,10 +241,13 @@ p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
     theme(legend.position="bottom", strip.text.x = element_blank())
 ```
 
+### Figure 3A {.tabset}
+#### View
+
 Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.
 
 ```{r}
-goFreq <- as_tibble(unique(cpgEgGo[,c("GO","Freq")]))
+goFreq <- as_tibble(unique(cpgEgGoEPIC[,c("GO","Freq")]))
 
 dat %>% filter(method %in% names(dict)) %>%
     mutate(method = unname(dict[method])) %>% 
@@ -241,18 +259,25 @@ dat %>% filter(method %in% names(dict)) %>%
     summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
 
 p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
-    geom_violin()
-p + stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
+    geom_violin() + 
+    stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
                  show.legend = FALSE, fun = median) +
     labs(y="Median avg. no. CpGs/gene/GO cat.", 
          x="No. randomly sampled CpGs",
          fill="Method")  +
     scale_fill_manual(values = methodCols)
-    
+p
 ```
 
+#### Create PDF
+```{r, eval=FALSE}
+fig <- here("output/Fig-3B.pdf")
 
+pdf(file = fig, width = 9)
+p
+dev.off()
+```
 
-
+## {-}
 
 
