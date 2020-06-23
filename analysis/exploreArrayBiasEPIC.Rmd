@@ -115,6 +115,7 @@ p <- a + b + c + plot_layout(widths = c(1,2,6)) +
     plot_annotation(caption = "No. genes mapped to a CpG",
                     theme = theme(plot.caption = element_text(hjust = 0.5, 
                                                               size = 12)))
+p
 ```
 
 #### Create PDF
