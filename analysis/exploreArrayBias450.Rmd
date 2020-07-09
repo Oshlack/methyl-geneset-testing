@@ -180,7 +180,7 @@ p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) +
 p
 ```
 
-### Create PDF
+#### Create PDF
 ```{r, eval=FALSE}
 fig <- here("output/SFig-3A.pdf")
 
@@ -189,7 +189,7 @@ p
 dev.off()
 ```
 
-## {-}
+### {-}
 
 QQ plots of randomly selected simulations at each level of CpGs sampled.
 
@@ -253,7 +253,7 @@ p
 dev.off()
 ```
 
-## {-}
+### {-}
 
 
 

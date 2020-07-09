@@ -275,6 +275,71 @@ gsaseq <- function(sig.de, universe, collection, plot.bias=FALSE,
     graphics::lines(stats::lowess(avgbias,propDM),col=4,lwd=2)
 }
 
+getBiasDat <- function (sig.cpg, all.cpg = NULL, collection,
+                     array.type = c("450K", "EPIC"), plot.bias = FALSE,
+                     prior.prob = TRUE, anno = NULL, equiv.cpg = TRUE,
+                     fract.counts = TRUE)
+{
+    if (!is.vector(sig.cpg))
+        stop("Input CpG list is not a character vector")
+    array.type <- match.arg(toupper(array.type), c("450K", "EPIC"))
+    if (!is.null(anno)) {
+        out <- getMappedEntrezIDs(sig.cpg = sig.cpg, all.cpg = all.cpg,
+                                  array.type = array.type, anno)
+    }
+    else {
+        out <- getMappedEntrezIDs(sig.cpg = sig.cpg, all.cpg = all.cpg,
+                                  array.type = array.type)
+    }
+    sorted.eg.sig <- out$sig.eg
+    eg.universe <- out$universe
+    freq_genes <- out$freq
+    test.de <- out$de
+    frac <- out$fract.counts
+    equiv <- out$equiv
+
+    # data for bias plot
+    D <- test.de
+    bias <- as.vector(equiv)
+    o <- order(bias)
+    splitf <- rep(1:100, each = 200)[1:length(bias)]
+    avgbias <- tapply(bias[o], factor(splitf), mean)
+    sumDM <- tapply(D[o], factor(splitf), sum)
+    propDM <- sumDM/table(splitf)
+
+    # save data to make bias ggplot
+    data.frame(avgbias = avgbias, propDM = as.vector(propDM),
+               stringsAsFactors = FALSE)
+}
+
+shift_legend <- function(p, pos = "center", plot = FALSE) {
+    pnls <- cowplot::plot_to_gtable(p) %>%
+        gtable::gtable_filter("panel") %>%
+        with(setNames(grobs, layout$name)) %>%
+        purrr::keep(~identical(.x,zeroGrob()))
+
+    if(length(pnls) == 0){
+        p
+    } else {
+        lemon::reposition_legend(p, pos, panel=names(pnls), plot = plot)
+
+    }
+
+}
+
+# .plotBias <- function (D, bias) {
+#     o <- order(bias)
+#     splitf <- rep(1:100, each = 200)[1:length(bias)]
+#     avgbias <- tapply(bias[o], factor(splitf), mean)
+#     sumDM <- tapply(D[o], factor(splitf), sum)
+#     propDM <- sumDM/table(splitf)
+#     par(mar = c(5, 5, 2, 2))
+#     plot(avgbias, as.vector(propDM), xlab = "Number of CpGs per gene (binned)",
+#          ylab = "Proportion Differential Methylation", cex.lab = 1.5,
+#          cex.axis = 1.2)
+#     lines(lowess(avgbias, propDM), col = 4, lwd = 2)
+# }
+
 methodPal <- c("#a0e85b",
                "#154e56",
                "#61cab8",
@@ -311,5 +376,5 @@ dict <- c("mgsa.glm" = "mGLM",
           "gometh-probe-fdr" = "GOmeth (FDR < 0.05)")
 
 methodCols <- methodPal[c(1,2,3,5,6,7,8,12,9,7,11,12,12,7,
-                          12,5,1,1,1,12,10,9,12,10)]
+                          12,5,1,1,1,12,10)]
 names(methodCols) <- unname(dict)

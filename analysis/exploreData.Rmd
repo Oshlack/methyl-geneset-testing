@@ -22,6 +22,7 @@ library(gridExtra)
 library(missMethyl)
 library(ggplot2)
 library(glue)
+library(grid)
 library(tidyverse)
 library(rbin)
 library(patchwork)
@@ -72,8 +73,6 @@ ggplot(dat, aes(x = bVal, colour = cellType)) +
     scale_color_brewer(palette = "Dark2")
 ```
 
-### Figure 4A {.tabset}
-#### View
 ```{r}
 # MDS plots to look at largest sources of variation
 p <- plotMDS(getM(fltGr), top=1000, gene.selection="common", plot = FALSE)
@@ -87,31 +86,9 @@ p <- ggplot(dat, aes(x = x, y = y, colour = cellType)) +
 p
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-4A.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
-```
-
-### {-}
-
-MDS plots using *only* the CpGs that map to genes.
-
 ```{r}
-ann <- loadAnnotation("EPIC")
-flatAnn <- missMethyl:::.getFlatAnnotation("EPIC", anno = ann)
-geneM <- getM(fltGr[rownames(fltGr) %in% flatAnn$cpg,])
-
-p <- plotMDS(geneM, top=1000, gene.selection="common", plot = FALSE)
-dat <- tibble::tibble(x = p$x, y = p$y, cellType = targets$CellType)
-
-ggplot(dat, aes(x = x, y = y, colour = cellType)) +
-    geom_point(size = 3) +
-    labs(colour = "Cell Type") +
-    scale_colour_brewer(palette = "Dark2")
+fig <- here("output/figures/Fig-4A.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
 
 # Statistical analysis
@@ -142,29 +119,31 @@ fitSum <- summary(decideTests(tfit, p.value = pval))
 fitSum
 ```
 
-## Figure 1B {.tabset}
-### View
+```{r}
+bDat <- getBiasDat(rownames(topTreat(tfit, coef = "CD4vCD8", num = 5000)), 
+                   array.type = "EPIC")
+
+p <- ggplot(bDat, aes(x = avgbias, y = propDM)) +
+    geom_point(shape = 1, size = 2) +
+    geom_smooth() +
+    labs(x = "No. CpGs per gene (binned)",
+         y = "Prop. differential methylation") +
+    theme_minimal() +
+    theme(panel.grid = element_blank(),
+          axis.line = element_line(colour = "black"))
+p
+```
 
 ```{r}
-tmp <- gometh(rownames(topTreat(tfit, coef = "CD4vCD8", num = 5000)), 
-              anno = ann, array.type = "EPIC", plot.bias = TRUE)
+fig <- here("output/figures/Fig-1B.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-1B.pdf")
-
-pdf(file = fig, width = 9)
-tmp <- gometh(rownames(topTreat(tfit, coef = "CD4vCD8", num = 5000)), 
-              anno = ann, array.type = "EPIC", plot.bias = TRUE)
-dev.off()
-```
-
-## {-}
 
 How correlated is differential methylation with differential expression for the same contrasts (same cell types but not identical samples)?
 
 ```{r, fig.height=6, fig.width=7, warning=FALSE, message=FALSE}
+ann <- loadAnnotation("EPIC")
+flatAnn <- loadFlatAnnotation(ann)
 rfit <- readRDS(here("data/rnaseq-fit.rds"))
 rdat <- rownames_to_column(data.frame(rfit$coefficients), var = "gene_id")
 
@@ -205,8 +184,6 @@ ggplot(dat, aes(x = coef, y = coefficient, colour = colour)) +
          y = "Gene expression Log FC", color = "Diff. Gene Exp.")
 ```
 
-## Supp. Figure X1
-### View
 Examine only the independent contrasts.
 
 ```{r}
@@ -219,16 +196,10 @@ p <- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
     scale_fill_brewer(palette = "Set1", direction = -1)
 p
 ```
-### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/SFig-X1.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/SFig-X1.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-## {-}
 
 ## Compare performance of different gene set testing methods
 
@@ -285,16 +256,13 @@ ggplot(subDat, aes(x = pvalue, colour = sub)) +
 
 ```{r}
 cpgEgGo <- cpgsEgGoFreqs(flatAnn)
-```
 
-### Supp. Figure X2
-#### View
-
-```{r, fig.width=7}
 cpgEgGo %>% 
   group_by(GO) %>%
   summarise(med = median(Freq)) -> medCpgEgGo
+```
 
+```{r, fig.width=7}
 dat %>% filter(set == "GO") %>%
     filter(sub %in% c("n","c1")) %>% 
     mutate(method = unname(dict[method])) %>% 
@@ -311,7 +279,7 @@ sub %>% group_by(contrast, method, bin) %>%
   summarise(prop = sum(pvalue < 0.05)/n()) -> pdat
 
 p <- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = method)) +
-  geom_line(size = 1.25) +
+  geom_line(size = 1.1) +
   facet_wrap(vars(contrast), ncol = 3) +
   scale_x_continuous(breaks = as.numeric(levels(pdat$bin)), labels = binLabs) +
   theme(axis.text.x = element_text(angle=45, hjust = 1, vjust = 1,
@@ -324,16 +292,10 @@ p <- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = method)) +
 p
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/SFig-X2.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/SFig-X2.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-### {-}
 
 As we are comparing immune cells, we expect GO categories related to the immune system and its processes to be highly ranked. To evalue this, we downloaded all of the child terms for the GO category "immune system process" (GO:002376) from AminGO 2;  [http://amigo.geneontology.org/amigo/term/GO:0002376](http://amigo.geneontology.org/amigo/term/GO:0002376). 
 
@@ -389,9 +351,6 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
 p
 ```
 
-### Figure 4B, Supp. Figure 4B, Supp. Figure 5B {.tabset}
-#### View
-
 ```{r}
 p <- vector("list", length(unique(dat$contrast)))
 
@@ -427,7 +386,7 @@ for(i in 1:length(unique(dat$contrast))){
         geom_bar(stat = "identity", position = "dodge") +
         labs(fill = "Method", 
              x = "Truth set", 
-             y = "Prop. 'truth' terms in top 100") +
+             y = "Prop. top 100 terms in truth set") +
         scale_fill_manual(values = methodCols) +
         ggtitle(cont)
 }
@@ -437,33 +396,20 @@ p[[2]]
 p[[3]]
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-4B.pdf")
+```{r}
+fig <- here("output/figures/Fig-4A.rds")
+saveRDS(p[[1]], fig, compress = FALSE)
 
-pdf(file = fig, width = 9)
-p[[1]]
-dev.off()
+fig <- here("output/figures/SFig-4A.rds")
+saveRDS(p[[2]], fig, compress = FALSE)
 
-fig <- here("output/SFig-4B.pdf")
-
-pdf(file = fig, width = 9)
-p[[2]]
-dev.off()
-
-fig <- here("output/SFig-5B.pdf")
-
-pdf(file = fig, width = 9)
-p[[3]]
-dev.off()
+fig <- here("output/figures/SFig-5A.rds")
+saveRDS(p[[3]], fig, compress = FALSE)
 ```
-
-### Figure 4C-G, Supp. Figure 4C-G, Supp Figure 5C-G {.tabset}
-#### View
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
-```{r, fig.height=7, fig.width=9}
+```{r}
 terms <- missMethyl:::.getGO()$idTable
 nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList, 
                                                    length)), 
@@ -479,75 +425,65 @@ dat %>% filter(set == "GO") %>%
     filter(rank <= 10) %>% 
     inner_join(terms, by = c("ID" = "GOID")) %>%
     inner_join(nGenes) -> sub
+```
 
+```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
 p <- vector("list", length(unique(sub$contrast)))
-for(i in 1:length(unique(sub$contrast))){
+for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
     sub %>% filter(contrast == cont) %>%
         arrange(method, -rank) %>%
         ungroup() %>%
         mutate(idx = as.factor(1:n())) -> tmp
     
-    ord <- unlist(lapply(1:length(unique(tmp$method)), function(i){
-        c((i*10):(i*10-9))
-    }))
-    termLabs <- substr(tmp$TERM[ord], 1, 50)
-    names(termLabs) <- tmp$idx[ord]
+    setLabs <- substr(tmp$TERM, 1, 40)
+    names(setLabs) <- tmp$idx
     
-    rnaTruth <- tmp$ID[ord] %in% topGOSets$ID[topGOSets$contrast %in% cont]
-    ispTruth <- tmp$ID[ord] %in% immuneGO$GOID
-    sumTruth <- rnaTruth + ispTruth
+    tmp %>% mutate(rna = ID %in% topGOSets$ID[topGOSets$contrast %in% cont],
+                   isp = ID %in% immuneGO$GOID,
+                   both = rna + isp,
+                   col = ifelse(both == 2, "Both", 
+                                ifelse(both == 1 & rna == 1, "RNAseq",
+                                       ifelse(both == 1 & isp == 1, 
+                                              "ISP", "Neither")))) -> tmp
     
-    truthCol <- ifelse(sumTruth == 2, "purple", 
-                       ifelse(sumTruth == 1 & rnaTruth == 1, "red",
-                              ifelse(sumTruth == 1 & ispTruth == 1, "blue", 
-                                     "black")))
-        
-    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx)) +
-        geom_point(aes(size = n), alpha = 0.8, 
-                   colour = methodCols[tmp$method]) +
+    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
+        geom_point(aes(size = n), alpha = 0.7) +
         scale_size(limits = c(min(sub$n), max(sub$n))) +
         facet_wrap(vars(method), ncol = 2, scales = "free") +
-        scale_y_discrete(labels = termLabs) +
-        labs(y = "", size = "No. genes") +
-        theme(axis.text.y = element_text(size = 8),
-              plot.title = element_text(size = 10),
-              legend.position = "bottom",
-              legend.text = element_text(size = 8),
-              legend.title = element_text(size = 10),
-              axis.text.x = element_text(size = 8),
-              axis.title.x = element_text(size = 10)) +
+        scale_y_discrete(labels = setLabs) +
+        labs(y = "", size = "No. genes", colour = "In truth set") +
+        theme(axis.text.y = element_text(size = 6),
+              axis.text.x = element_text(size = 6),
+              legend.box = "horizontal",
+              legend.margin = margin(0, 0, 0, 0, unit = "lines"),
+              panel.spacing.x = unit(1, "lines")) +
+        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-80))) +
         geom_vline(xintercept = -log10(0.05), linetype = "dashed") +
-        ggtitle(cont)  
+        ggtitle(cont)
 }
 
-p[[1]]
-p[[2]]
-p[[3]]
+shift_legend(p[[1]], plot = TRUE, pos = "left")
+shift_legend(p[[2]], plot = TRUE, pos = "left")
+shift_legend(p[[3]], plot = TRUE, pos = "left")
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-4C-G.pdf")
+```{r}
+fig <- here("output/figures/Fig-4B.rds")
+saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
+                     pos = "left"), 
+        fig, compress = FALSE)
 
-pdf(file = fig, width = 9)
-p[[1]]
-dev.off()
+fig <- here("output/figures/SFig-4B.rds")
+saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
+                     pos = "left"), 
+        fig, compress = FALSE)
 
-fig <- here("output/SFig-4C-G.pdf")
-
-pdf(file = fig, width = 9)
-p[[2]]
-dev.off()
-
-fig <- here("output/SFig-5C-G.pdf")
-
-pdf(file = fig, width = 9)
-p[[3]]
-dev.off()
+fig <- here("output/figures/SFig-5B.rds")
+saveRDS(shift_legend(p[[3]] + theme(plot.title = element_blank()),
+                     pos = "left"), 
+        fig, compress = FALSE)
 ```
-
-### {-}
 
 P-value histograms for the different methods for all contrasts on GO categories.
 
@@ -688,42 +624,48 @@ dat %>% filter(set == "KEGG") %>%
     filter(rank <= 10) %>% 
     inner_join(terms, by = c("ID" = "PathwayID")) %>%
     inner_join(nGenes) -> sub
+```
 
+```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
 p <- vector("list", length(unique(sub$contrast)))
-for(i in 1:length(unique(sub$contrast))){
-    cont <- unique(sub$contrast)[i]
+for(i in 1:length(p)){
+    cont <- sort(unique(sub$contrast))[i]
     sub %>% filter(contrast == cont) %>%
         arrange(method, -rank) %>%
         ungroup() %>%
         mutate(idx = as.factor(1:n())) -> tmp
     
-    ord <- unlist(lapply(1:length(unique(tmp$method)), function(i){
-        c((i*10):(i*10-9))
-    }))
-    termLabs <- substr(tmp$Description[ord], 1, 50)
-    names(termLabs) <- tmp$idx[ord]
+    setLabs <- substr(tmp$Description, 1, 40)
+    names(setLabs) <- tmp$idx
     
-    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx)) +
-        geom_point(aes(size = n), alpha = 0.8, colour = methodCols[tmp$method]) +
+    tmp %>% mutate(rna = ID %in% topKEGG$PID[topKEGG$contrast %in% cont],
+                   isp = ID %in% immuneKEGG$PID,
+                   both = rna + isp,
+                   col = ifelse(both == 2, "Both", 
+                                ifelse(both == 1 & rna == 1, "RNAseq",
+                                       ifelse(both == 1 & isp == 1, 
+                                              "ISP", "Neither")))) -> tmp
+    
+    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
+        geom_point(aes(size = n), alpha = 0.7) +
+        scale_size(limits = c(min(sub$n), max(sub$n))) +
         facet_wrap(vars(method), ncol = 2, scales = "free") +
-        scale_y_discrete(labels = termLabs) +
-        labs(y = "", size = "No. genes") +
-        theme(axis.text.y = element_text(size = 8),
-              plot.title = element_text(size = 10),
-              legend.position = "bottom",
-              legend.text = element_text(size = 8),
-              legend.title = element_text(size = 10),
-              axis.text.x = element_text(size = 8),
-              axis.title.x = element_text(size = 10)) +
+        scale_y_discrete(labels = setLabs) +
+        labs(y = "", size = "No. genes", colour = "In truth set") +
+        theme(axis.text.y = element_text(size = 6),
+              axis.text.x = element_text(size = 6),
+              legend.box = "horizontal",
+              legend.margin = margin(0, 0, 0, 0, unit = "lines"),
+              panel.spacing.x = unit(1, "lines")) +
+        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-80))) +
         geom_vline(xintercept = -log10(0.05), linetype = "dashed") +
-        ggtitle(cont)  
+        ggtitle(cont)
 }
 
-p[[1]]
-p[[2]]
-p[[3]]
+shift_legend(p[[1]], plot = TRUE, pos = "left")
+shift_legend(p[[2]], plot = TRUE, pos = "left")
+shift_legend(p[[3]], plot = TRUE, pos = "left")
 ```
-
 
 P-value histograms for the different methods for all contrasts on KEGG pathways.
 
@@ -841,7 +783,7 @@ for(i in 1:length(unique(dat$contrast))){
         geom_bar(stat = "identity", position = "dodge") +
         labs(fill = "Method", 
              x = "Truth set", 
-             y = "Prop. 'truth' terms in top 100") +
+             y = "Prop. top 100 terms in truth set") +
         scale_fill_manual(values = methodCols) +
         ggtitle(cont)
 }
@@ -851,29 +793,16 @@ p[[2]]
 p[[3]]
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/SFig-6A.pdf")
+```{r}
+fig <- here("output/figures/SFig-6A.rds")
+saveRDS(p[[1]], fig, compress = FALSE)
 
-pdf(file = fig, width = 9)
-p[[1]]
-dev.off()
+fig <- here("output/figures/SFig-7A.rds")
+saveRDS(p[[2]], fig, compress = FALSE)
 
-fig <- here("output/SFig-7A.pdf")
-
-pdf(file = fig, width = 9)
-p[[2]]
-dev.off()
-
-fig <- here("output/SFig-8A.pdf")
-
-pdf(file = fig, width = 9)
-p[[3]]
-dev.off()
+fig <- here("output/figures/SFig-8A.rds")
+saveRDS(p[[3]], fig, compress = FALSE)
 ```
-
-### Supp Figure 6B-F, 7B-F, 8B-F{.tabset}
-#### View
 
 ```{r, fig.height=8, fig.width=9}
 data(PathwayList)
@@ -890,67 +819,61 @@ dat %>% filter(set == "BROAD") %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 10) %>% 
     inner_join(nGenes) -> sub
+```
 
+```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
 p <- vector("list", length(unique(sub$contrast)))
-for(i in 1:length(unique(sub$contrast))){
+for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
     sub %>% filter(contrast == cont) %>%
         arrange(method, -rank) %>%
         ungroup() %>%
         mutate(idx = as.factor(1:n())) -> tmp
     
-    ord <- unlist(lapply(1:length(unique(tmp$method)), function(i){
-        c((i*10):(i*10-9))
-    }))
-    termLabs <- substr(tmp$ID[ord], 1, 50)
-    names(termLabs) <- tmp$idx[ord]
+    setLabs <- substr(tmp$ID, 1, 30)
+    names(setLabs) <- tmp$idx
     
-    truthCol <- ifelse(termLabs %in% topBROAD$ID[topBROAD$contrast %in% cont]
-                       [1:100], "red", "black")
+    tmp %>% mutate(rna = ID %in% topBROAD$ID[topGOSets$contrast %in% cont],
+                   col = ifelse(rna == 1, "RNAseq", "None")) -> tmp
     
-    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx)) +
-        geom_point(aes(size = n), alpha = 0.8, colour = methodCols[tmp$method]) +
+    p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
+        geom_point(aes(size = n), alpha = 0.7) +
+        scale_size(limits = c(min(sub$n), max(sub$n))) +
         facet_wrap(vars(method), ncol = 2, scales = "free") +
-        scale_y_discrete(labels = termLabs) +
-        labs(y = "", size = "No. genes") +
-        theme(axis.text.y = element_text(size = 6, colour = truthCol),
-              plot.title = element_text(size = 10),
-              legend.position = "bottom",
-              legend.text = element_text(size = 8),
-              legend.title = element_text(size = 10),
-              axis.text.x = element_text(size = 8),
-              axis.title.x = element_text(size = 10)) +
+        scale_y_discrete(labels = setLabs) +
+        scale_color_manual(values = scales::hue_pal()(4)[3:4]) +
+        labs(y = "", size = "No. genes", colour = "In truth set") +
+        theme(axis.text.y = element_text(size = 6),
+              axis.text.x = element_text(size = 6),
+              legend.box = "horizontal",
+              legend.margin = margin(0, 0, 0, 0, unit = "lines"),
+              panel.spacing.x = unit(1, "lines")) +
+        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-100))) +
         geom_vline(xintercept = -log10(0.05), linetype = "dashed") +
-        ggtitle(cont)  
+        ggtitle(cont)
 }
 
-p[[1]]
-p[[2]]
-p[[3]]
+shift_legend(p[[1]], plot = TRUE, pos = "left")
+shift_legend(p[[2]], plot = TRUE, pos = "left")
+shift_legend(p[[3]], plot = TRUE, pos = "left")
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/SFig-6B-F.pdf")
+```{r}
+fig <- here("output/figures/SFig-6B.rds")
+saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
+                     pos = "left"), 
+        fig, compress = FALSE)
 
-pdf(file = fig, width = 9)
-p[[1]]
-dev.off()
+fig <- here("output/figures/SFig-7B.rds")
+saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
+                     pos = "left"), 
+        fig, compress = FALSE)
 
-fig <- here("output/SFig-7B-F.pdf")
-
-pdf(file = fig, width = 9)
-p[[2]]
-dev.off()
-
-fig <- here("output/SFig-8B-F.pdf")
-
-pdf(file = fig, width = 9)
-p[[3]]
-dev.off()
+fig <- here("output/figures/SFig-8B.rds")
+saveRDS(shift_legend(p[[3]] + theme(plot.title = element_blank()),
+                     pos = "left"), 
+        fig, compress = FALSE)
 ```
-
-### {-}
 
 P-value histograms for the different methods for all contrasts on BROAD gene sets.
 

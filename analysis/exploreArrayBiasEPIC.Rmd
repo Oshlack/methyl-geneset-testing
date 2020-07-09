@@ -49,9 +49,6 @@ numCpgsPerGene <- as.vector(table(flatAnn$entrezid))
 summary(numCpgsPerGene)
 ```
 
-### Figure 1A {.tabset}
-#### View
-
 ```{r}
 dat <- data.frame(table(table(flatAnn$entrezid)))
 numCpgsPerGene <- as.vector(table(flatAnn$entrezid))
@@ -76,18 +73,11 @@ p <- ggplot(dat, aes(x=Var1, y=Freq)) +
 p
 ```
 
-#### Create PDF
-
-```{r, eval=FALSE}
-fig <- here("output/Fig-1A.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/Fig-1A.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
 
-### Figure 1D {.tabset}
-#### View
 The number of genes a CpG maps to can also vary, although the majority of CpGs only map to one gene.
 
 ```{r}
@@ -103,35 +93,28 @@ a <- ggplot(dat[dat$Split == "A",], aes(x=Var1, y=Freq)) +
 
 b <- ggplot(dat[dat$Split == "B",], aes(x=Var1, y=Freq)) +
     geom_bar(stat = "identity") +
-    theme(axis.title.x = element_blank(),
+    theme(axis.title.x=element_blank(),
           axis.title.y = element_blank())
 
 c <- ggplot(dat[dat$Split == "C",], aes(x=Var1, y=Freq)) +
     geom_bar(stat = "identity") +
-    theme(axis.title.x=element_blank(),
-          axis.title.y = element_blank()) 
+    theme(axis.title.y = element_blank(),
+          axis.title.x = element_blank()) 
 
 p <- a + b + c + plot_layout(widths = c(1,2,6)) + 
-    plot_annotation(caption = "No. genes mapped to a CpG",
-                    theme = theme(plot.caption = element_text(hjust = 0.5, 
-                                                              size = 12)))
+   plot_annotation(caption = "No. genes mapped to a CpG",
+                   theme = theme(plot.caption = element_text(hjust = 0.5,
+                                                             size = 12)))
 p
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-1D.pdf")
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/Fig-1D.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-### {-}
 
 Explore the distribution of the average number of CpGs per gene, per GO category. 
 
-### Figure 1C {.tabset}
-#### View
 ```{r}
 ann450 <- loadAnnotation("450k")
 flatAnn450 <- loadFlatAnnotation(ann450)
@@ -169,13 +152,9 @@ p <- ggplot(datSum, aes(x=avg)) +
 p
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-1C.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/Fig-1C.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
 
 ## Null simulations
@@ -183,9 +162,6 @@ dev.off()
 Null simulation strategy: randomly select 50, 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array. 
 
 The code used for the simulation can be found in `r here("code/randCpgSim.R")`.   
-
-### Figure 3A {.tabset}
-#### View
 
 The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.
 
@@ -198,7 +174,7 @@ dat %>% filter(method %in% names(dict)) %>%
     summarise(pSig = sum(P.DE < 0.05)/length(P.DE)) -> sigDat
 
 p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) + 
-    geom_violin() +
+    geom_violin(size = 0.3) +
     geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
     labs(y="Prop. GO cat. with p-value < 0.05", x="No. randomly sampled CpGs",
          fill="Method") +
@@ -206,16 +182,10 @@ p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) +
 p
 ```
 
-### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-3A.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/Fig-3A.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-## {-}
 
 QQ plots of randomly selected simulations at each level of CpGs sampled.
 
@@ -242,9 +212,6 @@ p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
     theme(legend.position="bottom", strip.text.x = element_blank())
 ```
 
-### Figure 3A {.tabset}
-#### View
-
 Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.
 
 ```{r}
@@ -260,8 +227,9 @@ dat %>% filter(method %in% names(dict)) %>%
     summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
 
 p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
-    geom_violin() + 
-    stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
+    geom_violin(size = 0.3) + 
+    stat_summary(geom="point", size = 0.5, color="white", 
+                 position = position_dodge(0.9),
                  show.legend = FALSE, fun = median) +
     labs(y="Median avg. no. CpGs/gene/GO cat.", 
          x="No. randomly sampled CpGs",
@@ -270,15 +238,9 @@ p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) +
 p
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-3B.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/Fig-3B.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-## {-}
 
 

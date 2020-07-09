@@ -55,34 +55,30 @@ ggplot(dat, aes(x = x, y = y, colour = gender)) +
        colour = "Sex")
 ```
 
-## Figure 3C
-### View
+```{r}
+betasFlt <- rmSNPandCH(betasNoNA, rmXY = TRUE, rmcrosshyb = TRUE)
+dim(betasFlt)
+```
 
 ```{r, message=FALSE}
-betasFlt <- rmSNPandCH(betasNoNA, rmXY = TRUE, rmcrosshyb = TRUE)
 mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE)
 dat <- tibble(x = mds$x, y = mds$y, gender = meta$gender)
 
 pal <- paletteer::paletteer_d("wesanderson::Moonrise3", 2)
 cols <- c("female" = pal[2], "male" = pal[1])
 p <- ggplot(dat, aes(x = x, y = y, colour = gender)) +
-  geom_point(size = 3) +
+  geom_point(size = 2) +
   labs(x = "Principal Component 1", y = "Principal Component 2", 
        colour = "Sex") +
     scale_color_manual(values = cols)
 p
 ```
 
-### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-3C.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/Fig-3C.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
 
-### {-}
 
 ```{r, fig.width=8, fig.height=7}
 dat$age <- meta$years_to_birth
@@ -140,9 +136,6 @@ inFile <- here("output/FDR-analysis/FDR-analysis.rds")
 if(file.exists(inFile)) dat <- as_tibble(readRDS(inFile))
 ```
 
-## Figure 3D
-### View
-
 The plots below shows that MethylGSA-ORA does not control the false discovery rate very well as the median proportion of p-value 0.05 for the 100 simulations is greater than 0.5. MethylGSA-GSEA does better, although its median false discovery rate is still relatively high at around 0.25. MethylGSA-GLM has good false discovery rate control with median FDR at around 0.05. ChAMP-ebGSEA is only slightly anti-conservative using both the wicox test (WT) and known population median test (KPMT) with a median FDR at around 0.06-0.08. MissMethyl-gometh is very consistent although somewhat conservative with a median FDR at around 0.02-0.03. 
 
 ```{r, fig.width=9}  
@@ -153,8 +146,8 @@ dat %>% mutate(method = unname(dict[method])) %>%
 
 p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig, 
                           fill = method)) +
-    geom_violin(scale = "width", width = 0.8) + 
-    stat_summary(geom = "point", size = 1, color = "white",
+    geom_violin(scale = "width", width = 0.8, size = 0.3) + 
+    stat_summary(geom = "point", size = 0.5, color = "white",
                  position = position_dodge(0.8),
                  show.legend = FALSE, fun = median) +
     geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
@@ -164,13 +157,8 @@ p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig,
 p
 ```
 
-### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/Fig-3D.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/Fig-3D.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
 
-### {-}
