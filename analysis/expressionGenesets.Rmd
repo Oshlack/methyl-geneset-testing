@@ -118,23 +118,38 @@ p1 + p2 + plot_layout(guides = "collect")
 ```
 
 
-```{r, fig.width=9}
+```{r}
+cellPal <- RColorBrewer::brewer.pal(6, "Dark2")[c(4, 5, 1, 2, 3, 6)]
 dat <- tidy(y, addSamples = TRUE)
 p1 <- ggplot(dat, aes(x = sample, y = lib.size, fill = group)) +
     geom_bar(stat = "identity") +
     labs(fill = "Cell Type", x = "Sample", y = "Library Size") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7))
+    scale_fill_manual(values = cellPal) +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7),
+          legend.position = "bottom")
 
 dat$cpm <- reshape2::melt(cpm(y, log = TRUE), value.name = "cpm")$cpm
 p2 <- ggplot(dat, aes(x = sample, y = cpm, fill = group)) +
     geom_boxplot(show.legend = FALSE) +
     labs(x = "Sample", y = "CPM") +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7))
+    theme(axis.text.x = element_text(angle = 45, hjust = 1, size = 7),
+          legend.position = "bottom") +
+    scale_fill_manual(values = cellPal) 
 
-p1 + p2 + plot_layout(guides = "collect")
+p <- p1 + p2 + plot_layout(guides = "collect") & theme(legend.position = "bottom")
+p
 ```
 
-Multi-dimensional scaling (MDS) plots show the largest sources of variation in the data. They are a good way of exploring the relationships between the samples and identifying structure in the data. The following series of MDS plots examines the first four principal components. The samples are coloured by various known features of the samples such as CMV result and foetal sex. The MDS plots do not show the samples obviously clustering by any of the known features of the data. This indicates that we are unlikely to find many differentially expressed genes between CMV and normal samples.
+```{r}
+fig <- here("output/figures/SFig-4A.rds")
+saveRDS(p1, fig, compress = FALSE)
+
+
+fig <- here("output/figures/SFig-4B.rds")
+saveRDS(p2, fig, compress = FALSE)
+```
+
+Multi-dimensional scaling (MDS) plots show the largest sources of variation in the data. They are a good way of exploring the relationships between the samples and identifying structure in the data. The following series of MDS plots examines the first four principal components. 
 
 ```{r, fig.height=8, fig.width=9}
 lcpm <- cpm(y, log = TRUE)
@@ -148,12 +163,18 @@ for(i in 1:length(dims)){
     dat <-data.frame(x = tmp$x, y = tmp$y, cellType = targets$Cell_type)
     p[[i]] <- ggplot(dat, aes(x = x, y = y, colour = cellType)) +
         geom_point() +
+        scale_colour_manual(values = cellPal)  +
         labs(colour = "Cell Type", x = glue("PC {tmp$dim.plot[1]}"),
              y = glue("PC {tmp$dim.plot[2]}"))
     
 }
 
 (p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = "collect")
+```
+
+```{r}
+fig <- here("output/figures/SFig-4C.rds")
+saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
 # Differential expression analysis
@@ -173,6 +194,22 @@ fit2 <- eBayes(cfit, robust = TRUE)
 summary(decideTests(fit2, p.value = 0.05))
 ```
 
+```{r}
+fitSum <- summary(decideTests(fit2, p.value = 0.05))
+dat <- reshape2::melt(fitSum[rownames(fitSum) != "NotSig", ])
+colnames(dat) <- c("dir","comp","num")
+
+p <- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(x = "Comparison", y = "No. DM CpGs (FDR < 0.05)", fill = "Direction") +
+    scale_fill_brewer(palette = "Set1", direction = -1)
+p
+```
+
+```{r}
+fig <- here("output/figures/SFig-4D.rds")
+saveRDS(p, fig, compress = FALSE)
+```
 # Gene set testing
 
 Testing for enrichment of GO categories and KEGG pathways amongst statistically significant differentially expressed genes.

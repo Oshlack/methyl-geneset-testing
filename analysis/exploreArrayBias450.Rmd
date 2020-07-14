@@ -49,9 +49,6 @@ numCpgsPerGene <- as.vector(table(flatAnn$entrezid))
 summary(numCpgsPerGene)
 ```
 
-### Supp. Figure 1A {.tabset}
-#### View
-
 ```{r}
 dat <- data.frame(table(table(flatAnn$entrezid)))
 numCpgsPerGene <- as.vector(table(flatAnn$entrezid))
@@ -64,9 +61,9 @@ p <- ggplot(dat, aes(x=Var1, y=Freq)) +
     geom_vline(xintercept = med, linetype = "dashed", color = "red") +
     annotate("text", x = med + 2, label=glue("median = {med}"), y=720, 
              colour="red", size = 3, hjust="left") +
-    geom_vline(xintercept = mod, linetype = "dashed", color = "red") +
+    geom_vline(xintercept = mod - 0.5, linetype = "dashed", color = "blue") +
     annotate("text", x = mod + 2, label=glue("mode = {mod}"), y=780, 
-             colour="red", size = 3, hjust="left") +
+             colour="blue", size = 3, hjust="left") +
     scale_x_discrete(breaks = c(1,5,10,20,35,50,60,70,80,90,100,125,152,202,
                                 251,350,1299)) +
     theme(axis.text.x=element_text(angle=45, hjust=1)) +
@@ -75,18 +72,11 @@ p <- ggplot(dat, aes(x=Var1, y=Freq)) +
 p
 ```
 
-#### Create PDF
-
-```{r, eval=FALSE}
-fig <- here("output/SFig-1A.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/SFig-1A.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
 
-### Supp. Figure 1B {.tabset}
-#### View
 The number of genes a CpG maps to can also vary, although the majority of CpGs only map to one gene.
 
 ```{r}
@@ -117,15 +107,10 @@ p <- a + b + c + plot_layout(widths = c(1,2,6)) +
 p
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/SFig-1B.pdf")
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/SFig-1B.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-### {-}
 
 Explore the distribution of the average number of CpGs per gene, per GO category. First, associate GO categories with the CpG and gene data.
 
@@ -158,9 +143,6 @@ Null simulation strategy: randomly select 50, 100, 500, 1000, 5000 and 10000 set
 
 The code used for the simulation can be found in `r here("code/randCpgSim.R")`.   
 
-### Supplementary Figure 3A {.tabset}
-#### View
-
 The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.
 
 ```{r}
@@ -180,16 +162,10 @@ p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) +
 p
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/SFig-3A.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/SFig-3A.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-### {-}
 
 QQ plots of randomly selected simulations at each level of CpGs sampled.
 
@@ -216,9 +192,6 @@ p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
     theme(legend.position="bottom", strip.text.x = element_blank())
 ```
 
-### Supp. Figure 3B {.tabset}
-#### View
-
 Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.
 
 ```{r}
@@ -244,17 +217,10 @@ p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) +
 p
 ```
 
-#### Create PDF
-```{r, eval=FALSE}
-fig <- here("output/SFig-3B.pdf")
-
-pdf(file = fig, width = 9)
-p
-dev.off()
+```{r}
+fig <- here("output/figures/SFig-3B.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
-
-### {-}
-
 
 
 

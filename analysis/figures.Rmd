@@ -10,6 +10,7 @@ library(ggplot2)
 library(limma)
 library(tidyverse)
 library(ggplotify)
+library(UpSetR)
 source(here("code/utility.R"))
 options(scipen=10000)
 ```
@@ -65,21 +66,41 @@ dev.off()
 f4a <- readRDS(here("output/figures/Fig-4A.rds"))
 f4b <- readRDS(here("output/figures/Fig-4B.rds"))
 f4c <- readRDS(here("output/figures/Fig-4C.rds"))
-
+f4d <- readRDS(here("output/figures/Fig-4D.rds"))
+    
 layout <- "
-AABB
-PPPP
-PPPP
-PPPP
+AACCCC
+AACCCC
+BBCCCC
+BBCCCC
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
 "        
 cairo_pdf(here("output/figures/Fig-4.pdf"), width = 8, height = 9)
 f4a + theme(legend.position = "bottom", 
-            legend.key.size = unit(1, "lines"),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
+            legend.key.size = unit(0.75, "lines"),
+            legend.text = element_text(size = 7),
+            legend.title = element_text(size = 8),
             legend.box.just = 0,
-            axis.title = element_text(size = 9)) +
-    f4b + guides(fill = guide_legend(ncol = 3)) +
+            axis.title = element_text(size = 8),
+            plot.margin = margin(0,0,0,0)) +
+    f4b + theme(legend.position = "bottom", 
+            legend.key.size = unit(0.75, "lines"),
+            legend.text = element_text(size = 7),
+            legend.title = element_text(size = 8),
+            legend.box.just = 0,
+            axis.title.y = element_text(size = 7),
+            axis.text = element_text(size = 7),
+            plot.margin = margin(0,0,0,0)) +
+    f4c + guides(colour = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
           legend.key.size = unit(1, "lines"),
           legend.text = element_text(size = 8),
@@ -87,38 +108,50 @@ f4a + theme(legend.position = "bottom",
           plot.title = element_blank(),
           axis.title = element_text(size = 9)) +
     labs(y = "Prop. top 100 terms in truth set") +
-    wrap_elements(f4c) +
+    wrap_elements(f4d) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
 ```{r}
-f5a <- readRDS(here("output/figures/Fig-5A.rds"))
-f5b <- readRDS(here("output/figures/Fig-5B.rds"))
-f5c <- readRDS(here("output/figures/Fig-5C.rds"))
-f5d <- readRDS(here("output/figures/Fig-5D.rds"))
-f5e <- readRDS(here("output/figures/Fig-5E.rds"))
-f5f <- readRDS(here("output/figures/Fig-5F.rds"))
+a <- readRDS(here("output/figures/Fig-5A.rds"))
+b <- readRDS(here("output/figures/Fig-5B.rds"))
+c <- readRDS(here("output/figures/Fig-5C.rds"))
+d <- readRDS(here("output/figures/Fig-5D.rds"))
+e <- readRDS(here("output/figures/Fig-5E.rds"))
+f <- readRDS(here("output/figures/Fig-5F.rds"))
+g <- readRDS(here("output/figures/Fig-5G.rds"))
 
 layout <- "
-AABBCC
-DDDDDD
-DDDDDD
-EEEFFF
-EEEFFF
+AAACCCCC
+AAACCCCC
+BBBCCCCC
+BBBCCCCC
+DDDDDDDD
+DDDDDDDD
+DDDDDDDD
+DDDDDDDD
+DDDDDDDD
+DDDDDDDD
+EEEFFGGG
+EEEFFGGG
+EEEFFGGG
+EEEFFGGG
+EEEFFGGG
+EEEFFGGG
 "     
 
-cairo_pdf(here("output/figures/Fig-5.pdf"), width = 8, height = 9)
-f5a + theme(legend.position = "bottom", 
-            legend.key.size = unit(1, "lines"),
+cairo_pdf(here("output/figures/Fig-5.pdf"), width = 9, height = 10)
+a + theme(legend.position = "bottom", 
+            legend.key.size = unit(0.75, "lines"),
             legend.text = element_text(size = 8),
             legend.title = element_text(size = 9),
             legend.box.just = 0,
             axis.title = element_text(size = 9),
             axis.text = element_text(size = 8),
             text = element_text(family = "arial")) +
-    f5b + guides(fill = guide_legend(ncol = 3)) +
+    b + guides(fill = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
           legend.key.size = unit(1, "lines"),
           legend.text = element_text(size = 8),
@@ -126,7 +159,7 @@ f5a + theme(legend.position = "bottom",
           plot.title = element_blank(),
           axis.title = element_text(size = 8),
             text = element_text(family = "arial")) +
-    f5c + theme(legend.position = "bottom", 
+    c + theme(legend.position = "bottom", 
             legend.key.size = unit(1, "lines"),
             legend.text = element_text(size = 8),
             legend.title = element_text(size = 9),
@@ -134,45 +167,78 @@ f5a + theme(legend.position = "bottom",
             plot.title = element_blank(),
             axis.title = element_text(size = 8),
             text = element_text(family = "arial")) +
-    wrap_elements(f5d + theme(plot.title = element_blank(),
-                              legend.box = "vertical",
-                              legend.text = element_text(size = 8),
+    wrap_elements(d + theme(plot.title = element_blank(),
+                              legend.box = "horizontal",
+                              legend.text = element_text(size = 7),
                               legend.key.size = unit(1, "lines"),
-                              legend.title = element_text(size = 9),
-                              axis.text.y = element_text(size = 8),
+                              legend.title = element_text(size = 8),
+                              axis.text.y = element_text(size = 7),
             text = element_text(family = "arial"))) +
+    wrap_elements(panel = e, clip = FALSE) +
+    wrap_elements(panel = f + theme(axis.title = element_text(size = 9)), 
+                  clip = FALSE) +
+    wrap_elements(panel = g, clip = FALSE) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
-dev.off()
-
-cairo_pdf(here("output/figures/Fig-5E.pdf"), width = 9)
-f5e
-dev.off()
-
-cairo_pdf(here("output/figures/Fig-5F.pdf"), width = 9)
-f5f
 dev.off()
 ```
 
 # Supplementary Figures
 
 ```{r}
-sf4a <- readRDS(here("output/figures/SFig-4A.rds"))
-sf4b <- readRDS(here("output/figures/SFig-4B.rds"))
+a <- readRDS(here("output/figures/SFig-1A.rds"))
+b <- readRDS(here("output/figures/SFig-1B.rds"))
 
 layout <- "
-AAA#
-PPPP
-PPPP
-PPPP
-"        
-cairo_pdf(here("output/figures/SFig-4.pdf"), width = 8, height = 9)
-wrap_elements(sf4a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.direction = "vertical") +
-    labs(y = "Prop. top 100 terms in truth set")) +
-    wrap_elements(sf4b) +
+AAA
+BBB
+"
+cairo_pdf(here("output/figures/SFig-01.pdf"))
+a + wrap_elements(b) + 
+    plot_layout(design = layout) + 
+    plot_annotation(tag_levels = 'A') &
+    theme(plot.tag = element_text(size = 14, face = "bold"))
+dev.off()
+```
+
+```{r}
+a <- readRDS(here("output/figures/SFig-3A.rds"))
+b <- readRDS(here("output/figures/SFig-3B.rds"))
+
+layout <- "
+AAA
+BBB
+"
+cairo_pdf(here("output/figures/SFig-03.pdf"))
+a + b + 
+    plot_layout(design = layout, guides = "collect") + 
+    plot_annotation(tag_levels = 'A') &
+    theme(plot.tag = element_text(size = 14, face = "bold"))
+dev.off()
+```
+
+```{r}
+a <- readRDS(here("output/figures/SFig-4A.rds"))
+b <- readRDS(here("output/figures/SFig-4B.rds"))
+c <- readRDS(here("output/figures/SFig-4C.rds"))
+d <- readRDS(here("output/figures/SFig-4D.rds"))
+
+layout <- "
+AABB
+AABB
+CCDD
+"
+
+cairo_pdf(here("output/figures/SFig-04.pdf"), width = 9)
+a + theme(legend.position = "right", 
+          legend.box = "vertical",
+          legend.text = element_text(size = 7)) +
+    b + 
+    c + theme(legend.text = element_text(size = 8)) +
+    d + theme(legend.text = element_text(size = 8),
+              axis.title = element_text(size = 8),
+              legend.position = "bottom") +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
@@ -180,42 +246,21 @@ dev.off()
 ```
 
 ```{r}
-sf5a <- readRDS(here("output/figures/SFig-5A.rds"))
-sf5b <- readRDS(here("output/figures/SFig-5B.rds"))
+a <- readRDS(here("output/figures/SFig-5A.rds"))
+b <- readRDS(here("output/figures/SFig-5B.rds"))
 
 layout <- "
-AAA#
-PPPP
-PPPP
-PPPP
+AAAA
+BBBB
+BBBB
+BBBB
 "        
-cairo_pdf(here("output/figures/SFig-5.pdf"), width = 8, height = 9)
-wrap_elements(sf5a + theme(plot.title = element_blank(),
+cairo_pdf(here("output/figures/SFig-05.pdf"), width = 8, height = 9)
+wrap_elements(a + theme(plot.title = element_blank(),
                           axis.title = element_text(size = 9),
-                          legend.direction = "vertical") +
+                          legend.position = "right") +
     labs(y = "Prop. top 100 terms in truth set")) +
-    wrap_elements(sf5b) +
-    plot_layout(design = layout) +
-    plot_annotation(tag_levels = 'A') &
-    theme(plot.tag = element_text(size = 14, face = "bold"))
-dev.off()
-```
-```{r}
-sf6a <- readRDS(here("output/figures/SFig-6A.rds"))
-sf6b <- readRDS(here("output/figures/SFig-6B.rds"))
-
-layout <- "
-AAA#
-PPPP
-PPPP
-PPPP
-"        
-cairo_pdf(here("output/figures/SFig-6.pdf"), width = 8, height = 9)
-wrap_elements(sf6a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.direction = "vertical") +
-    labs(y = "Prop. top 100 terms in truth set")) +
-    wrap_elements(sf6b) +
+    wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
@@ -223,59 +268,145 @@ dev.off()
 ```
 
 ```{r}
-sf7a <- readRDS(here("output/figures/SFig-7A.rds"))
-sf7b <- readRDS(here("output/figures/SFig-7B.rds"))
+a <- readRDS(here("output/figures/SFig-6A.rds"))
+b <- readRDS(here("output/figures/SFig-6B.rds"))
 
 layout <- "
-AAA#
-PPPP
-PPPP
-PPPP
+AAAA
+BBBB
+BBBB
+BBBB
 "        
-cairo_pdf(here("output/figures/SFig-7.pdf"), width = 8, height = 9)
-wrap_elements(sf7a + theme(plot.title = element_blank(),
+cairo_pdf(here("output/figures/SFig-06.pdf"), width = 8, height = 9)
+wrap_elements(a + theme(plot.title = element_blank(),
                           axis.title = element_text(size = 9),
-                          legend.direction = "vertical") +
+                          legend.position = "right") +
     labs(y = "Prop. top 100 terms in truth set")) +
-    wrap_elements(sf7b) +
+    wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
 ```{r}
-sf8a <- readRDS(here("output/figures/SFig-8A.rds"))
-sf8b <- readRDS(here("output/figures/SFig-8B.rds"))
+a <- readRDS(here("output/figures/SFig-7A.rds"))
+b <- readRDS(here("output/figures/SFig-7B.rds"))
+c <- readRDS(here("output/figures/SFig-7C.rds"))
+d <- readRDS(here("output/figures/SFig-7D.rds"))
+e <- readRDS(here("output/figures/SFig-7E.rds"))
+
+layout <- "
+AAAA
+BBBB
+CCCC
+CCCC
+CCCC
+CCCC
+DDDD
+DDDD
+DDDD
+DDDD
+EEEE
+EEEE
+EEEE
+EEEE
+"        
+cairo_pdf(here("output/figures/SFig-07.pdf"), width = 8, height = 17)
+a + theme(legend.position = "none", 
+          axis.title.y = element_text(size = 8)) +
+    b + theme(legend.position = "right", 
+          axis.title.y = element_text(size = 8)) +
+    c + 
+    d +
+    e +
+    plot_layout(design = layout) +
+    plot_annotation(tag_levels = 'A') &
+    theme(plot.tag = element_text(size = 14, face = "bold"))
+dev.off()
+```
+
+```{r}
+a <- readRDS(here("output/figures/SFig-8A.rds"))
+b <- readRDS(here("output/figures/SFig-8B.rds"))
 
 layout <- "
 AAA#
-PPPP
-PPPP
-PPPP
-"        
-cairo_pdf(here("output/figures/SFig-8.pdf"), width = 8, height = 9)
-wrap_elements(sf8a + theme(plot.title = element_blank(),
+BBBB
+BBBB
+BBBB
+"           
+cairo_pdf(here("output/figures/SFig-08.pdf"), width = 8, height = 9)
+wrap_elements(a + theme(plot.title = element_blank(),
                           axis.title = element_text(size = 9),
-                          legend.direction = "vertical") +
+                          legend.position = "right") +
     labs(y = "Prop. top 100 terms in truth set")) +
-    wrap_elements(sf8b) +
+    wrap_elements(b) +
+    plot_layout(design = layout) +
+    plot_annotation(tag_levels = 'A') &
+    theme(plot.tag = element_text(size = 14, face = "bold"))
+dev.off()
+```
+
+```{r}
+a <- readRDS(here("output/figures/SFig-9A.rds"))
+b <- readRDS(here("output/figures/SFig-9B.rds"))
+
+layout <- "
+AAA#
+BBBB
+BBBB
+BBBB
+"        
+cairo_pdf(here("output/figures/SFig-09.pdf"), width = 8, height = 9)
+wrap_elements(a + theme(plot.title = element_blank(),
+                          axis.title = element_text(size = 9),
+                          legend.position = "right") +
+    labs(y = "Prop. top 100 terms in truth set")) +
+    wrap_elements(b) +
+    plot_layout(design = layout) +
+    plot_annotation(tag_levels = 'A') &
+    theme(plot.tag = element_text(size = 14, face = "bold"))
+dev.off()
+```
+
+```{r}
+a <- readRDS(here("output/figures/SFig-10A.rds"))
+b <- readRDS(here("output/figures/SFig-10B.rds"))
+
+layout <- "
+AAA#
+BBBB
+BBBB
+BBBB
+"        
+cairo_pdf(here("output/figures/SFig-10.pdf"), width = 8, height = 9)
+wrap_elements(a + theme(plot.title = element_blank(),
+                          axis.title = element_text(size = 9),
+                          legend.position = "right") +
+    labs(y = "Prop. top 100 terms in truth set")) +
+    wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
 ```{r}
-sf9a <- readRDS(here("output/figures/SFig-9A.rds"))
-sf9b <- readRDS(here("output/figures/SFig-9B.rds"))
-sf9c <- readRDS(here("output/figures/SFig-9C.rds"))
+a <- readRDS(here("output/figures/SFig-11A.rds"))
+b <- readRDS(here("output/figures/SFig-11B.rds"))
+c <- readRDS(here("output/figures/SFig-11C.rds"))
+d <- readRDS(here("output/figures/SFig-11D.rds"))
+e <- readRDS(here("output/figures/SFig-11E.rds"))
+f <- readRDS(here("output/figures/SFig-11F.rds"))
 
 layout <- "
-AAABBB
-PPPPPP
-PPPPPP
+AAABBBBB
+CCCCCCCC
+CCCCCCCC
+DDDEEFFF
+DDDEEFFF
 "        
-cairo_pdf(here("output/figures/SFig-9.pdf"), width = 8, height = 6)
-sf9a + guides(fill = guide_legend(ncol = 3)) +
+cairo_pdf(here("output/figures/SFig-11.pdf"), width = 8, height = 9)
+a + guides(fill = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
           legend.key.size = unit(1, "lines"),
           legend.text = element_text(size = 8),
@@ -283,18 +414,23 @@ sf9a + guides(fill = guide_legend(ncol = 3)) +
           plot.title = element_blank(),
           axis.title = element_text(size = 8)) +
     labs(y = "Prop. top 100 terms in truth set") +
-    sf9b + theme(legend.position = "bottom", 
+    b + theme(legend.position = "bottom", 
             legend.key.size = unit(1, "lines"),
             legend.text = element_text(size = 8),
             legend.title = element_text(size = 9),
             legend.box.just = 0,
             plot.title = element_blank(),
             axis.title = element_text(size = 8)) +
-    wrap_elements(sf9c + theme(plot.title = element_blank(),
-                              legend.box = "vertical",
-                              legend.text = element_text(size = 8),
+    wrap_elements(c + theme(plot.title = element_blank(),
+                              legend.box = "horizontal",
+                              legend.text = element_text(size = 7),
                               legend.key.size = unit(1, "lines"),
-                              legend.title = element_text(size = 9))) +
+                              legend.title = element_text(size = 8),
+                              axis.text.y = element_text(size = 7))) +
+    wrap_elements(panel = d, clip = FALSE) +
+    wrap_elements(panel = e + theme(axis.title = element_text(size = 9)), 
+                                    clip = FALSE) +
+    wrap_elements(panel = f, clip = FALSE) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
@@ -302,17 +438,22 @@ dev.off()
 ```
 
 ```{r}
-sf10a <- readRDS(here("output/figures/SFig-10A.rds"))
-sf10b <- readRDS(here("output/figures/SFig-10B.rds"))
-sf10c <- readRDS(here("output/figures/SFig-10C.rds"))
+a <- readRDS(here("output/figures/SFig-12A.rds"))
+b <- readRDS(here("output/figures/SFig-12B.rds"))
+c <- readRDS(here("output/figures/SFig-12C.rds"))
+d <- readRDS(here("output/figures/SFig-12D.rds"))
+e <- readRDS(here("output/figures/SFig-12E.rds"))
+f <- readRDS(here("output/figures/SFig-12F.rds"))
 
 layout <- "
-AAABBB
-PPPPPP
-PPPPPP
-"        
-cairo_pdf(here("output/figures/SFig-10.pdf"), width = 8, height = 6)
-sf10a + guides(fill = guide_legend(ncol = 3)) +
+AAABBBBB
+CCCCCCCC
+CCCCCCCC
+DDDEEFFF
+DDDEEFFF
+"          
+cairo_pdf(here("output/figures/SFig-12.pdf"), width = 8, height = 9)
+a + guides(fill = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
           legend.key.size = unit(1, "lines"),
           legend.text = element_text(size = 8),
@@ -320,19 +461,76 @@ sf10a + guides(fill = guide_legend(ncol = 3)) +
           plot.title = element_blank(),
           axis.title = element_text(size = 8)) +
     labs(y = "Prop. top 100 terms in truth set") +
-    sf10b + theme(legend.position = "bottom", 
+    b + theme(legend.position = "bottom", 
             legend.key.size = unit(1, "lines"),
             legend.text = element_text(size = 8),
             legend.title = element_text(size = 9),
             legend.box.just = 0,
             plot.title = element_blank(),
             axis.title = element_text(size = 8)) +
-    wrap_elements(sf10c + theme(plot.title = element_blank(),
-                              legend.box = "vertical",
-                              legend.text = element_text(size = 8),
+   wrap_elements(c + theme(plot.title = element_blank(),
+                              legend.box = "horizontal",
+                              legend.text = element_text(size = 7),
                               legend.key.size = unit(1, "lines"),
-                              legend.title = element_text(size = 9))) +
+                              legend.title = element_text(size = 8),
+                              axis.text.y = element_text(size = 7))) +
+    wrap_elements(panel = d, clip = FALSE) +
+    wrap_elements(panel = e + theme(axis.title = element_text(size = 9)), 
+                                    clip = FALSE) +
+    wrap_elements(panel = f, clip = FALSE) +
     plot_layout(design = layout) +
+    plot_annotation(tag_levels = 'A') &
+    theme(plot.tag = element_text(size = 14, face = "bold"))
+dev.off()
+```
+```{r}
+a <- readRDS(here("output/figures/SFig-13A.rds"))
+b <- readRDS(here("output/figures/SFig-13B.rds"))
+c <- readRDS(here("output/figures/SFig-13C.rds"))
+d <- readRDS(here("output/figures/SFig-13D.rds"))
+e <- readRDS(here("output/figures/SFig-13E.rds"))
+
+layout <- "
+AAAA
+BBBB
+CCCC
+CCCC
+CCCC
+CCCC
+DDDD
+DDDD
+DDDD
+DDDD
+EEEE
+EEEE
+EEEE
+EEEE
+"        
+cairo_pdf(here("output/figures/SFig-13.pdf"), width = 8, height = 17)
+a + theme(legend.position = "none", 
+          axis.title.y = element_text(size = 8)) +
+    b + theme(legend.position = "right", 
+          axis.title.y = element_text(size = 8)) +
+    c + 
+    d +
+    e +
+    plot_layout(design = layout) +
+    plot_annotation(tag_levels = 'A') &
+    theme(plot.tag = element_text(size = 14, face = "bold"))
+dev.off()
+```
+
+```{r}
+a <- readRDS(here("output/figures/SFig-14A.rds"))
+b <- readRDS(here("output/figures/SFig-14B.rds"))
+
+layout <- "
+AAAA
+BBBB
+"        
+cairo_pdf(here("output/figures/SFig-14.pdf"), width = 9)
+a + b +
+    plot_layout(design = layout, guides = "collect") +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
