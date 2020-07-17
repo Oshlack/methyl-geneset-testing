@@ -86,7 +86,7 @@ Genes that do not have an adequate number of reads in any sample should be filte
 Filter out lowly expressed genes and calculate TMM normalisation factors.
 
 ```{r}
-keep <- filterByExpr(z, group = z$group)
+keep <- filterByExpr(z, group = z$samples$group)
 x <- z[keep, ]
 y <- calcNormFactors(x)
 y
