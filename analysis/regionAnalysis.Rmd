@@ -651,13 +651,13 @@ d <- vector("list", length(p))
 for(i in 1:length(p)){
     cont <- sort(colnames(cont.matrix))[i]
     dat %>% filter(contrast == cont) %>%
-        select(-contrast) %>%
+        dplyr::select(-contrast) %>%
         group_by(cpgs) %>%
         summarize(meth = list(method)) %>%
         ggplot(aes(x = meth)) +
         geom_bar() +
         labs(y = "Intersection size", x = "") +
-        scale_x_upset() +
+        scale_x_upset(sets = c("FDR < 0.05", "DMRcate", "Top 5000")) +
         theme(axis.title.y = element_text(size = 10)) -> int
     
     dat %>% filter(contrast == cont) %>%
@@ -732,7 +732,7 @@ for(i in 1:length(p)){
         ggplot(aes(x = meth)) +
         geom_bar() +
         labs(y = "Intersection size", x = "") +
-        scale_x_upset() +
+        scale_x_upset(sets = c("FDR < 0.05", "DMRcate", "Top 5000")) +
         theme(axis.title.y = element_text(size = 10)) -> int
     
     dat %>% group_by(contrast, method) %>%
