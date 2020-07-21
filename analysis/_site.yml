@@ -1,7 +1,7 @@
-name: "methyl-geneset-testing"
+name: methyl-geneset-testing
 output_dir: ../docs
 navbar:
-  title: "methyl-geneset-testing"
+  title: methyl-geneset-testing
   left:
   - text: Home
     href: index.html
@@ -9,6 +9,10 @@ navbar:
     href: about.html
   - text: License
     href: license.html
+  right:
+  - icon: fa-github
+    text: Source code
+    href: https://github.com/Oshlack/methyl-geneset-testing
 output:
   workflowr::wflow_html:
     toc: yes
