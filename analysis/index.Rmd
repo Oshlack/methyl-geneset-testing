@@ -12,8 +12,8 @@ Unbiased gene set enrichment analysis for genome-wide DNA methylation data
 This site contains the results of the analysis presented in 
 *“Unbiased gene set enrichment analysis for genome-wide DNA methylation data”*. 
 Follow the links below to see the different parts of the analysis. For details
-on how to reproduce the complete analyis, please see the [Getting started](start)
-guide.
+on how to reproduce the complete analyis, please see the 
+[Getting started](gettingStarted.html) page.
 
 
 Analysis
@@ -65,6 +65,6 @@ content on this website is covered by a [Creative Commons CC-BY][cc] license.
 Citations
 ---------
 
-[start]: gettingStarted.html "Getting started"
+
 [mit]: https://choosealicense.com/licenses/mit/ "MIT License"
 [cc]: https://creativecommons.org/licenses/by/4.0/ "CC-BY License"

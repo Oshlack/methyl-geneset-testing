@@ -64,7 +64,7 @@ HumanMethylationEPIC arrays. Normal kidney methylation data from The Cancer
 Genome Atlas (TCGA) kidney clear-cell carcinoma (KIRC) cohort, which was 
 generated using Illumina HumanMethylation450 arrays. These are both 
 automatically downloaded as part of the analysis directly from the Bioconductor
-(ExperimentHub)[expt-hub]. 
+[ExperimentHub](expt-hub). 
 We also use a flow-sorted, blood cell RNAseq dataset,
 which can be downloaded from GEO at [GSE107011](geo-rnaseq) or SRA at 
 [SRP125125](sra-rnaseq).
