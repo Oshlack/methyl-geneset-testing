@@ -2,7 +2,7 @@
 Unbiased Methylation Gene Set Testing Paper Analysis
 ====================================================
 
-This repository contains code and output for the analysis in *Unbiased gene set enrichment analysis for genome-wide DNA methylation data*.
+This repository contains code and output for the analysis in *"Unbiased gene set enrichment analysis for genome-wide DNA methylation data"*.
 
 To see the results of the analysis please visit the [analysis webpage](http://oshlacklab.com/methyl-geneset-testing "Analysis website"). If you wish to reproduce the analysis follow the instructions on the Getting Started page.
 
