@@ -3,7 +3,7 @@
 dir <- here::here("code")
 jobDir <- glue::glue("{dir}/.job")
 outDir <- here::here("output/methylgsa-params")
-input <- here::here("data/input.RData")
+input <- here::here("data/cache-intermediates/input.RData")
 
 if (!dir.exists(outDir)) dir.create(outDir)
 if (!dir.exists(jobDir)) dir.create(jobDir)

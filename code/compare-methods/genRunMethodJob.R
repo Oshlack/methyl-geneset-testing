@@ -3,7 +3,7 @@
 dir <- here::here("code")
 jobDir <- glue::glue("{dir}/.job")
 outDir <- here::here("output/compare-methods")
-input <- here::here("data/blood.contrasts.rds")
+input <- here::here("data/cache-intermediates/blood.contrasts.rds")
 
 if (!dir.exists(outDir)) dir.create(outDir)
 if (!dir.exists(jobDir)) dir.create(jobDir)

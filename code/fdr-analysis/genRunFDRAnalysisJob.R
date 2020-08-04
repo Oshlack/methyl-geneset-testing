@@ -3,7 +3,7 @@
 dir <- here::here("code")
 jobDir <- glue::glue("{dir}/.job")
 outDir <- here::here("output/FDR-analysis")
-input <- here::here("data/TCGA.KIRC.rds")
+input <- here::here("data/datasets/TCGA.KIRC.rds")
 
 if (!dir.exists(outDir)) dir.create(outDir)
 if (!dir.exists(jobDir)) dir.create(jobDir)
