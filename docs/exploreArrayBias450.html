@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
-<meta name="date" content="2020-07-21" />
+<meta name="date" content="2020-08-04" />
 
 <title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
@@ -389,7 +389,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
 <h3 class="subtitle">Exploring the biases on 450k arrays</h3>
 <h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
-<h4 class="date">July 21, 2020</h4>
+<h4 class="date">August 04, 2020</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-07-21
+<strong>Last updated:</strong> 2020-08-04
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -505,16 +505,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree7fd8e1c1207a585d2e2e82928da0677920ddd443targetblank7fd8e1ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/7fd8e1c1207a585d2e2e82928da0677920ddd443" target="_blank">7fd8e1c</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree239e2f541370c4e2e17101496355a66818a0534atargetblank239e2f5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/239e2f541370c4e2e17101496355a66818a0534a" target="_blank">239e2f5</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree7fd8e1c1207a585d2e2e82928da0677920ddd443targetblank7fd8e1ca" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree239e2f541370c4e2e17101496355a66818a0534atargetblank239e2f5a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/7fd8e1c1207a585d2e2e82928da0677920ddd443" target="_blank">7fd8e1c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/239e2f541370c4e2e17101496355a66818a0534a" target="_blank">239e2f5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -529,17 +529,16 @@ Ignored files:
     Ignored:    code/old/
     Ignored:    data/
     Ignored:    output/.DS_Store
-    Ignored:    output/450K.rds
-    Ignored:    output/CD4vCD8.GO.csv
-    Ignored:    output/CD4vCD8.KEGG.csv
-    Ignored:    output/EPIC.rds
     Ignored:    output/FDR-analysis/
     Ignored:    output/compare-methods/
     Ignored:    output/figures/
+    Ignored:    output/methylgsa-params/
     Ignored:    output/random-cpg-sims/
 
 Unstaged changes:
-    Modified:   .gitignore
+    Modified:   analysis/exploreData.Rmd
+    Modified:   code/random-cpg-sims/randomCpgSim.R
+    Modified:   code/utility.R
 
 </code></pre>
 <p>
@@ -578,6 +577,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/239e2f541370c4e2e17101496355a66818a0534a/analysis/exploreArrayBias450.Rmd" target="_blank">239e2f5</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-04
+</td>
+<td>
+wflow_publish(c(&quot;analysis/exploreArrayBias450.Rmd&quot;, &quot;analysis/exploreArrayBiasEPIC.Rmd&quot;))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/e631347d2fe362ed5b7fb0ec0a237be681daa314/docs/exploreArrayBias450.html" target="_blank">e631347</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-07-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 html
@@ -922,6 +955,7 @@ Jovana Maksimovic
 </table>
 </div>
 </div>
+<p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-1A.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
 <p>The number of genes a CpG maps to can also vary, although the majority of CpGs only map to one gene.</p>
@@ -1010,6 +1044,7 @@ Jovana Maksimovic
 </table>
 </div>
 </div>
+<p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-1B.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
 <p>Explore the distribution of the average number of CpGs per gene, per GO category. First, associate GO categories with the CpG and gene data.</p>
@@ -1110,10 +1145,12 @@ Jovana Maksimovic
 </div>
 <div id="null-simulations" class="section level2">
 <h2>Null simulations</h2>
-<p>Null simulation strategy: randomly select 50, 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array.</p>
-<p>The code used for the simulation can be found in /Users/maksimovicjovana/Work/Research/methyl-geneset-testing/code/randCpgSim.R.</p>
+<p>We randomly select 50, 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array.</p>
+<p>The code used to produce the simulation results can be found in the <code>code/random-cpg-sims</code> directory. It consists of three scripts: <code>genRandCpgSimJobs.R</code>, <code>randomCpgSim.R</code> and <code>processRandCpgSim.R</code>. The <code>genRandCpgSimJobs.R</code> script creates and submits <a href="https://slurm.schedmd.com/overview.html">Slurm</a> job scripts that run the <code>randomCpgSim.R</code> script, in parallel, on a HPC. Each job executes <em>one</em> of the 100 simulations, for a fixed number of randomly selected CpGs, using either the 450K or EPIC array annotation. The results of each job are saved as an RDS file named <code>{arrayType}.{noCpgs}.{simNo}.rds</code> in the <code>output/random-cpg-sims</code> directory. Once all simulation jobs are complete, the <code>processRandCpgSim.R</code> must be executed to collate the results into a single object for each array type, which are then saved as <code>450K.rds</code> and <code>EPIC.rds</code> in the <code>output/random-cpg-sims</code> directory. The intermediate RDS files are moved into <code>output/.bin</code>, which can then be deleted, if no longer required. The subsequent section requires <code>450K.rds</code> to be present in the <code>output/random-cpg-sims</code> directory for downstream analysis and plotting.</p>
+<div id="results" class="section level3">
+<h3>Results</h3>
 <p>The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.</p>
-<pre class="r"><code>dat &lt;- readRDS(here(&quot;output/random-cpg-sims/EPIC.rds&quot;))
+<pre class="r"><code>dat &lt;- readRDS(here(&quot;output/random-cpg-sims/450K.rds&quot;))
 
 dat %&gt;% filter(method %in% names(dict)) %&gt;%
     mutate(method = unname(dict[method])) %&gt;%
@@ -1187,6 +1224,7 @@ Jovana Maksimovic
 </table>
 </div>
 </div>
+<p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-3A.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
 <p>QQ plots of randomly selected simulations at each level of CpGs sampled.</p>
@@ -1330,6 +1368,7 @@ Jovana Maksimovic
 </table>
 </div>
 </div>
+<p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-3B.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
 <br>
@@ -1498,6 +1537,7 @@ loaded via a namespace (and not attached):
 [108] DelayedMatrixStats_1.8.0                  
 [109] illuminaio_0.28.0                         
 [110] git2r_0.27.1                              </code></pre>
+</div>
 </div>
 </div>
 
