@@ -1,7 +1,7 @@
 loadAnnotation <- function(arrayType = c("450k", "EPIC")) {
 
   arrayType <- match.arg(arrayType)
-  annFile <- here::here(glue::glue("data/ann{arrayType}.RData"))
+  annFile <- here::here(glue::glue("data/annotations/ann{arrayType}.RData"))
 
   if(file.exists(annFile)){
     # load annotation from file for faster execution
@@ -23,7 +23,7 @@ loadFlatAnnotation <- function(ann) {
 
   arrayType <- ifelse(nrow(ann) > 500000, "EPIC", "450k")
 
-  flatFile <- here::here(glue::glue("data/flatAnn{arrayType}.RData"))
+  flatFile <- here::here(glue::glue("data/annotations/flatAnn{arrayType}.RData"))
 
   if(file.exists(flatFile)){
     # load flat annotation from file for faster execution
@@ -42,23 +42,24 @@ getMode <- function(x) {
   ux[which.max(tabulate(match(x, ux)))]
 }
 
-readData <- function(saveAs, dataSrc = c("BC","RA"), saveRG = FALSE){
+readData <- function(saveAs, #dataSrc = c("BC","RA"),
+                     saveRG = FALSE){
 
-  dataSrc <- match.arg(dataSrc)
+  #dataSrc <- match.arg(dataSrc)
 
-  if(dataSrc == "BC"){
+  #if(dataSrc == "BC"){
     dat <- getBloodCellData()
     rawRg <- dat$rawRg
     targets <- dat$targets
 
-  } else if (dataSrc == "RA"){
-    dat <- getRmArthritisData()
-    rawRg <- dat$rawRg
-    targets <- dat$targets
-  }
+  # } else if (dataSrc == "RA"){
+  #   dat <- getRmArthritisData()
+  #   rawRg <- dat$rawRg
+  #   targets <- dat$targets
+  # }
 
   # calculate the detection p-values
-  detP <- detectionP(rawRg)
+  detP <- minfi::detectionP(rawRg)
 
   # normalise
   normGr <- minfi::preprocessQuantile(rawRg)
@@ -104,39 +105,39 @@ getBloodCellData <- function(){
   return(list(rawRg = rawRg, targets = targets))
 }
 
-getRheumArthritisData <- function(){
-  require(GEOquery)
-  require(here)
-  require(minfi)
-
-  cat("Downloading data...\n")
-  dataFiles <- getGEOSuppFiles(GEO = "GSE42861", baseDir = here("data"),
-                               filter_regex = "RAW")
-  outPath <- here("data/GSE42861")
-
-  cat("Extracting TAR archive...\n")
-  untar(tarfile = rownames(dataFiles), exdir = outPath)
-
-  cat("Downloading series matrix...\n")
-  seriesMatrix <- getGEO(GEO = "GSE42861", destdir = outPath,
-                         GSEMatrix = TRUE, parseCharacteristics = FALSE)
-  pd <- pData(phenoData(seriesMatrix[[1]]))
-  tmp <- as.character(pd$supplementary_file)
-  tmp <- strsplit2(tmp,"suppl/")[,2]
-  pd$id <- strsplit2(tmp,"_Grn")[,1]
-  targets <- pd[pd$`subject:ch1` == "Normal",]
-  targets$Basename <- paste0(outPath,"/",targets$id)
-
-  cat("Unzipping GZ files...\n")
-  idatgz <- c(paste0(targets$Basename,"_Red.idat.gz"),
-              paste0(targets$Basename,"_Grn.idat.gz"))
-  lapply(idatgz, function(f) gunzip(f))
-
-  cat("Reading IDAT files...\n")
-  rawRg <- read.metharray.exp(targets = targets)
-
-  return(list(rawRg = rawRg, targets = targets))
-}
+# getRheumArthritisData <- function(){
+#   require(GEOquery)
+#   require(here)
+#   require(minfi)
+#
+#   cat("Downloading data...\n")
+#   dataFiles <- getGEOSuppFiles(GEO = "GSE42861", baseDir = here("data"),
+#                                filter_regex = "RAW")
+#   outPath <- here("data/GSE42861")
+#
+#   cat("Extracting TAR archive...\n")
+#   untar(tarfile = rownames(dataFiles), exdir = outPath)
+#
+#   cat("Downloading series matrix...\n")
+#   seriesMatrix <- getGEO(GEO = "GSE42861", destdir = outPath,
+#                          GSEMatrix = TRUE, parseCharacteristics = FALSE)
+#   pd <- pData(phenoData(seriesMatrix[[1]]))
+#   tmp <- as.character(pd$supplementary_file)
+#   tmp <- strsplit2(tmp,"suppl/")[,2]
+#   pd$id <- strsplit2(tmp,"_Grn")[,1]
+#   targets <- pd[pd$`subject:ch1` == "Normal",]
+#   targets$Basename <- paste0(outPath,"/",targets$id)
+#
+#   cat("Unzipping GZ files...\n")
+#   idatgz <- c(paste0(targets$Basename,"_Red.idat.gz"),
+#               paste0(targets$Basename,"_Grn.idat.gz"))
+#   lapply(idatgz, function(f) gunzip(f))
+#
+#   cat("Reading IDAT files...\n")
+#   rawRg <- read.metharray.exp(targets = targets)
+#
+#   return(list(rawRg = rawRg, targets = targets))
+# }
 
 filterQual <- function(normGr, detP, pval=0.01){
   # ensure probes are in the same order in both objects

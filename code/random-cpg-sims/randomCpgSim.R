@@ -18,6 +18,7 @@ simNo <- args[3]
 outDir <- args[4]
 
 # set a seed for each simulation using sim no. indicated by slurm
+# this ensures different CpGs are sampled for each of the 100 simulations
 set.seed(simNo)
 randSet <- sample(x = ann$Name, size = noCpgs) # randomly sample cpgNum sites
 
