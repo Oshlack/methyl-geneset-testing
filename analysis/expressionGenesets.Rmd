@@ -14,8 +14,6 @@ library(EnsDb.Hsapiens.v75)
 library(readr)
 library(limma)
 library(edgeR)
-library(EGSEA)
-library(EGSEAdata)
 library(glue)
 library(patchwork)
 library(biobroom)
@@ -23,27 +21,45 @@ library(ChAMP)
 source(here("code/utility.R"))
 ```
 
-# Data import
+# Data download, mapping and quantification
 
-The dataset used to generate the RNAseq "truth" gene sets is avoilable from GEO at [GSE107011](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE107011) or SRA at [SRP125125](https://www.ncbi.nlm.nih.gov/sra?term=SRP125125).
+The RNAseq dataset used to generate the "truth" gene sets is avoilable from GEO at [GSE107011](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE107011) or SRA at [SRP125125](https://www.ncbi.nlm.nih.gov/sra?term=SRP125125).
 
-The data was quasi-mapped and quantified using Salmon (v1.2.1) with the hg19_cdna Ensembl human transcriptome.  
+The RNAseq data was quasi-mapped and quantified using Salmon (v1.2.1) with the [hg19_cdna](http://refgenomes.databio.org/v2/asset/hg19_cdna/fasta/archive?tag=default) human transcriptome downloaded from [refgenie](http://refgenomes.databio.org/index). The code used to perform the Salmon quasi-mapping and quantification can be found in `code/salmon-quant.sh`. 
+
+The Salmon mapping statistics can be veiwed [here](multiqc_report.html).
+
+For downstream analysis that quantification files (`quant.sf`) for each sample are expected to be present in the following directory structure:
+
+* `data`
+    * `datasets`
+        * `SRP125125`
+            * `quants`
+                * `SRR6298258_quant`
+                * ...
+                * ...
+                * `SRR6298376_quant`
+                
+## Data import
 
 Load sample information and file names.
 
 ```{r}
-targets <- read_csv(here("data/SRP125125/SraRunTableFull.txt"))
+targets <- read_csv(here("data/datasets/SRP125125/SraRunTableFull.txt"))
 targets$Cell_type <- gsub(" ", "_", targets$Cell_type)
 targets$Cell_type <- gsub("-", "_", targets$Cell_type)
 targets
 ```
 
+Setup file paths and sample names.
+
 ```{r}
-files <- list.files(here("data/SRP125125/quants"), 
+files <- list.files(here("data/datasets/SRP125125/quants"), 
                     recursive = TRUE, pattern = "quant.sf", full.names = TRUE)
 pos <- regexpr("SRR6298[0-9][0-9][0-9]", files, perl = TRUE)
 names(files) <- unname(substr(files, pos, 
                               pos[1] + attr(pos, "match.length") - 1))
+head(files)
 ```
 
 Associate transcripts with gene IDs for gene-level summarization.
@@ -114,7 +130,7 @@ p2 <- ggplot(dat, aes(x = cpm, colour = group)) +
          title = "Filtered") +
     geom_vline(xintercept = log2(10/M + 2/L), linetype = "dashed")
 
-p1 + p2 + plot_layout(guides = "collect")
+p1 + p2 + plot_layout(guides = "collect") & theme(legend.position = "bottom")
 ```
 
 
@@ -139,6 +155,8 @@ p2 <- ggplot(dat, aes(x = sample, y = cpm, fill = group)) +
 p <- p1 + p2 + plot_layout(guides = "collect") & theme(legend.position = "bottom")
 p
 ```
+
+Save figure for use in manuscript.
 
 ```{r}
 fig <- here("output/figures/SFig-4A.rds")
@@ -172,13 +190,16 @@ for(i in 1:length(dims)){
 (p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = "collect")
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/SFig-4C.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
 # Differential expression analysis
-The TMM normalised data was transformed using `voomWithQualityWeights`. This takes into account the differing library sizes and the mean variance relationship in the data as well as calculating sample-specific quality weights. Linear models were fit in `limma`, taking into account the `voom` weights. 
+
+The TMM normalised data was transformed using `voomWithQualityWeights`. This takes into account the differing library sizes and the mean variance relationship in the data as well as calculating sample-specific quality weights. Linear models were fit using `limma`, taking into account the `voom` weights. 
 
 ```{r}
 design <- model.matrix(~0+y$samples$group, data = targets)
@@ -206,13 +227,18 @@ p <- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
 p
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/SFig-4D.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
+
 # Gene set testing
 
 Testing for enrichment of GO categories and KEGG pathways amongst statistically significant differentially expressed genes.
+
+Save results as RDS objects for use as "truth" sets in methylation analyses.
 
 ```{r, message=FALSE}
 go <- NULL
@@ -238,8 +264,8 @@ for(i in 1:ncol(cont)){
     kegg <- bind_rows(kegg, tmp)
 }
 
-saveRDS(go, here(glue("data/RNAseq-GO.rds")))
-saveRDS(kegg, here(glue("data/RNAseq-KEGG.rds")))
+saveRDS(go, here(glue("data/cache-rnaseq/RNAseq-GO.rds")))
+saveRDS(kegg, here(glue("data/cache-rnaseq/RNAseq-KEGG.rds")))
 ```
 
 Test whether any of the genes in the BROAD sets are differentially expressed.
@@ -262,10 +288,10 @@ for(i in 1:ncol(cont)){
     broad <- bind_rows(broad, tmp)
 }
 
-saveRDS(broad, here("data/RNAseq-BROAD.rds"))
+saveRDS(broad, here("data/cache-rnaseq/RNAseq-BROAD.rds"))
 ```
 
-Test whether the BROAD sets are enriched for the differentially expressed genes using Belinda's `gsaseq` function.
+Test whether the BROAD sets are enriched for the differentially expressed genes using the `gsaseq` function that can be found in `code/utility.R`
 
 ```{r}
 entrez <- suppressMessages(lapply(ensembl, function(x){
@@ -285,5 +311,5 @@ for(i in 1:ncol(cont)){
     
 }
 
-saveRDS(gsa, here("data/RNAseq-BROAD-GSA.rds"))
+saveRDS(gsa, here("data/cache-rnaseq/RNAseq-BROAD-GSA.rds"))
 ```
