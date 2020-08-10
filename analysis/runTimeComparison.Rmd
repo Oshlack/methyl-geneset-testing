@@ -42,12 +42,12 @@ transIDs <- genes(edb, columns = c("symbol", "gene_id", "entrezid"),
                        return.type = "DataFrame")
 ```
 
-## Run-time comparison
+## Measure run-times for different methods
 
 Execute and record run-time for each method (on a single core) for the three different contrasts.
 
 ```{r, message=FALSE}
-inFile <- here("data/run-time-results.rds")
+inFile <- here("data/cache-runtime/run-time-results.rds")
 
 if(!file.exists(inFile)){
     
@@ -62,7 +62,7 @@ if(!file.exists(inFile)){
         tmp[!is.na(tmp)]
     }))
     
-    load(here("data/input.RData"))
+    load(here("data/cache-intermediates/input.RData"))
     anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
     timing <- NULL
     
@@ -137,6 +137,8 @@ if(!file.exists(inFile)){
 }
 ```
 
+## Visualise results
+
 Plot run-time results.
 
 ```{r}
@@ -151,7 +153,7 @@ p1
 ```
 
 ```{r}
-inFile <- here("data/run-time-mcores.rds")
+inFile <- here("data/cache-runtime/run-time-mcores.rds")
 
 if(!file.exists(inFile)){
     
@@ -233,6 +235,8 @@ layout <- c(area(t = 0, l = 1, b = 5, r = 4),
 p1 + p2 + theme(text = element_text(size = 8), legend.position = "none") + 
     plot_layout(design = layout, guides = "collect")
 ```
+
+# Run-time summary table
 
 ```{r}
 timing %>% mutate(method = unname(dict[method])) %>% 
