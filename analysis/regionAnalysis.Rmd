@@ -39,7 +39,7 @@ We are using publicly available EPIC data [GSE110554](https://www.ncbi.nlm.nih.g
 
 ```{r}
 # load data
-dataFile <- here("data/GSE110554-data.RData")
+dataFile <- here("data/datasets/GSE110554-data.RData")
 if(file.exists(dataFile)){
   # load processed data and sample information
   load(dataFile)
@@ -78,10 +78,10 @@ fitSum
 
 # Find differentially methylated regions
 
-Identify differentially methylated regions using the DMRcate package. 
+Identify differentially methylated regions using the *DMRcate* package. 
 
 ```{r, message=FALSE}
-outFile <- here("data/dmrcate-results.rds")
+outFile <- here("data/cache-region/dmrcate-results.rds")
 
 if(!file.exists(outFile)){
   dmrList <- vector("list", ncol(cont.matrix))
@@ -122,16 +122,19 @@ p <- ggplot(dat, aes(x = contrast, y = value, fill = filtering)) +
 p
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/Fig-5B.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
 
 ## GO analysis of DMRs
+
 Run GO analysis on the differentially methylated regions (DMRs) identified by DMRcate for each of the contrasts.
 
 ```{r}
-outFile <- here("data/dmrcate-go.rds")
+outFile <- here("data/cache-region/dmrcate-go.rds")
 anno <- loadAnnotation(arrayType = "EPIC")
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 hg19Genes <- GenomicFeatures::genes(txdb)
@@ -230,6 +233,8 @@ p[[i]] <- ggplot(bDat[[i]], aes(x = avgbias, y = propDM)) +
     (p[[3]] + labs(title = names(dmrList)[3])| plot_spacer())
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/Fig-5A.rds")
 saveRDS(p[[3]], fig, compress = FALSE)
@@ -244,34 +249,34 @@ saveRDS(p[[2]], fig, compress = FALSE)
 ### Compare GOregion with other approaches
 
 ```{r}
-immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"), 
+immuneGO <- unique(read.csv(here("data/genesets/GO-immune-system-process.txt"), 
                             stringsAsFactors = FALSE, header = FALSE, 
                             col.names = "GOID"))
 
-rnaseqGO <- readRDS(here("data/RNAseq-GO.rds"))
+rnaseqGO <- readRDS(here("data/cache-rnaseq/RNAseq-GO.rds"))
 rnaseqGO %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> topGOSets
+    dplyr::filter(rank <= 100) -> topGOSets
 
 dmrGo %>% arrange(contrast, method, P.DE) %>%
-    filter(method %in% c("goana", "goregion-gometh")) %>%
+    dplyr::filter(method %in% c("goana", "goregion-gometh")) %>%
     mutate(method = unname((dict[method]))) %>%
     group_by(contrast, method) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> dat
+    dplyr::filter(rank <= 100) -> dat
 
 p <- vector("list", length(unique(dat$contrast)))
 
 for(i in 1:length(p)){
     cont <- sort(unique(dat$contrast))[i]
     
-    dat %>% filter(contrast == cont) %>%
+    dat %>% dplyr::filter(contrast == cont) %>%
         arrange(method, P.DE) %>%
         group_by(method) %>%
         mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
         mutate(truth = "ISP Terms") -> immuneSum
     
-    dat %>% filter(contrast == cont) %>%
+    dat %>% dplyr::filter(contrast == cont) %>%
         arrange(method, P.DE) %>%
         group_by(method) %>%
         mutate(csum = cumsum(GO %in% topGOSets$ID[topGOSets$contrast %in% 
@@ -296,6 +301,8 @@ p[[2]]
 p[[3]]
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/Fig-5C.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
@@ -318,7 +325,7 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList,
 dat %>% arrange(contrast, method, P.DE) %>%
     group_by(contrast, method) %>%
     mutate(FDR = p.adjust(P.DE, method = "BH")) %>%
-    filter(rank <= 10) %>% 
+    dplyr::filter(rank <= 10) %>% 
     inner_join(terms, by = c("GO" = "GOID")) %>%
     inner_join(nGenes, by = c("GO" = "ID")) -> sub
 ```
@@ -330,7 +337,7 @@ names(truthPal) <- c("Both", "ISP", "Neither", "RNAseq")
 
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
-    sub %>% filter(contrast == cont) %>%
+    sub %>% dplyr::filter(contrast == cont) %>%
         arrange(method, -rank) %>%
         ungroup() %>%
         mutate(idx = as.factor(1:n())) -> tmp
@@ -371,6 +378,8 @@ shift_legend(p[[2]], plot = TRUE, pos = "left")
 shift_legend(p[[3]], plot = TRUE, pos = "left")
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/Fig-5D.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
@@ -385,14 +394,14 @@ saveRDS(p[[3]], fig, compress = FALSE)
 ### Compare GOregion with probe-wise analysis
 
 ```{r}
-dmrGo %>% filter(method %in% c("goregion-gometh", "gometh-probe-top", 
+dmrGo %>% dplyr::filter(method %in% c("goregion-gometh", "gometh-probe-top", 
                          "gometh-probe-fdr")) %>%
     mutate(method = unname((dict[method]))) %>% 
     arrange(contrast, method, P.DE) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> sub
+    dplyr::filter(rank <= 100) -> sub
 
 p1 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
@@ -404,7 +413,7 @@ p1 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
 ```
 
 ```{r, fig.height=7, fig.width=9}
-dmrGo %>% filter(method %in% c("goregion-gometh", "gometh-probe-top", 
+dmrGo %>% dplyr::filter(method %in% c("goregion-gometh", "gometh-probe-top", 
                          "gometh-probe-fdr")) %>%
     mutate(method = unname((dict[method]))) %>% 
     arrange(contrast, method, P.DE) %>%
@@ -412,7 +421,7 @@ dmrGo %>% filter(method %in% c("goregion-gometh", "gometh-probe-top",
     mutate(csum = cumsum(GO %in% topGOSets$ID[topGOSets$contrast %in% 
                                                   contrast])) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> sub
+    dplyr::filter(rank <= 100) -> sub
 
 p2 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
@@ -428,6 +437,7 @@ p3 <- p1 / p2 +
 p3
 ```
 
+Save figure for use in manuscript.
 
 ```{r}
 fig <- here("output/figures/SFig-13A.rds")
@@ -445,14 +455,14 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList,
                                                    length)), 
                              var = "ID")
 
-dmrGo %>% filter(method %in% c("goregion-gometh", "gometh-probe-top", 
+dmrGo %>% dplyr::filter(method %in% c("goregion-gometh", "gometh-probe-top", 
                          "gometh-probe-fdr")) %>%
     mutate(method = unname((dict[method]))) %>% 
     arrange(contrast, method, P.DE) %>%
     group_by(contrast, method) %>%
     mutate(FDR = p.adjust(P.DE, method = "BH")) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 10) %>% 
+    dplyr::filter(rank <= 10) %>% 
     inner_join(terms, by = c("GO" = "GOID")) %>%
     inner_join(nGenes, by = c("GO" = "ID")) -> sub
 ```
@@ -461,7 +471,7 @@ dmrGo %>% filter(method %in% c("goregion-gometh", "gometh-probe-top",
 p <- vector("list", length(unique(sub$contrast)))
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
-    sub %>% filter(contrast == cont) %>%
+    sub %>% dplyr::filter(contrast == cont) %>%
         arrange(method, -rank) %>%
         ungroup() %>%
         mutate(idx = as.factor(1:n())) -> tmp
@@ -500,6 +510,8 @@ shift_legend(p[[1]], plot = TRUE, pos = "left")
 shift_legend(p[[2]], plot = TRUE, pos = "left")
 shift_legend(p[[3]], plot = TRUE, pos = "left")
 ``` 
+
+Save figure for use in manuscript.
 
 ```{r}
 fig <- here("output/figures/SFig-13C.rds")
@@ -613,6 +625,8 @@ p[[1]] + ggtitle(sort(unique(sub$contrast))[1]) |
     p[[3]] + ggtitle(sort(unique(sub$contrast))[3])
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/Fig-5F.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
@@ -640,7 +654,7 @@ ggplot(sub, aes(x = group, y = n, fill = method)) +
     theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
 
-## CpG overlap between region-wise and probe-wise approaches
+### CpG overlap between region-wise and probe-wise approaches
 
 Compare the CpGs covered by the different approaches, for the three contrasts.
 
@@ -650,7 +664,7 @@ d <- vector("list", length(p))
 
 for(i in 1:length(p)){
     cont <- sort(colnames(cont.matrix))[i]
-    dat %>% filter(contrast == cont) %>%
+    dat %>% dplyr::filter(contrast == cont) %>%
         dplyr::select(-contrast) %>%
         group_by(cpgs) %>%
         summarize(meth = list(method)) %>%
@@ -660,7 +674,7 @@ for(i in 1:length(p)){
         scale_x_upset(sets = c("FDR < 0.05", "DMRcate", "Top 5000")) +
         theme(axis.title.y = element_text(size = 10)) -> int
     
-    dat %>% filter(contrast == cont) %>%
+    dat %>% dplyr::filter(contrast == cont) %>%
         group_by(contrast, method) %>% 
         tally() %>%
         ggplot(aes(x = method, y = n)) +
@@ -702,6 +716,8 @@ d[[2]]
 d[[3]] 
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/Fig-5E.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
@@ -713,7 +729,7 @@ fig <- here("output/figures/SFig-12D.rds")
 saveRDS(p[[3]], fig, compress = FALSE)
 ```
 
-## Gene overlap between region-wise and probe-wise approaches
+### Gene overlap between region-wise and probe-wise approaches
 
 Compare the genes covered by the different approaches, for the three contrasts.
 
@@ -723,7 +739,7 @@ d <- vector("list", length(p))
 
 for(i in 1:length(p)){
     cont <- sort(colnames(cont.matrix))[i]
-    dat %>% filter(contrast == cont) %>%
+    dat %>% dplyr::filter(contrast == cont) %>%
         left_join(flatAnn, by = c("cpgs" = "cpg")) %>%
         dplyr::select(method, entrezid) %>%
         distinct() %>%
@@ -740,7 +756,7 @@ for(i in 1:length(p)){
         group_by(contrast, method) %>%
         dplyr::select(group_cols(), entrezid) %>%
         distinct() %>%
-        filter(contrast == cont) %>%
+        dplyr::filter(contrast == cont) %>%
         tally() %>%
         ggplot(aes(x = method, y = n)) +
         geom_col(fill="black", position = "dodge") +
@@ -781,6 +797,8 @@ d[[2]]
 d[[3]]
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/Fig-5G.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
@@ -795,7 +813,7 @@ saveRDS(p[[3]], fig, compress = FALSE)
 ## Effect of DMR cut offs i.e. num probes in region and absolute delta beta
 
 ```{r}
-outFile <- here("data/dmrcate-params.rds")
+outFile <- here("data/cache-region/dmrcate-params.rds")
 dmrParams <- NULL
 
 meanDiffs <- seq(0, 0.2, by = 0.1)
@@ -834,7 +852,7 @@ dmrParams %>% arrange(contrast, params, P.DE) %>%
     group_by(contrast, params) %>%
     mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> dat
+    dplyr::filter(rank <= 100) -> dat
 
 p1 <- ggplot(dat, aes(x = rank, y = csum, colour = params)) +
     geom_line() +
@@ -851,7 +869,7 @@ dmrParams %>% arrange(contrast, params, P.DE) %>%
     group_by(contrast, params) %>%
     mutate(csum = cumsum(GO %in% topGOSets$ID[topGOSets$contrast %in% contrast])) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> sub
+    dplyr::filter(rank <= 100) -> sub
 
 p2 <- ggplot(sub, aes(x = rank, y = csum, colour = params)) +
     geom_line() +
@@ -861,6 +879,9 @@ p2 <- ggplot(sub, aes(x = rank, y = csum, colour = params)) +
          y = glue("Cumulative no. RNAseq sets"))
 p2
 ```
+
+Save figure for use in manuscript.
+
 ```{r}
 fig <- here("output/figures/SFig-14A.rds")
 saveRDS(p1, fig, compress = FALSE)
