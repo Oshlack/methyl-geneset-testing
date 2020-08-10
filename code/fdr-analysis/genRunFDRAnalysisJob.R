@@ -12,7 +12,7 @@ library(ChAMP)
 library(org.Hs.eg.db)
 library(AnnotationDbi)
 
-broadFile <- here::here("data/BROAD-sets.rds")
+broadFile <- here::here("data/genesets/BROAD-sets.rds")
 
 if (!file.exists(broadFile)){
     data("PathwayList")
