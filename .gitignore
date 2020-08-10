@@ -19,3 +19,4 @@ output/*
 code/.job/*
 *.Rproj
 .Rproj
+docs/misc/*
