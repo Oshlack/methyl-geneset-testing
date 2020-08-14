@@ -1,162 +1,158 @@
 loadAnnotation <- function(arrayType = c("450k", "EPIC")) {
+    # Function to load 450K or EPIC array annotation data and save
+    # locally as RData file for faster repeat execution.
+    # Jovana Maksimovic
+    # Modified: 14 August 2020
 
-  arrayType <- match.arg(arrayType)
-  annFile <- here::here(glue::glue("data/annotations/ann{arrayType}.RData"))
+    arrayType <- match.arg(arrayType)
+    outDir <- here::here("data/annotations")
+    if (!dir.exists(outDir)) dir.create(outDir)
+    annFile <- here::here(glue::glue("data/annotations/ann{arrayType}.RData"))
 
-  if(file.exists(annFile)){
-    # load annotation from file for faster execution
-    load(annFile)
-  } else {
-    if(arrayType == "EPIC") {
-      ann <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+    if(file.exists(annFile)){
+        # load annotation from file for faster execution
+        load(annFile)
     } else {
-      ann <- minfi::getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+        if(arrayType == "EPIC") {
+            ann <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+        } else {
+            ann <- minfi::getAnnotation(IlluminaHumanMethylation450kanno.ilmn12.hg19)
+        }
+        # save annotation to file to speed up subsequent execution
+        save(ann, file=annFile)
     }
-    # save annotation to file to speed up subsequent execution
-    save(ann, file=annFile)
-  }
 
-  ann
+    ann
 }
 
 loadFlatAnnotation <- function(ann) {
+    # Function to load 450K or EPIC flattened array annotation that associates
+    # CpGs with Entrez IDs and save as RData file locally for faster repeat
+    # execution.
+    # Jovana Maksimovic
+    # Modified: 14 August 2020
 
-  arrayType <- ifelse(nrow(ann) > 500000, "EPIC", "450k")
+    arrayType <- ifelse(nrow(ann) > 500000, "EPIC", "450k")
+    outDir <- here::here("data/annotations")
+    if (!dir.exists(outDir)) dir.create(outDir)
+    flatFile <- here::here(glue::glue("data/annotations/flatAnn{arrayType}.RData"))
 
-  flatFile <- here::here(glue::glue("data/annotations/flatAnn{arrayType}.RData"))
+    if(file.exists(flatFile)){
+        # load flat annotation from file for faster execution
+        load(flatFile)
+    } else {
+        flatAnn <- missMethyl:::.getFlatAnnotation(anno=ann)
+        # save flat annotation to file to speed up subsequent execution
+        save(flatAnn, file=flatFile)
+    }
 
-  if(file.exists(flatFile)){
-    # load flat annotation from file for faster execution
-    load(flatFile)
-  } else {
-    flatAnn <- missMethyl:::.getFlatAnnotation(anno=ann)
-    # save flat annotation to file to speed up subsequent execution
-    save(flatAnn, file=flatFile)
-  }
-
-  flatAnn
+    flatAnn
 }
 
 getMode <- function(x) {
-  ux <- unique(x)
-  ux[which.max(tabulate(match(x, ux)))]
+    # Function determine the mode.
+    # Jovana Maksimovic
+
+    ux <- unique(x)
+    ux[which.max(tabulate(match(x, ux)))]
 }
 
 readData <- function(saveAs, #dataSrc = c("BC","RA"),
                      saveRG = FALSE){
+    # Function to load, normalise and filter the flow-sorted blood cell data
+    # and save relevant objects as RData file for downstream use.
+    # Jovana Maksimovic
+    # Modified: 14 August 2020
 
-  #dataSrc <- match.arg(dataSrc)
+    #dataSrc <- match.arg(dataSrc)
 
-  #if(dataSrc == "BC"){
+    #if(dataSrc == "BC"){
     dat <- getBloodCellData()
     rawRg <- dat$rawRg
     targets <- dat$targets
 
-  # } else if (dataSrc == "RA"){
-  #   dat <- getRmArthritisData()
-  #   rawRg <- dat$rawRg
-  #   targets <- dat$targets
-  # }
+    # } else if (dataSrc == "RA"){
+    #   dat <- getRmArthritisData()
+    #   rawRg <- dat$rawRg
+    #   targets <- dat$targets
+    # }
 
-  # calculate the detection p-values
-  detP <- minfi::detectionP(rawRg)
+    # calculate the detection p-values
+    detP <- minfi::detectionP(rawRg)
 
-  # normalise
-  normGr <- minfi::preprocessQuantile(rawRg)
+    # normalise
+    normGr <- minfi::preprocessQuantile(rawRg)
 
-  # filtering
-  fltGr <- filterQual(normGr, detP)
-  fltGr <- filterProbes(fltGr)
+    # filtering
+    fltGr <- filterQual(normGr, detP)
+    fltGr <- filterProbes(fltGr)
 
-  save(detP, normGr, fltGr, targets, file = saveAs)
-  if(saveRG) save(rawRg, file = glue("{dirname(saveAs)}/RG.{basename(saveAs)}"))
-}
-
-cpgsEgGoFreqs <- function(flatAnn){
-
-  cpgsEg <- table(flatAnn$entrezid)
-  egGo <- reshape2::melt(missMethyl:::.getGO()$idList)
-  colnames(egGo) <- c("ENTREZID","GO")
-
-  m1 <- match(egGo$ENTREZID, names(cpgsEg))
-  cpgsEgGo <- data.frame(egGo[!is.na(m1),], cpgsEg[m1[!is.na(m1)]])
-  colnames(cpgsEgGo)[3:4] <- c("ENTREZID.","Freq")
-
-  gene.go <- paste(cpgsEgGo$ENTREZID, cpgsEgGo$GO, sep=".")
-  d <- duplicated(gene.go)
-  cpgsEgGo <- cpgsEgGo[!d,]
-  cpgsEgGo
+    save(detP, normGr, fltGr, targets, file = saveAs)
+    if(saveRG) save(rawRg, file = glue("{dirname(saveAs)}/RG.{basename(saveAs)}"))
 }
 
 getBloodCellData <- function(){
+    # Function download the flow-sorted blood cell data from ExperimentHub at
+    # Bioconductor and return RGset and sample information table as a list.
+    # Jovana Maksimovic
 
-  hub <- ExperimentHub::ExperimentHub()
-  AnnotationHub::query(hub, "FlowSorted.Blood.EPIC")
-  FlowSorted.Blood.EPIC <- hub[["EH1136"]]
+    hub <- ExperimentHub::ExperimentHub()
+    AnnotationHub::query(hub, "FlowSorted.Blood.EPIC")
+    FlowSorted.Blood.EPIC <- hub[["EH1136"]]
 
-  # get all the sorted cell samples
-  rawRg <- FlowSorted.Blood.EPIC[,FlowSorted.Blood.EPIC$CellType != "MIX"]
+    # get all the sorted cell samples
+    rawRg <- FlowSorted.Blood.EPIC[,FlowSorted.Blood.EPIC$CellType != "MIX"]
 
-  targets <- colData(rawRg)
+    targets <- colData(rawRg)
 
-  # give the samples descriptive names
-  sampleNames(rawRg) <- targets$Sample_Name
+    # give the samples descriptive names
+    sampleNames(rawRg) <- targets$Sample_Name
 
-  return(list(rawRg = rawRg, targets = targets))
+    return(list(rawRg = rawRg, targets = targets))
 }
 
-# getRheumArthritisData <- function(){
-#   require(GEOquery)
-#   require(here)
-#   require(minfi)
-#
-#   cat("Downloading data...\n")
-#   dataFiles <- getGEOSuppFiles(GEO = "GSE42861", baseDir = here("data"),
-#                                filter_regex = "RAW")
-#   outPath <- here("data/GSE42861")
-#
-#   cat("Extracting TAR archive...\n")
-#   untar(tarfile = rownames(dataFiles), exdir = outPath)
-#
-#   cat("Downloading series matrix...\n")
-#   seriesMatrix <- getGEO(GEO = "GSE42861", destdir = outPath,
-#                          GSEMatrix = TRUE, parseCharacteristics = FALSE)
-#   pd <- pData(phenoData(seriesMatrix[[1]]))
-#   tmp <- as.character(pd$supplementary_file)
-#   tmp <- strsplit2(tmp,"suppl/")[,2]
-#   pd$id <- strsplit2(tmp,"_Grn")[,1]
-#   targets <- pd[pd$`subject:ch1` == "Normal",]
-#   targets$Basename <- paste0(outPath,"/",targets$id)
-#
-#   cat("Unzipping GZ files...\n")
-#   idatgz <- c(paste0(targets$Basename,"_Red.idat.gz"),
-#               paste0(targets$Basename,"_Grn.idat.gz"))
-#   lapply(idatgz, function(f) gunzip(f))
-#
-#   cat("Reading IDAT files...\n")
-#   rawRg <- read.metharray.exp(targets = targets)
-#
-#   return(list(rawRg = rawRg, targets = targets))
-# }
-
 filterQual <- function(normGr, detP, pval=0.01){
-  # ensure probes are in the same order in both objects
-  detP <- detP[match(rownames(normGr),rownames(detP)),]
+    # Function to remove probes for which the detection p-value > 0.01 in at
+    # least ONE sample.
+    # Jovana Maksimovic
 
-  # remove any probes that have failed in one or more samples
-  keep <- rowSums(detP < pval) == ncol(normGr)
-  fltGr <- normGr[keep,]
+    # ensure probes are in the same order in both objects
+    detP <- detP[match(rownames(normGr),rownames(detP)),]
+
+    # remove any probes that have failed in one or more samples
+    keep <- rowSums(detP < pval) == ncol(normGr)
+    fltGr <- normGr[keep,]
 }
 
 filterProbes <- function(datGr, dist=2, mafcut=0, and=TRUE, rmcrosshyb = TRUE,
                          rmXY=TRUE){
-  require(DMRcate)
+    # Function to remove SNP, cross-hybridising and sex chromosome probes.
+    # Jovana Maksimovic
 
-  # filter out SNP probes and multi-mapping probes
-  keep <- rownames(rmSNPandCH(getM(datGr), dist = dist, mafcut = mafcut, and = and,
-                              rmcrosshyb = rmcrosshyb, rmXY=rmXY))
-  fltGr <- datGr[rownames(datGr) %in% keep,]
-  fltGr
+    # filter out SNP probes and multi-mapping probes
+    keep <- rownames(DMRcate::rmSNPandCH(getM(datGr), dist = dist,
+                                         mafcut = mafcut, and = and,
+                                         rmcrosshyb = rmcrosshyb, rmXY=rmXY))
+    fltGr <- datGr[rownames(datGr) %in% keep,]
+    fltGr
+}
+
+cpgsEgGoFreqs <- function(flatAnn){
+    # Function count the number of CpGs per gene per GO category.
+    # Jovana Maksimovic
+
+    cpgsEg <- table(flatAnn$entrezid)
+    egGo <- reshape2::melt(missMethyl:::.getGO()$idList)
+    colnames(egGo) <- c("ENTREZID","GO")
+
+    m1 <- match(egGo$ENTREZID, names(cpgsEg))
+    cpgsEgGo <- data.frame(egGo[!is.na(m1),], cpgsEg[m1[!is.na(m1)]])
+    colnames(cpgsEgGo)[3:4] <- c("ENTREZID.","Freq")
+
+    gene.go <- paste(cpgsEgGo$ENTREZID, cpgsEgGo$GO, sep=".")
+    d <- duplicated(gene.go)
+    cpgsEgGo <- cpgsEgGo[!d,]
+    cpgsEgGo
 }
 
 gsaseq <- function(sig.de, universe, collection, plot.bias=FALSE,
@@ -277,10 +273,13 @@ gsaseq <- function(sig.de, universe, collection, plot.bias=FALSE,
 }
 
 getBiasDat <- function (sig.cpg, all.cpg = NULL, collection,
-                     array.type = c("450K", "EPIC"), plot.bias = FALSE,
-                     prior.prob = TRUE, anno = NULL, equiv.cpg = TRUE,
-                     fract.counts = TRUE)
+                        array.type = c("450K", "EPIC"), plot.bias = FALSE,
+                        prior.prob = TRUE, anno = NULL, equiv.cpg = TRUE,
+                        fract.counts = TRUE)
 {
+    # Function to get the probe-bias data for plotting using ggplot2.
+    # Jovana Maksimovic
+
     if (!is.vector(sig.cpg))
         stop("Input CpG list is not a character vector")
     array.type <- match.arg(toupper(array.type), c("450K", "EPIC"))
@@ -314,6 +313,9 @@ getBiasDat <- function (sig.cpg, all.cpg = NULL, collection,
 }
 
 shift_legend <- function(p, pos = "center", plot = FALSE) {
+    # Function to move ggplot2 legend into empty panel.
+    # Jovana Maksimovic
+
     pnls <- cowplot::plot_to_gtable(p) %>%
         gtable::gtable_filter("panel") %>%
         with(setNames(grobs, layout$name)) %>%
@@ -328,19 +330,7 @@ shift_legend <- function(p, pos = "center", plot = FALSE) {
 
 }
 
-# .plotBias <- function (D, bias) {
-#     o <- order(bias)
-#     splitf <- rep(1:100, each = 200)[1:length(bias)]
-#     avgbias <- tapply(bias[o], factor(splitf), mean)
-#     sumDM <- tapply(D[o], factor(splitf), sum)
-#     propDM <- sumDM/table(splitf)
-#     par(mar = c(5, 5, 2, 2))
-#     plot(avgbias, as.vector(propDM), xlab = "Number of CpGs per gene (binned)",
-#          ylab = "Proportion Differential Methylation", cex.lab = 1.5,
-#          cex.axis = 1.2)
-#     lines(lowess(avgbias, propDM), col = 4, lwd = 2)
-# }
-
+# colour palette used for manuscript figures
 methodPal <- c("#a0e85b",
                "#154e56",
                "#61cab8",
@@ -354,6 +344,7 @@ methodPal <- c("#a0e85b",
                "#a1085c",
                "#f75ef0")
 
+# method names used for manuscript figures
 dict <- c("mgsa.glm" = "mGLM",
           "mgsa.ora" = "mRRA (ORA)",
           "mgsa.gsea" = "mRRA (GSEA)",
@@ -376,6 +367,7 @@ dict <- c("mgsa.glm" = "mGLM",
           "gometh-probe-top" = "GOmeth (5000)",
           "gometh-probe-fdr" = "GOmeth (FDR < 0.05)")
 
+# colour labelling dictionary to use with ggplot2
 methodCols <- methodPal[c(1,2,3,5,6,7,8,12,9,7,11,12,12,7,
                           12,5,1,1,1,12,10)]
 names(methodCols) <- unname(dict)
