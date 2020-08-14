@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
+<meta name="date" content="2020-08-14" />
 
-<title>About</title>
+<title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,6 +21,9 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
@@ -258,6 +263,69 @@ $(document).ready(function () {
 
 
 
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
 
 </head>
 
@@ -265,6 +333,16 @@ $(document).ready(function () {
 
 
 <div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
 
 
 
@@ -308,7 +386,10 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">About</h1>
+<h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
+<h3 class="subtitle">Exploring minimum and maximum gene set size parameters for methylGSA</h3>
+<h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
+<h4 class="date">August 14, 2020</h4>
 
 </div>
 
@@ -336,7 +417,7 @@ $(document).ready(function () {
 <strong>Last updated:</strong> 2020-08-14
 </p>
 <p>
-<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
 </p>
 <p>
 <strong>Knit directory:</strong> <code>methyl-geneset-testing/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
@@ -358,6 +439,66 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
 <div class="panel-body">
 <p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it's best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200302code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200302)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200302code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200302)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
 </div>
 </div>
 </div>
@@ -449,7 +590,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in th
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/about.Rmd</code>) and HTML (<code>docs/about.html</code>) files. If you've configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/08_methylGSAParamSweep.Rmd</code>) and HTML (<code>docs/08_methylGSAParamSweep.html</code>) files. If you've configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -475,19 +616,19 @@ Message
 <tbody>
 <tr>
 <td>
-html
+Rmd
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/244474d1ededdea7d83b837736931b8a5e75713b/docs/about.html" target="_blank">244474d</a>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/91699a8d1b57e40650c7101a0b7db675e67658a1/analysis/08_methylGSAParamSweep.Rmd" target="_blank">91699a8</a>
 </td>
 <td>
-Jovana Maksimovic
+JovMaksimovic
 </td>
 <td>
-2020-03-02
+2020-08-14
 </td>
 <td>
-Build site.
+wflow_publish(&quot;analysis/_site.yml&quot;, republish = TRUE, all = TRUE)
 </td>
 </tr>
 <tr>
@@ -495,33 +636,16 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/d7cd66e771da5cd568aab4e5999ae8b7be7a88ec/analysis/about.Rmd" target="_blank">d7cd66e</a>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/39bdd220a669d7fe614f2f012975716365c979b4/analysis/08_methylGSAParamSweep.Rmd" target="_blank">39bdd22</a>
 </td>
 <td>
-Jovana Maksimovic
+JovMaksimovic
 </td>
 <td>
-2020-03-02
+2020-08-14
 </td>
 <td>
-Initial Commit
-</td>
-</tr>
-<tr>
-<td>
-Rmd
-</td>
-<td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/18404093182d57d32414b057613f96813408d5f5/analysis/about.Rmd" target="_blank">1840409</a>
-</td>
-<td>
-Jovana Maksimovic
-</td>
-<td>
-2020-03-02
-</td>
-<td>
-Start workflowr project.
+Renamed analysis files with numbering for run order.
 </td>
 </tr>
 </tbody>
@@ -531,7 +655,111 @@ Start workflowr project.
 </div>
 </div>
 </div>
-<p>Describe your project.</p>
+<pre class="r"><code>library(here)
+library(reshape2)
+library(ggplot2)
+library(glue)
+library(tidyverse)
+library(patchwork)
+library(gt)</code></pre>
+<div id="explore-effect-of-minimum-and-maximum-gene-set-size-parameters" class="section level1">
+<h1>Explore effect of minimum and maximum gene set size parameters</h1>
+<p>We have run all three methylGSA methods, testing GO categories, on the three blood cell contrasts for the following combinations of minimum and maximum gene set size parameters:</p>
+<pre class="r"><code>params &lt;- data.frame(minsize = c(1:5, rep(5, 5)),                      
+                     maxsize = c(rep(5000, 5), seq(7000, 18000, by = 2750)))
+params</code></pre>
+<pre><code>   minsize maxsize
+1        1    5000
+2        2    5000
+3        3    5000
+4        4    5000
+5        5    5000
+6        5    7000
+7        5    9750
+8        5   12500
+9        5   15250
+10       5   18000</code></pre>
+<p>As some of the methods take a considerable amount of time to perform the gene set testing analysis, we have created several scripts in order to run the analyses in parallel on a HPC. The code used to run all the gene set testing analyses using the different methods can be found in the <code>code/param-sweep</code> directory. It consists of three scripts: <code>genSweepMethylGSA.R</code>, <code>paramSweepMethylGSA.R</code>, and <code>processSweepMethylGSA.R</code>. The <code>genSweepMethylGSA.R</code> script creates and submits <a href="https://slurm.schedmd.com/overview.html">Slurm</a> job scripts that run the <code>paramSweepMethylGSA.R</code> script, for <em>each</em> combinations of parameters, in parallel, on a HPC. The results of each job are saved as an RDS file named <code>{method}.{minsz}.{maxsz}.rds</code> in the <code>output/methylgsa-params</code> directory. Once all jobs are complete, the <code>processSweepMethylGSA.R</code> must be executed to collate the results into a single object, which is then saved as <code>methylGSA-param-sweep.rds</code> in the <code>output/methylgsa-params</code> directory. The intermediate RDS files are moved into <code>output/methylgsa-params/.bin</code>, which can then be deleted, if no longer required. The subsequent section requires <code>methylGSA-param-sweep.rds</code> to be present in the <code>output/methylgsa-params</code> directory for downstream analysis and plotting.</p>
+<div id="load-data" class="section level2">
+<h2>Load data</h2>
+<p>Read in the results of all the analyses.</p>
+<pre class="r"><code>inFile &lt;- here(&quot;output/methylgsa-params/methylGSA-param-sweep.rds&quot;)
+dat &lt;- readRDS(inFile)</code></pre>
+</div>
+<div id="examine-results" class="section level2">
+<h2>Examine results</h2>
+<pre class="r"><code>dat %&gt;% mutate(combo = glue(&quot;{minsize}.{maxsize}&quot;)) %&gt;%
+    group_by(method, contrast, combo) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 20) %&gt;% 
+    group_by(method, contrast) %&gt;%
+    mutate(params = factor(combo),
+           params = factor(params,
+                           levels = levels(params)[order(c(1:4,8:10,5:7))])) -&gt; sub
+
+methods &lt;- c(&quot;glm&quot;, &quot;gsea&quot;, &quot;ora&quot;)
+p &lt;- vector(&quot;list&quot;, length(methods))
+
+for(i in 1:length(methods)){
+    sub %&gt;% filter(method == methods[i]) -&gt; subMeth
+    
+    p[[i]] &lt;- ggplot(subMeth, aes(x=rank, y=Size)) +
+        geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;) +
+        facet_grid(params ~ contrast, scales = &quot;free_y&quot;) +
+        theme(legend.position = &quot;bottom&quot;) +
+        labs(x = &quot;Rank&quot;, y = &quot;No. genes in set&quot;) +
+        ggtitle(methods[i])
+}
+
+p[[1]] / p[[2]] / p[[3]]</code></pre>
+<p><img src="figure/08_methylGSAParamSweep.Rmd/unnamed-chunk-4-1.png" width="576" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 3.6.3 (2020-02-29)
+Platform: x86_64-apple-darwin15.6.0 (64-bit)
+Running under: macOS Mojave 10.14.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+ [1] gt_0.2.1        patchwork_1.0.1 forcats_0.5.0   stringr_1.4.0  
+ [5] dplyr_1.0.0     purrr_0.3.4     readr_1.3.1     tidyr_1.1.0    
+ [9] tibble_3.0.3    tidyverse_1.3.0 glue_1.4.1      ggplot2_3.3.2  
+[13] reshape2_1.4.4  here_0.1        workflowr_1.6.2
+
+loaded via a namespace (and not attached):
+ [1] tidyselect_1.1.0 xfun_0.15        haven_2.3.1      colorspace_1.4-1
+ [5] vctrs_0.3.2      generics_0.0.2   htmltools_0.5.0  yaml_2.2.1      
+ [9] blob_1.2.1       rlang_0.4.7      later_1.1.0.1    pillar_1.4.6    
+[13] withr_2.2.0      DBI_1.1.0        dbplyr_1.4.4     readxl_1.3.1    
+[17] modelr_0.1.8     lifecycle_0.2.0  plyr_1.8.6       cellranger_1.1.0
+[21] munsell_0.5.0    gtable_0.3.0     rvest_0.3.5      evaluate_0.14   
+[25] labeling_0.3     knitr_1.29       httpuv_1.5.4     fansi_0.4.1     
+[29] broom_0.7.0      Rcpp_1.0.5       promises_1.1.1   scales_1.1.1    
+[33] backports_1.1.8  jsonlite_1.7.0   farver_2.0.3     fs_1.4.2        
+[37] hms_0.5.3        digest_0.6.25    stringi_1.4.6    grid_3.6.3      
+[41] rprojroot_1.3-2  cli_2.0.2        tools_3.6.3      magrittr_1.5    
+[45] crayon_1.3.4     whisker_0.4      pkgconfig_2.0.3  ellipsis_0.3.1  
+[49] xml2_1.3.2       reprex_0.3.0     lubridate_1.7.9  assertthat_0.2.1
+[53] rmarkdown_2.3    httr_1.4.2       rstudioapi_0.11  R6_2.4.1        
+[57] git2r_0.27.1     compiler_3.6.3  </code></pre>
+</div>
+</div>
+</div>
 
 
 <!-- Adjust MathJax settings so that all math formulae are shown using
@@ -547,6 +775,8 @@ footer is added to webpages before the MathJax javascript. -->
 </script>
 
 
+</div>
+</div>
 
 </div>
 
@@ -579,6 +809,32 @@ $(document).ready(function () {
 
 <!-- code folding -->
 
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->
 <script>
