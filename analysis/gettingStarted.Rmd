@@ -110,7 +110,7 @@ Running the analysis
 The analysis directory contains the following analysis files:
 
 ```{r, echo=FALSE}
-list.files(path = here::here("analysis"), pattern = "Rmd")
+list.files(path = here::here("analysis"), pattern = "0[1-8]_*")
 ```
 
 As indicated by the numbering they should be run in this order. If you want to
