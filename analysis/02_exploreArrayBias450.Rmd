@@ -1,6 +1,6 @@
 ---
 title: 'Gene set testing for Illumina HumanMethylation Arrays'
-subtitle: "Exploring the biases on EPIC arrays "
+subtitle: "Exploring the biases on 450k arrays"
 author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
@@ -33,7 +33,7 @@ source(here("code/utility.R"))
 Get the array annotation data.
 
 ```{r}
-ann <- loadAnnotation(arrayType="EPIC")
+ann <- loadAnnotation(arrayType="450k")
 ```
 
 Associate CpGs to genes (ENTREZ ID) using the Illumina annotation information.
@@ -59,24 +59,26 @@ p <- ggplot(dat, aes(x=Var1, y=Freq)) +
     geom_segment(aes(x=Var1, xend=Var1, y=0, yend=Freq), color="darkgrey") +
     geom_point( color="black", size=1) +
     geom_vline(xintercept = med, linetype = "dashed", color = "red") +
-    annotate("text", x = med + 2, label=glue("median = {med}"), y=720, colour="red", 
-             size = 3, hjust="left") +
-    geom_vline(xintercept = mod, linetype = "dashed", color = "blue") +
-    annotate("text", x = mod + 2, label=glue("mode = {mod}"), y=780, colour="blue", 
-             size = 3, hjust="left") +
-    scale_x_discrete(breaks = c(1,10,20,30,45,55,70,80,90,100,120,135,150,160,180,
-                                200,215,250,330,429,1485)) +
+    annotate("text", x = med + 2, label=glue("median = {med}"), y=720, 
+             colour="red", size = 3, hjust="left") +
+    geom_vline(xintercept = mod - 0.5, linetype = "dashed", color = "blue") +
+    annotate("text", x = mod + 2, label=glue("mode = {mod}"), y=780, 
+             colour="blue", size = 3, hjust="left") +
+    scale_x_discrete(breaks = c(1,5,10,20,35,50,60,70,80,90,100,125,152,202,
+                                251,350,1299)) +
     theme(axis.text.x=element_text(angle=45, hjust=1)) +
     xlab("No. CpGs per gene") +
     ylab("Frequency")
-
 p
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-1A.rds")
+outDir <- here::here("output/figures")
+if (!dir.exists(outDir)) dir.create(outDir)
+
+fig <- here("output/figures/SFig-1A.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
 
@@ -84,97 +86,76 @@ The number of genes a CpG maps to can also vary, although the majority of CpGs o
 
 ```{r}
 dat <- data.frame(table(table(flatAnn$cpg)))
-dat$Split <- ifelse(dat$Freq > 2500, "A", 
-                    ifelse(dat$Freq < 2500 & dat$Freq > 65,"B","C"))
+dat$Split <- ifelse(dat$Freq > 2000, "A",
+                    ifelse(dat$Freq < 2000 & dat$Freq > 50,"B","C"))
 
 a <- ggplot(dat[dat$Split == "A",], aes(x=Var1, y=Freq)) +
     geom_bar(stat = "identity") +
-    theme(axis.title.x = element_blank(), 
+    theme(axis.title.x = element_blank(),
           axis.text.y=element_text(angle=90, hjust=0.5)) +
     ylab("Frequency")
 
 b <- ggplot(dat[dat$Split == "B",], aes(x=Var1, y=Freq)) +
     geom_bar(stat = "identity") +
-    theme(axis.title.x=element_blank(),
+    theme(axis.title.x = element_blank(),
           axis.title.y = element_blank())
 
 c <- ggplot(dat[dat$Split == "C",], aes(x=Var1, y=Freq)) +
     geom_bar(stat = "identity") +
-    theme(axis.title.y = element_blank(),
-          axis.title.x = element_blank()) 
+    theme(axis.title.x=element_blank(),
+          axis.title.y = element_blank())
 
-p <- a + b + c + plot_layout(widths = c(1,2,6)) + 
-   plot_annotation(caption = "No. genes mapped to a CpG",
-                   theme = theme(plot.caption = element_text(hjust = 0.5,
-                                                             size = 12)))
+p <- a + b + c + plot_layout(widths = c(1,2,6)) +
+    plot_annotation(caption = "No. genes mapped to a CpG",
+                    theme = theme(plot.caption = element_text(hjust = 0.5,
+                                                              size = 12)))
 p
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-1D.rds")
+fig <- here("output/figures/SFig-1B.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
 
-Explore the distribution of the average number of CpGs per gene, per GO category. 
+Explore the distribution of the average number of CpGs per gene, per GO category. First, associate GO categories with the CpG and gene data.
 
 ```{r}
-ann450 <- loadAnnotation("450k")
-flatAnn450 <- loadFlatAnnotation(ann450)
+cpgEgGo <- cpgsEgGoFreqs(flatAnn)
+head(cpgEgGo)
+```
 
-cpgEgGoEPIC <- cpgsEgGoFreqs(flatAnn)
-cpgEgGoEPIC$Array <- "EPIC"
+Calculate the average number of CpGs per gene, per GO category and plot the density distribution. 
 
-cpgEgGo450 <- cpgsEgGoFreqs(flatAnn450)
-cpgEgGo450$Array <- "450k"
+```{r}
+cpgEgGo %>% 
+  group_by(GO) %>%
+  summarise(avg = mean(Freq)) -> dat
 
-cpgEgGoEPIC %>% bind_rows(cpgEgGo450) %>% 
-    group_by(Array, GO) %>%
-    summarise(avg = mean(Freq)) -> datSum
+med <- round(median(dat$avg), 2)
 
-maxEPIC <- max(datSum$avg[datSum$Array == "EPIC"])
-max450 <- max(datSum$avg[datSum$Array == "450k"])
-
-bw <- 2
-pal <- paletteer::paletteer_d("RColorBrewer::Set1", 2)
-platform <- c("EPIC" = pal[1], "450k" = pal[2])
-p <- ggplot(datSum, aes(x=avg)) +
-    geom_histogram(dat = subset(datSum, Array == "450k"),
-                   alpha = 0.5, aes(fill = "450k"), binwidth = bw) +
-    geom_histogram(dat = subset(datSum, Array == "EPIC"),
-                   alpha = 0.5, aes(fill = "EPIC"), binwidth = bw) +
-    geom_vline(xintercept = maxEPIC, linetype="dashed", colour = pal[1]) +
-    geom_vline(xintercept = max450, linetype="dashed", colour = pal[2]) +
-    labs(x="Mean no. CpGs per gene per GO category", y = "Frequency",
-         fill = "Platform") +
-    annotate("text", x = maxEPIC - 4, label=glue("Max. EPIC = {maxEPIC}"),
-             y = 1500, colour=pal[1], size = 2.5, hjust="right") +
-    annotate("text", x = max450 - 4, label=glue("Max. 450k = {max450}"),
-             y = 2500, colour=pal[2], size = 2.5, hjust="right") +
-    scale_fill_manual(values = platform)
+p <- ggplot(dat, aes(x=avg)) +
+  geom_density() +
+  geom_vline(xintercept = med, linetype="dashed", colour = "red") +
+  labs(x="Mean no. CpGs per gene per GO category", y = "Density") +
+  annotate("text", x = med + 4, label=glue("median = {med}"), 
+           y = 0.035, colour="red", size = 3, hjust="left")
 p
-```
-
-Save figure for use in manuscript.
-
-```{r}
-fig <- here("output/figures/Fig-1C.rds")
-saveRDS(p, fig, compress = FALSE)
 ```
 
 ## Null simulations
 
 We randomly select 50, 100, 500, 1000, 5000 and 10000 sets of CpGs and perform GO testing on each set 100 times, with and without adjusting for the various biases on the array. 
 
-The code used to produce the simulation results can be found in the `code/random-cpg-sims` directory. It consists of three scripts: `genRandCpgSimJobs.R`, `randomCpgSim.R` and `processRandCpgSim.R`. The `genRandCpgSimJobs.R` script creates and submits [Slurm](https://slurm.schedmd.com/overview.html) job scripts that run the `randomCpgSim.R` script, in parallel, on a HPC. Each job executes *one* of the 100 simulations, for a fixed number of randomly selected CpGs, using either the 450K or EPIC array annotation. The results of each job are saved as an RDS file named `{arrayType}.{noCpgs}.{simNo}.rds` in the `output/random-cpg-sims` directory. Once all simulation jobs are complete, the `processRandCpgSim.R` must be executed to collate the results into a single object for each array type, which are then saved as `450K.rds` and `EPIC.rds` in the `output/random-cpg-sims` directory. The intermediate RDS files are moved into `output/random-cpg-sims/.bin`, which can then be deleted, if no longer required. The subsequent section requires `EPIC.rds` to be present in the `output/random-cpg-sims` directory for downstream analysis and plotting.             
+The code used to produce the simulation results can be found in the `code/random-cpg-sims` directory. It consists of three scripts: `genRandCpgSimJobs.R`, `randomCpgSim.R` and `processRandCpgSim.R`. The `genRandCpgSimJobs.R` script creates and submits [Slurm](https://slurm.schedmd.com/overview.html) job scripts that run the `randomCpgSim.R` script, in parallel, on a HPC. Each job executes *one* of the 100 simulations, for a fixed number of randomly selected CpGs, using either the 450K or EPIC array annotation. The results of each job are saved as an RDS file named `{arrayType}.{noCpgs}.{simNo}.rds` in the `output/random-cpg-sims` directory. Once all simulation jobs are complete, the `processRandCpgSim.R` must be executed to collate the results into a single object for each array type, which are then saved as `450K.rds` and `EPIC.rds` in the `output/random-cpg-sims` directory. The intermediate RDS files are moved into `output/random-cpg-sims/.bin`, which can then be deleted, if no longer required. The subsequent section requires `450K.rds` to be present in the `output/random-cpg-sims` directory for downstream analysis and plotting.             
 
-### Results
+### Results  
 
 The following boxplots show what proportion of the 100 simulations, at each level of CpGs sampled, had a raw p-value less than 0.05. This gives us an idea of the false discovery rate with and without adjustment for the number of CpGs annotated to a gene.
 
 ```{r}
-dat <- readRDS(here("output/random-cpg-sims/EPIC.rds"))
+dat <- readRDS(here("output/random-cpg-sims/450K.rds"))
 
 dat %>% filter(method %in% names(dict)) %>%
     mutate(method = unname(dict[method])) %>%
@@ -182,7 +163,7 @@ dat %>% filter(method %in% names(dict)) %>%
     summarise(pSig = sum(P.DE < 0.05)/length(P.DE)) -> sigDat
 
 p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) + 
-    geom_violin(size = 0.3) +
+    geom_violin() +
     geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
     labs(y="Prop. GO cat. with p-value < 0.05", x="No. randomly sampled CpGs",
          fill="Method") +
@@ -190,8 +171,10 @@ p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) +
 p
 ```
 
+Save figure for use in manuscript.
+
 ```{r}
-fig <- here("output/figures/Fig-3A.rds")
+fig <- here("output/figures/SFig-3A.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
 
@@ -223,7 +206,7 @@ p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
 Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.
 
 ```{r}
-goFreq <- as_tibble(unique(cpgEgGoEPIC[,c("GO","Freq")]))
+goFreq <- as_tibble(unique(cpgEgGo[,c("GO","Freq")]))
 
 dat %>% filter(method %in% names(dict)) %>%
     mutate(method = unname(dict[method])) %>% 
@@ -235,9 +218,8 @@ dat %>% filter(method %in% names(dict)) %>%
     summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
 
 p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
-    geom_violin(size = 0.3) + 
-    stat_summary(geom="point", size = 0.5, color="white", 
-                 position = position_dodge(0.9),
+    geom_violin() + 
+    stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
                  show.legend = FALSE, fun = median) +
     labs(y="Median avg. no. CpGs/gene/GO cat.", 
          x="No. randomly sampled CpGs",
@@ -249,8 +231,11 @@ p
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-3B.rds")
+fig <- here("output/figures/SFig-3B.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
+
+
+
 
 
