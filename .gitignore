@@ -9,7 +9,6 @@ analysis/*png
 analysis/*html
 analysis/*_cache
 analysis/site_libs
-data/*
 *.docx
 *.pptx
 *.xlsx
@@ -20,3 +19,13 @@ code/.job/*
 *.Rproj
 .Rproj
 docs/misc/*
+data/*
+!data/datasets
+data/datasets/*
+!data/datasets/SRP125125
+data/datasets/SRP125125/*
+!data/datasets/SRP125125/SraRunTableFull.txt
+!data/genesets
+data/genesets/*
+!data/genesets/GO-immune-system-process.txt
+!data/genesets/kegg-immune-related-pathways.csv
