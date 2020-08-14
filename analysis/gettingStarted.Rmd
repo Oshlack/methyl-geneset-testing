@@ -37,18 +37,18 @@ directory structure:
 * `analysis/` - Contains the RMarkdown documents with the various stages of
   analysis. These are numbered according to the order they should be run.
 * `data/` - This directory contains the data files used in the analysis with
-  each dataset in it's own sub-directory (see [Getting the data](#data) for
+  sub-directories for different data types (see [Getting the data](#data) for
   details). Processed intermediate data files will also be placed here.
 * `output/` - Directory for output files produced by the analysis, each analysis
   step has it's own sub-directory.
 * `docs/` - This directory contains the analysis website hosted at 
   http://oshlacklab.com/methyl-geneset-testing, including image files.
-* `R/` - R scripts with custom functions used in some analysis stages.
-* `packrat/` - Directory created by `packrat` that contains details of the R
-  packages and versions used in the analysis.
+* `code/` - R scripts with custom functions used in some analysis stages. There
+  are sub-directories for scripts associated with different steps in the 
+  anlaysis.
 * `README.md` - README describing the project.
-* `.Rprofile` - Custom R profile for the project including set up for
-  `packrat` and `workflowr`.
+* `.Rprofile` - Custom R profile for the project including set up for 
+  `workflowr`.
 * `.gitignore` - Details of files and directories that are excluded from the
   repository.
 * `_workflowr.yml` - Workflowr configuration file.
@@ -65,21 +65,44 @@ Genome Atlas (TCGA) kidney clear-cell carcinoma (KIRC) cohort, which was
 generated using Illumina HumanMethylation450 arrays. These are both 
 automatically downloaded as part of the analysis directly from the Bioconductor
 [ExperimentHub](expt-hub). 
+
 We also use a flow-sorted, blood cell RNAseq dataset,
 which can be downloaded from GEO at [GSE107011](geo-rnaseq) or SRA at 
 [SRP125125](sra-rnaseq).
 
-Once the datasets have been downloaded they need to be extracted, placed in the 
-correct directorys and renamed. The analysis code assumes the following
-directory structure inside the `data/` directory:
+Once the RNAseq data has been downloaded it needs to be extracted, placed in the 
+correct directories and quasi-mapped and quantified using [Salmon](https://combine-lab.github.io/salmon/). The approach we took is 
+described [here](expressionGenesets.html). The downstream analysis code assumes 
+the following directory structure inside the `data/` directory:
 
-* `SRP125125/`
-    * `quants/`
-  
-Additional data files used during the analysis are provided as part of the
-repository. Intermediate data files created during the analysis will be placed
-in `data/processed`. These are used by later stages of the analysis so should
-not be moved, altered or deleted.
+* `datasets`
+    * `SRP125125`
+        * `quants`
+            * `SRR6298258_quant`
+            * ...
+            * ...
+            * `SRR6298376_quant`
+
+Some additional data files used during the analysis are provided as part of the
+repository. 
+
+* `genesets`
+    * `GO-immune-system-process.txt`
+    * `kegg-immune-related-pathways.csv`
+* `datasets`
+    * `SRP125125`
+        * `SraRunTableFull.txt`
+        
+Intermediate data files created during the analysis will be placed in: 
+
+* `annotations`
+* `cache-intermediates`
+* `cache-region`
+* `cache-rnaseq`
+* `cache-runtime`
+
+These are used by later stages of the analysis so should not be moved, altered 
+or deleted.
 
 Running the analysis
 ====================
@@ -90,7 +113,6 @@ The analysis directory contains the following analysis files:
 list.files(path = here::here("analysis"), pattern = "Rmd")
 ```
 
-
 As indicated by the numbering they should be run in this order. If you want to
 rerun the entire analysis this can be easily done using `workflowr`.
 
@@ -100,19 +122,18 @@ workflowr::wflow_build(republish = TRUE)
 
 It is important to consider the computer and environment you are using before
 doing this. Running this analysis from scratch requires a considerable amount
-of time, disk space and memory. Some stages of the analysis also assume that
-multiple (10) cores are available for processing. If you have fewer cores
-available you will need to change the following line in the relevant files and
-provide the number of cores that are available for use.
-
-```r
-bpparam <- MulticoreParam(workers = 10)
-```
+of time, disk space and memory. **Some stages of the analysis need to be executed
+on a HPC to generate results required by downstream steps.** If you do no have 
+access to a HPC to perform these analyses using the code provided, you can 
+download pre-computed RDS files containing the results from [here](url).
 
 It is also possible to run individual stages of the analysis, either by
 providing the names of the file you want to run to `workflowr::wflow_build()` or
 by manually knitting the document (for example using the 'Kint' button in
 RStudio).
+
+Once **all** the analyses have been rerun, the manuscript figures can be generated
+using the code provided [here](figures.html). 
 
 [expt-hub]: https://bioconductor.org/packages/release/bioc/html/ExperimentHub.html "ExperimentHub"
 [geo-rnaseq]: https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE107011 "GSE107011"

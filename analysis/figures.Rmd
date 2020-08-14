@@ -15,7 +15,11 @@ source(here("code/utility.R"))
 options(scipen=10000)
 ```
 
+The code in this document produces all of the panel figures in our manuscript 
+and saves them as PDF files in the `output/figures` directory.
+
 # Figures
+## Figure 1
 
 ```{r}
 f1a <- readRDS(here("output/figures/Fig-1A.rds"))
@@ -35,6 +39,8 @@ f1a + f1b+ f1c + theme(legend.position = "bottom") +
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+
+## Figure 3
 
 ```{r}
 f3a <- readRDS(here("output/figures/Fig-3A.rds"))
@@ -61,6 +67,8 @@ f3a + theme(legend.position = "none") +
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+
+## Figure 4
 
 ```{r}
 f4a <- readRDS(here("output/figures/Fig-4A.rds"))
@@ -114,6 +122,8 @@ f4a + theme(legend.position = "bottom",
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+## Figure 5
+
 ```{r}
 a <- readRDS(here("output/figures/Fig-5A.rds"))
 b <- readRDS(here("output/figures/Fig-5B.rds"))
@@ -185,6 +195,7 @@ dev.off()
 ```
 
 # Supplementary Figures
+## Supplementary Figure 1
 
 ```{r}
 a <- readRDS(here("output/figures/SFig-1A.rds"))
@@ -202,6 +213,8 @@ a + wrap_elements(b) +
 dev.off()
 ```
 
+## Supplementary Figure 3
+
 ```{r}
 a <- readRDS(here("output/figures/SFig-3A.rds"))
 b <- readRDS(here("output/figures/SFig-3B.rds"))
@@ -217,6 +230,8 @@ a + b +
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+
+## Supplementary Figure 4
 
 ```{r}
 a <- readRDS(here("output/figures/SFig-4A.rds"))
@@ -244,6 +259,7 @@ a + theme(legend.position = "right",
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+## Supplementary Figure 5
 
 ```{r}
 a <- readRDS(here("output/figures/SFig-5A.rds"))
@@ -267,6 +283,8 @@ wrap_elements(a + theme(plot.title = element_blank(),
 dev.off()
 ```
 
+## Supplementary Figure 6
+
 ```{r}
 a <- readRDS(here("output/figures/SFig-6A.rds"))
 b <- readRDS(here("output/figures/SFig-6B.rds"))
@@ -288,6 +306,8 @@ wrap_elements(a + theme(plot.title = element_blank(),
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+## Supplementary Figure 7
+
 ```{r}
 a <- readRDS(here("output/figures/SFig-7A.rds"))
 b <- readRDS(here("output/figures/SFig-7B.rds"))
@@ -325,6 +345,8 @@ a + theme(legend.position = "none",
 dev.off()
 ```
 
+## Supplementary Figure 8
+
 ```{r}
 a <- readRDS(here("output/figures/SFig-8A.rds"))
 b <- readRDS(here("output/figures/SFig-8B.rds"))
@@ -346,6 +368,7 @@ wrap_elements(a + theme(plot.title = element_blank(),
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+## Supplementary Figure 9
 
 ```{r}
 a <- readRDS(here("output/figures/SFig-9A.rds"))
@@ -369,6 +392,8 @@ wrap_elements(a + theme(plot.title = element_blank(),
 dev.off()
 ```
 
+## Supplementary Figure 10
+
 ```{r}
 a <- readRDS(here("output/figures/SFig-10A.rds"))
 b <- readRDS(here("output/figures/SFig-10B.rds"))
@@ -390,6 +415,8 @@ wrap_elements(a + theme(plot.title = element_blank(),
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+## Supplementary Figure 11
+
 ```{r}
 a <- readRDS(here("output/figures/SFig-11A.rds"))
 b <- readRDS(here("output/figures/SFig-11B.rds"))
@@ -437,6 +464,8 @@ a + guides(fill = guide_legend(ncol = 3)) +
 dev.off()
 ```
 
+## Supplementary Figure 12
+
 ```{r}
 a <- readRDS(here("output/figures/SFig-12A.rds"))
 b <- readRDS(here("output/figures/SFig-12B.rds"))
@@ -483,6 +512,8 @@ a + guides(fill = guide_legend(ncol = 3)) +
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+## Supplementary Figure 13
+
 ```{r}
 a <- readRDS(here("output/figures/SFig-13A.rds"))
 b <- readRDS(here("output/figures/SFig-13B.rds"))
@@ -519,6 +550,7 @@ a + theme(legend.position = "none",
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()
 ```
+## Supplementary Figure 14
 
 ```{r}
 a <- readRDS(here("output/figures/SFig-14A.rds"))

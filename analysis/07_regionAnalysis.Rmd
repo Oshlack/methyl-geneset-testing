@@ -81,6 +81,9 @@ fitSum
 Identify differentially methylated regions using the *DMRcate* package. 
 
 ```{r, message=FALSE}
+outDir <- here::here("output/cache-region")
+if (!dir.exists(outDir)) dir.create(outDir)
+
 outFile <- here("data/cache-region/dmrcate-results.rds")
 
 if(!file.exists(outFile)){
@@ -125,6 +128,9 @@ p
 Save figure for use in manuscript.
 
 ```{r}
+outDir <- here::here("output/figures")
+if (!dir.exists(outDir)) dir.create(outDir)
+
 fig <- here("output/figures/Fig-5B.rds")
 saveRDS(p, fig, compress = FALSE)
 ```

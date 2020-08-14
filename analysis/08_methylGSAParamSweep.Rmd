@@ -22,8 +22,6 @@ library(gt)
 
 # Explore effect of minimum and maximum gene set size parameters
 
-## Load data
-
 We have run all three methylGSA methods, testing GO categories, on the three blood cell contrasts for the following combinations of minimum and maximum gene set size parameters: 
 
 ```{r}
@@ -31,6 +29,11 @@ params <- data.frame(minsize = c(1:5, rep(5, 5)),
                      maxsize = c(rep(5000, 5), seq(7000, 18000, by = 2750)))
 params
 ```
+
+As some of the methods take a considerable amount of time to perform the gene set testing analysis, we have created several scripts in order to run the analyses in parallel on a HPC.
+The code used to run all the gene set testing analyses using the different methods can be found in the `code/param-sweep` directory. It consists of three scripts: `genSweepMethylGSA.R`, `paramSweepMethylGSA.R`, and `processSweepMethylGSA.R`. The `genSweepMethylGSA.R` script creates and submits [Slurm](https://slurm.schedmd.com/overview.html) job scripts that run the `paramSweepMethylGSA.R` script, for *each* combinations of parameters, in parallel, on a HPC. The results of each job are saved as an RDS file named `{method}.{minsz}.{maxsz}.rds` in the `output/methylgsa-params` directory. Once all jobs are complete, the `processSweepMethylGSA.R` must be executed to collate the results into a single object, which is then saved as `methylGSA-param-sweep.rds` in the `output/methylgsa-params` directory. The intermediate RDS files are moved into `output/methylgsa-params/.bin`, which can then be deleted, if no longer required. The subsequent section requires `methylGSA-param-sweep.rds` to be present in the `output/methylgsa-params` directory for downstream analysis and plotting.
+
+## Load data
 
 Read in the results of all the analyses.
 
@@ -66,22 +69,5 @@ for(i in 1:length(methods)){
 }
 
 p[[1]] / p[[2]] / p[[3]]
-```
-
-
-```{r}
-# sub %>% gt()
-# 
-#     fmt_number(columns = vars(mean, mins), decimals = 2) %>%
-#     cols_label(
-#         mean = md("**Seconds**"),
-#         mins = md("**Minutes**"),
-#         method = md("**Method**")
-#         ) %>%
-#   tab_header(
-#     title = md("**Average run-time across all contrasts**"),
-#     subtitle = md("Using Broad MSigDB gene sets from `ChAMP` package")
-#     ) %>%
-#   tab_source_note(md("_*All methods were run on a single core._"))
 ```
 

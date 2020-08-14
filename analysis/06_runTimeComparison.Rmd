@@ -47,6 +47,9 @@ transIDs <- genes(edb, columns = c("symbol", "gene_id", "entrezid"),
 Execute and record run-time for each method (on a single core) for the three different contrasts.
 
 ```{r, message=FALSE}
+outDir <- here::here("output/cache-runtime")
+if (!dir.exists(outDir)) dir.create(outDir)
+
 inFile <- here("data/cache-runtime/run-time-results.rds")
 
 if(!file.exists(inFile)){

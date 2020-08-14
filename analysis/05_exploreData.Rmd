@@ -90,6 +90,9 @@ p
 Save figure for use in manuscript.
 
 ```{r}
+outDir <- here::here("output/figures")
+if (!dir.exists(outDir)) dir.create(outDir)
+
 fig <- here("output/figures/Fig-4A.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
@@ -108,11 +111,8 @@ design <- model.matrix(~0+targets$CellType)
 colnames(design) <- levels(factor(targets$CellType))
 fit <- lmFit(mVals, design)
 cont.matrix <- makeContrasts(CD4vCD8=CD4T-CD8T,
-                             #BcellvMono=Bcell-Mono,
                              MonovNeu=Mono-Neu,
                              BcellvNK=Bcell-NK,
-                             #NeuvNK=Neu-NK,
-                             #MonovNK=Mono-NK,
                              levels=design)
 fit2 <- contrasts.fit(fit, cont.matrix)
 tfit <- eBayes(fit2, robust=TRUE, trend=TRUE)
@@ -181,6 +181,9 @@ Firstly, the results of the statistical analysis of the three blood cell compari
 ```{r}
 minsize <- 5
 maxsize <- 5000
+
+outDir <- here::here("output/cache-intermediates")
+if (!dir.exists(outDir)) dir.create(outDir)
 
 outFile <- here("data/cache-intermediates/blood.contrasts.rds")
 

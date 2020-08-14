@@ -85,6 +85,9 @@ p
 Save figure for use in manuscript.
 
 ```{r}
+outDir <- here::here("output/figures")
+if (!dir.exists(outDir)) dir.create(outDir)
+
 fig <- here("output/figures/Fig-3C.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
