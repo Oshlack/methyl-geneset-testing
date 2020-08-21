@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
-<meta name="date" content="2020-08-14" />
+<meta name="date" content="2020-08-21" />
 
 <title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
@@ -389,7 +389,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
 <h3 class="subtitle">Generating &quot;truth&quot; gene sets from RNA-seq data</h3>
 <h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
-<h4 class="date">August 14, 2020</h4>
+<h4 class="date">August 21, 2020</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-08-14
+<strong>Last updated:</strong> 2020-08-21
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -505,16 +505,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree91699a8d1b57e40650c7101a0b7db675e67658a1targetblank91699a8a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/91699a8d1b57e40650c7101a0b7db675e67658a1" target="_blank">91699a8</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtreee3b14f49ab36cc724f62903501563603902b2154targetblanke3b14f4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/e3b14f49ab36cc724f62903501563603902b2154" target="_blank">e3b14f4</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree91699a8d1b57e40650c7101a0b7db675e67658a1targetblank91699a8a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtreee3b14f49ab36cc724f62903501563603902b2154targetblanke3b14f4a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/91699a8d1b57e40650c7101a0b7db675e67658a1" target="_blank">91699a8</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/e3b14f49ab36cc724f62903501563603902b2154" target="_blank">e3b14f4</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -610,6 +610,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e3b14f49ab36cc724f62903501563603902b2154/analysis/03_expressionGenesets.Rmd" target="_blank">e3b14f4</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-21
+</td>
+<td>
+wflow_publish(c(&quot;analysis/01_exploreArrayBiasEPIC.Rmd&quot;, &quot;analysis/02_exploreArrayBias450.Rmd&quot;,
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/03_expressionGenesets.html" target="_blank">555069b</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -965,6 +999,43 @@ p2 &lt;- ggplot(dat, aes(x = cpm, colour = group)) +
 
 p1 + p2 + plot_layout(guides = &quot;collect&quot;) &amp; theme(legend.position = &quot;bottom&quot;)</code></pre>
 <p><img src="figure/03_expressionGenesets.Rmd/unnamed-chunk-8-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-8-1">
+Past versions of unnamed-chunk-8-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-8-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/figure/03_expressionGenesets.Rmd/unnamed-chunk-8-1.png" target="_blank">555069b</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>cellPal &lt;- RColorBrewer::brewer.pal(6, &quot;Dark2&quot;)[c(4, 5, 1, 2, 3, 6)]
 dat &lt;- tidy(y, addSamples = TRUE)
 p1 &lt;- ggplot(dat, aes(x = sample, y = lib.size, fill = group)) +
@@ -985,6 +1056,43 @@ p2 &lt;- ggplot(dat, aes(x = sample, y = cpm, fill = group)) +
 p &lt;- p1 + p2 + plot_layout(guides = &quot;collect&quot;) &amp; theme(legend.position = &quot;bottom&quot;)
 p</code></pre>
 <p><img src="figure/03_expressionGenesets.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/figure/03_expressionGenesets.Rmd/unnamed-chunk-9-1.png" target="_blank">555069b</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>outDir &lt;- here::here(&quot;output/figures&quot;)
 if (!dir.exists(outDir)) dir.create(outDir)
@@ -1015,6 +1123,43 @@ for(i in 1:length(dims)){
 
 (p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = &quot;collect&quot;)</code></pre>
 <p><img src="figure/03_expressionGenesets.Rmd/unnamed-chunk-11-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/figure/03_expressionGenesets.Rmd/unnamed-chunk-11-1.png" target="_blank">555069b</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-4C.rds&quot;)
 saveRDS(p[[1]], fig, compress = FALSE)</code></pre>
@@ -1026,6 +1171,43 @@ saveRDS(p[[1]], fig, compress = FALSE)</code></pre>
 colnames(design) &lt;- c(levels(factor(y$samples$group)))
 v &lt;- voomWithQualityWeights(y, design, plot = TRUE)</code></pre>
 <p><img src="figure/03_expressionGenesets.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/figure/03_expressionGenesets.Rmd/unnamed-chunk-13-1.png" target="_blank">555069b</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>cont &lt;- makeContrasts(CD4vCD8=Naive_CD4_T_cells-Naive_CD8_T_cells,
                       MonovNeu=Classical_monocytes-Low_density_neutrophils,
                       BcellvNK=Naive_B_cells-Natural_killer_cells,
@@ -1044,10 +1226,47 @@ colnames(dat) &lt;- c(&quot;dir&quot;,&quot;comp&quot;,&quot;num&quot;)
 
 p &lt;- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
     geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;) +
-    labs(x = &quot;Comparison&quot;, y = &quot;No. DM CpGs (FDR &lt; 0.05)&quot;, fill = &quot;Direction&quot;) +
+    labs(x = &quot;Comparison&quot;, y = &quot;No. DE Genes (FDR &lt; 0.05)&quot;, fill = &quot;Direction&quot;) +
     scale_fill_brewer(palette = &quot;Set1&quot;, direction = -1)
 p</code></pre>
 <p><img src="figure/03_expressionGenesets.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/figure/03_expressionGenesets.Rmd/unnamed-chunk-14-1.png" target="_blank">555069b</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-4D.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>

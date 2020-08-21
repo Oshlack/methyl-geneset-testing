@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
-<meta name="date" content="2020-08-14" />
+<meta name="date" content="2020-08-21" />
 
 <title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
@@ -389,7 +389,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
 <h3 class="subtitle">Exploring the biases on EPIC arrays</h3>
 <h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
-<h4 class="date">August 14, 2020</h4>
+<h4 class="date">August 21, 2020</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-08-14
+<strong>Last updated:</strong> 2020-08-21
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -505,16 +505,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtreead9e7be3060369217fecb4b7fd98df9570a7b22atargetblankad9e7bea"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/ad9e7be3060369217fecb4b7fd98df9570a7b22a" target="_blank">ad9e7be</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtreee3b14f49ab36cc724f62903501563603902b2154targetblanke3b14f4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/e3b14f49ab36cc724f62903501563603902b2154" target="_blank">e3b14f4</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtreead9e7be3060369217fecb4b7fd98df9570a7b22atargetblankad9e7bea" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtreee3b14f49ab36cc724f62903501563603902b2154targetblanke3b14f4a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/ad9e7be3060369217fecb4b7fd98df9570a7b22a" target="_blank">ad9e7be</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/e3b14f49ab36cc724f62903501563603902b2154" target="_blank">e3b14f4</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -568,10 +568,6 @@ Ignored files:
     Ignored:    data/misc/
     Ignored:    output/.DS_Store
     Ignored:    output/FDR-analysis/
-    Ignored:    output/cache-intermediates/
-    Ignored:    output/cache-region/
-    Ignored:    output/cache-rnaseq/
-    Ignored:    output/cache-runtime/
     Ignored:    output/compare-methods/
     Ignored:    output/figures/
     Ignored:    output/methylgsa-params/
@@ -614,6 +610,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e3b14f49ab36cc724f62903501563603902b2154/analysis/01_exploreArrayBiasEPIC.Rmd" target="_blank">e3b14f4</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-21
+</td>
+<td>
+wflow_publish(c(&quot;analysis/01_exploreArrayBiasEPIC.Rmd&quot;, &quot;analysis/02_exploreArrayBias450.Rmd&quot;,
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/01_exploreArrayBiasEPIC.html" target="_blank">e66c39a</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -685,6 +715,43 @@ p &lt;- ggplot(dat, aes(x=Var1, y=Freq)) +
 
 p</code></pre>
 <p><img src="figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-5-1.png" target="_blank">e66c39a</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>outDir &lt;- here::here(&quot;output/figures&quot;)
 if (!dir.exists(outDir)) dir.create(outDir)
@@ -718,6 +785,43 @@ p &lt;- a + b + c + plot_layout(widths = c(1,2,6)) +
                                                              size = 12)))
 p</code></pre>
 <p><img src="figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-7-1">
+Past versions of unnamed-chunk-7-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-7-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-7-1.png" target="_blank">e66c39a</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-1D.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
@@ -757,6 +861,43 @@ p &lt;- ggplot(datSum, aes(x=avg)) +
     scale_fill_manual(values = platform)
 p</code></pre>
 <p><img src="figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-9-1.png" target="_blank">e66c39a</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-1C.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
@@ -783,6 +924,43 @@ dat %&gt;% filter(method %in% names(dict)) %&gt;%
     scale_fill_manual(values = methodCols)
 p</code></pre>
 <p><img src="figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-11-1.png" target="_blank">e66c39a</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-3A.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
 <p>QQ plots of randomly selected simulations at each level of CpGs sampled.</p>
@@ -807,6 +985,43 @@ p + geom_line(aes(x=-log10(exp), y=-log10(exp)),
          color=&quot;Method&quot;) +
     theme(legend.position=&quot;bottom&quot;, strip.text.x = element_blank())</code></pre>
 <p><img src="figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-13-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-13-1">
+Past versions of unnamed-chunk-13-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-13-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-13-1.png" target="_blank">e66c39a</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Explore the relationship between the median, average number of CpGs, per gene, per GO category and the various sources of bias on the array.</p>
 <pre class="r"><code>goFreq &lt;- as_tibble(unique(cpgEgGoEPIC[,c(&quot;GO&quot;,&quot;Freq&quot;)]))
 
@@ -820,6 +1035,11 @@ dat %&gt;% filter(method %in% names(dict)) %&gt;%
     summarise(medAvgFreq=median(avgFreq)) -&gt; medAvgDat</code></pre>
 <pre><code>`summarise()` regrouping output by &#39;simNo&#39;, &#39;noCpgs&#39;, &#39;method&#39; (override with `.groups` argument)</code></pre>
 <pre><code>`summarise()` regrouping output by &#39;simNo&#39;, &#39;noCpgs&#39; (override with `.groups` argument)</code></pre>
+<pre class="r"><code>goFreq %&gt;% group_by(GO) %&gt;% 
+    summarise(med = median(Freq)) %&gt;%
+    dplyr::select(med) %&gt;%
+    summarise(med = median(med)) -&gt; medPerGO</code></pre>
+<pre><code>`summarise()` ungrouping output (override with `.groups` argument)</code></pre>
 <pre class="r"><code>p &lt;- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
     geom_violin(size = 0.3) + 
     stat_summary(geom=&quot;point&quot;, size = 0.5, color=&quot;white&quot;, 
@@ -828,9 +1048,52 @@ dat %&gt;% filter(method %in% names(dict)) %&gt;%
     labs(y=&quot;Median avg. no. CpGs/gene/GO cat.&quot;, 
          x=&quot;No. randomly sampled CpGs&quot;,
          fill=&quot;Method&quot;)  +
-    scale_fill_manual(values = methodCols)
+    scale_fill_manual(values = methodCols) +
+    geom_hline(yintercept = medPerGO$med, linetype=&quot;dashed&quot;, color = &quot;red&quot;) +
+    annotate(&quot;text&quot;, x = 6.5, 
+             label=glue(&quot;Med. Med. No. Genes/GO Cat. = {round(medPerGO$med, 2)}&quot;), 
+             y = medPerGO$med + 2, 
+             colour=&quot;red&quot;, 
+             size = 2.5, hjust=&quot;right&quot;)
 p</code></pre>
 <p><img src="figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-14-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-14-1">
+Past versions of unnamed-chunk-14-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-14-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/figure/01_exploreArrayBiasEPIC.Rmd/unnamed-chunk-14-1.png" target="_blank">e66c39a</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-14
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-3B.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
