@@ -81,7 +81,7 @@ fitSum
 Identify differentially methylated regions using the *DMRcate* package. 
 
 ```{r, message=FALSE}
-outDir <- here::here("output/cache-region")
+outDir <- here::here("data/cache-region")
 if (!dir.exists(outDir)) dir.create(outDir)
 
 outFile <- here("data/cache-region/dmrcate-results.rds")

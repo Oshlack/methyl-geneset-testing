@@ -182,7 +182,7 @@ Firstly, the results of the statistical analysis of the three blood cell compari
 minsize <- 5
 maxsize <- 5000
 
-outDir <- here::here("output/cache-intermediates")
+outDir <- here::here("data/cache-intermediates")
 if (!dir.exists(outDir)) dir.create(outDir)
 
 outFile <- here("data/cache-intermediates/blood.contrasts.rds")

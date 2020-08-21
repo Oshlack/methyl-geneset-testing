@@ -218,14 +218,20 @@ dev.off()
 ```{r}
 a <- readRDS(here("output/figures/SFig-3A.rds"))
 b <- readRDS(here("output/figures/SFig-3B.rds"))
+c <- readRDS(here("output/figures/SFig-3C.rds"))
 
 layout <- "
-AAA
-BBB
+AAABBB
+CCCCCC
+CCCCCC
+CCCCCC
 "
-cairo_pdf(here("output/figures/SFig-03.pdf"))
-a + b + 
-    plot_layout(design = layout, guides = "collect") + 
+cairo_pdf(here("output/figures/SFig-03.pdf"), width = 9, height = 9)
+a + theme(legend.position = "none", 
+          axis.title.y = element_text(size = 9)) + 
+    b + theme(axis.title.y = element_text(size = 9)) + 
+    wrap_elements(c) +
+    plot_layout(design = layout) + 
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()

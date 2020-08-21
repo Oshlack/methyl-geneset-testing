@@ -225,7 +225,7 @@ colnames(dat) <- c("dir","comp","num")
 
 p <- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
     geom_bar(stat = "identity", position = "dodge") +
-    labs(x = "Comparison", y = "No. DM CpGs (FDR < 0.05)", fill = "Direction") +
+    labs(x = "Comparison", y = "No. DE Genes (FDR < 0.05)", fill = "Direction") +
     scale_fill_brewer(palette = "Set1", direction = -1)
 p
 ```

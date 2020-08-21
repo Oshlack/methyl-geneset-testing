@@ -18,6 +18,7 @@ library(glue)
 library(tidyverse)
 library(patchwork)
 library(gt)
+source(here("code/utility.R"))
 ```
 
 # Explore effect of minimum and maximum gene set size parameters
@@ -44,30 +45,57 @@ dat <- readRDS(inFile)
 
 ## Examine results
 
-```{r, fig.width=6, fig.height=20, message=FALSE, warning=FALSE}
-dat %>% mutate(combo = glue("{minsize}.{maxsize}")) %>%
+```{r, message=FALSE, warning=FALSE, fig.height=7, fig.width=9}
+dat %>% mutate(combo = glue("Min = {minsize}; Max = {maxsize}")) %>%
+    mutate(method = unname((dict[method]))) %>%
     group_by(method, contrast, combo) %>%
     mutate(rank = 1:n()) %>%
-    filter(rank <= 20) %>% 
+    filter(rank <= 9) %>% 
     group_by(method, contrast) %>%
     mutate(params = factor(combo),
            params = factor(params,
                            levels = levels(params)[order(c(1:4,8:10,5:7))])) -> sub
 
-methods <- c("glm", "gsea", "ora")
-p <- vector("list", length(methods))
+methods <- sort(unique(sub$method))
+p <- vector("list", length(methods) * length(unique(sub$contrast)))
+i = 1
+leg <- c(TRUE, rep(FALSE, length(p) - 1))
 
-for(i in 1:length(methods)){
-    sub %>% filter(method == methods[i]) -> subMeth
-    
-    p[[i]] <- ggplot(subMeth, aes(x=rank, y=Size)) +
-        geom_bar(stat = "identity", position = "dodge") +
-        facet_grid(params ~ contrast, scales = "free_y") +
-        theme(legend.position = "bottom") +
-        labs(x = "Rank", y = "No. genes in set") +
-        ggtitle(methods[i])
+for(meth in methods) {
+    for(j in 1:length(unique(sub$contrast))){
+        sub %>% filter(method == meth & 
+                           contrast == sort(unique(sub$contrast))[j]) -> subMeth
+        
+        p[[i]] <- ggplot(subMeth, aes(x=rank, y=Size, colour = params)) +
+            geom_jitter(show.legend = leg[i], width = 0.15, height = 0.5,
+                        shape = 20, alpha = 0.7) +
+            scale_x_continuous(labels = 1:9, breaks = 1:9) +
+            labs(x = "Rank", y = "No. genes in set",
+                 colour = "Parameters") +
+            guides(colour = guide_legend(ncol = 4, byrow = TRUE)) + 
+            ggtitle(glue("{meth}: {sort(unique(sub$contrast))[j]}")) +
+            theme(title = element_text(size = 8),
+                  legend.text = element_text(size = 7),
+                  legend.title = element_text(size = 8))
+        i = i + 1
+    }
 }
 
-p[[1]] / p[[2]] / p[[3]]
+p <- ((p[[1]] | p[[2]] | p[[3]]) /
+    (p[[4]] | p[[5]] | p[[6]]) /
+    (p[[7]] | p[[8]] | p[[9]])) + 
+    plot_layout(guides = "collect") & 
+    theme(legend.position = "bottom")
+p
+```
+
+Save figure for use in manuscript.
+
+```{r}
+outDir <- here::here("output/figures")
+if (!dir.exists(outDir)) dir.create(outDir)
+
+fig <- here("output/figures/SFig-3C.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
 

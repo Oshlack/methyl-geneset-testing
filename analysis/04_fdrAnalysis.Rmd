@@ -184,3 +184,18 @@ fig <- here("output/figures/Fig-3D.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
 
+Calculate the median number of significant gene sets per method, across simulations and sample numbers.
+
+```{r, message=FALSE, warning=FALSE}
+dat %>% mutate(method = unname(dict[method])) %>%
+    group_by(simNo, sampleNo, method) %>% 
+    summarise(num = sum(pvalue < 0.05)) %>%
+    group_by(sampleNo, method) %>%
+    summarise(med = median(num)) %>%
+    group_by(method) %>%
+    summarise(med = median(med)) -> medNoSets
+
+medNoSets
+```
+
+

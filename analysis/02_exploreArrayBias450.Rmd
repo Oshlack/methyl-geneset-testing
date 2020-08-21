@@ -217,6 +217,11 @@ dat %>% filter(method %in% names(dict)) %>%
     group_by(simNo, noCpgs, method) %>%
     summarise(medAvgFreq=median(avgFreq)) -> medAvgDat
 
+goFreq %>% group_by(GO) %>% 
+    summarise(med = median(Freq)) %>%
+    dplyr::select(med) %>%
+    summarise(med = median(med)) -> medPerGO
+
 p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
     geom_violin() + 
     stat_summary(geom="point", size=1, color="white", position = position_dodge(0.9),
@@ -224,7 +229,13 @@ p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) +
     labs(y="Median avg. no. CpGs/gene/GO cat.", 
          x="No. randomly sampled CpGs",
          fill="Method")  +
-    scale_fill_manual(values = methodCols)
+    scale_fill_manual(values = methodCols) +
+    geom_hline(yintercept = medPerGO$med, linetype="dashed", color = "red") +
+    annotate("text", x = 6.5, 
+             label=glue("Med. Med. No. Genes/GO Cat. = {round(medPerGO$med, 2)}"), 
+             y = medPerGO$med + 2, 
+             colour="red", 
+             size = 2.5, hjust="right")
 p
 ```
 
