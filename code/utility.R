@@ -365,9 +365,12 @@ dict <- c("mgsa.glm" = "mGLM",
           "mgsa.glm.6" = "mGLM",
           "mgsa.glm.3" = "mGLM",
           "gometh-probe-top" = "GOmeth (5000)",
-          "gometh-probe-fdr" = "GOmeth (FDR < 0.05)")
+          "gometh-probe-fdr" = "GOmeth (FDR < 0.05)",
+          "glm" = "mGLM",
+          "ora" = "mRRA (ORA)",
+          "gsea" = "mRRA (GSEA)")
 
 # colour labelling dictionary to use with ggplot2
 methodCols <- methodPal[c(1,2,3,5,6,7,8,12,9,7,11,12,12,7,
-                          12,5,1,1,1,12,10)]
+                          12,5,1,1,1,12,10,1,2,3)]
 names(methodCols) <- unname(dict)
