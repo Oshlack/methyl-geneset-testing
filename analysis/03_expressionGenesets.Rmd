@@ -274,7 +274,7 @@ saveRDS(go, here(glue("data/cache-rnaseq/RNAseq-GO.rds")))
 saveRDS(kegg, here(glue("data/cache-rnaseq/RNAseq-KEGG.rds")))
 ```
 
-Test whether any of the genes in the BROAD sets are differentially expressed.
+Test whether the BROAD sets are enriched for the differentially expressed genes using the `gsaseq` function that can be found in `code/utility.R`
 
 ```{r}
 data(PathwayList)
@@ -283,23 +283,7 @@ ensembl <- suppressMessages(lapply(PathwayList[keep], function(x){
     tmp <- v$genes$gene_id[v$genes$symbol %in% x]
     tmp[!is.na(tmp)]
 }))
-idx <- ids2indices(ensembl, v$genes$gene_id)
 
-broad <- NULL  
-for(i in 1:ncol(cont)){
-    tmp <- camera(v, index = idx, design = design, contrast = cont[,i],
-                  trend.var = TRUE)
-    tmp <- rownames_to_column(tmp, var = "ID")
-    tmp$contrast <- colnames(cont)[i] 
-    broad <- bind_rows(broad, tmp)
-}
-
-saveRDS(broad, here("data/cache-rnaseq/RNAseq-BROAD.rds"))
-```
-
-Test whether the BROAD sets are enriched for the differentially expressed genes using the `gsaseq` function that can be found in `code/utility.R`
-
-```{r}
 entrez <- suppressMessages(lapply(ensembl, function(x){
     tmp <- unname(v$genes$entrezid[v$genes$gene_id %in% x])
     tmp[!is.na(tmp)]
@@ -319,3 +303,4 @@ for(i in 1:ncol(cont)){
 
 saveRDS(gsa, here("data/cache-rnaseq/RNAseq-BROAD-GSA.rds"))
 ```
+
