@@ -836,7 +836,7 @@ if(!file.exists(outFile)){
                                        array.type = "EPIC"), 
                               number = Inf)
                 tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
-                tmp$params <- glue("|\u0394\u03B2| = {j}; #CpGs = {k}")
+                tmp$params <- glue("|\u0394\u03B2| = {j}; No. CpGs = {k}")
                 tmp$contrast <- colnames(cont.matrix)[i]
                 dmrParams <- bind_rows(dmrParams, tmp)
             }
