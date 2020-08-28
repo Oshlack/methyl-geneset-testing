@@ -11,7 +11,7 @@
 
 <meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
 
-<meta name="date" content="2020-08-22" />
+<meta name="date" content="2020-08-28" />
 
 <title>Gene set testing for Illumina HumanMethylation Arrays</title>
 
@@ -389,7 +389,7 @@ div.tocify {
 <h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
 <h3 class="subtitle">Generating &quot;truth&quot; gene sets from RNA-seq data</h3>
 <h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
-<h4 class="date">August 22, 2020</h4>
+<h4 class="date">August 28, 2020</h4>
 
 </div>
 
@@ -414,7 +414,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-08-22
+<strong>Last updated:</strong> 2020-08-28
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -505,16 +505,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree836f608e7e0fec2918c1ac39b99958235d98b36dtargetblank836f608a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/836f608e7e0fec2918c1ac39b99958235d98b36d" target="_blank">836f608</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree562f140aa61ac43c285f2da11a48bb1bffe03d11targetblank562f140a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/562f140aa61ac43c285f2da11a48bb1bffe03d11" target="_blank">562f140</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree836f608e7e0fec2918c1ac39b99958235d98b36dtargetblank836f608a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree562f140aa61ac43c285f2da11a48bb1bffe03d11targetblank562f140a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/836f608e7e0fec2918c1ac39b99958235d98b36d" target="_blank">836f608</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/562f140aa61ac43c285f2da11a48bb1bffe03d11" target="_blank">562f140</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -564,15 +564,15 @@ Ignored files:
     Ignored:    data/datasets/SRP125125/multiqc_report.html
     Ignored:    data/datasets/SRP125125/quants/
     Ignored:    data/datasets/TCGA.KIRC.rds
-    Ignored:    data/genesets/BROAD-sets.rds
     Ignored:    data/misc/
     Ignored:    output/.DS_Store
     Ignored:    output/FDR-analysis/
-    Ignored:    output/cache-rnaseq/
     Ignored:    output/compare-methods/
     Ignored:    output/figures/
     Ignored:    output/methylgsa-params/
+    Ignored:    output/outputs.tar.gz
     Ignored:    output/random-cpg-sims/
+    Ignored:    output/test/
 
 </code></pre>
 <p>
@@ -611,6 +611,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/562f140aa61ac43c285f2da11a48bb1bffe03d11/analysis/03_expressionGenesets.Rmd" target="_blank">562f140</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-28
+</td>
+<td>
+wflow_publish(c(&quot;analysis/03_expressionGenesets.Rmd&quot;, &quot;analysis/gettingStarted.Rmd&quot;,
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/49cc17893d267cf7b565e9933153d6727a34e8e2/docs/03_expressionGenesets.html" target="_blank">49cc178</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1355,7 +1389,7 @@ missing values for &#39;group&#39;</code></pre>
 values for &#39;group&#39;</code></pre>
 <pre><code>Warning in rowsum.default(rep_len(1L, length(universe)), group = universe, :
 missing values for &#39;group&#39;</code></pre>
-<pre class="r"><code>outDir &lt;- here::here(&quot;output/cache-rnaseq&quot;)
+<pre class="r"><code>outDir &lt;- here::here(&quot;data/cache-rnaseq&quot;)
 if (!dir.exists(outDir)) dir.create(outDir)
 
 saveRDS(go, here(glue(&quot;data/cache-rnaseq/RNAseq-GO.rds&quot;)))
