@@ -6,16 +6,29 @@ output:
     toc: false
 ---
 
-Unbiased gene set enrichment analysis for genome-wide DNA methylation data
---------------------------------------------------------------------------
-
-This site contains the results of the analysis presented in 
-*“Unbiased gene set enrichment analysis for genome-wide DNA methylation data”*. 
-Follow the links below to see the different parts of the analysis. For details
-on how to reproduce the complete analyis, please see the 
+Gene set enrichment analysis for genome-wide DNA methylation data
+-----------------------------------------------------------------
+This site contains the results of the analyses presented in 
+[*“Gene set enrichment analysis for genome-wide DNA methylation data”*](https://www.biorxiv.org/content/10.1101/2020.08.24.265702v1). 
+Follow the links below to view the different parts of the analysis. For details
+on how to reproduce the complete analysis, please see the 
 [Getting started](gettingStarted.html) page.
 
 
+Abstract
+--------
+DNA methylation is one of the most commonly studied epigenetic marks, due to its role in disease and development. Illumina methylation arrays have been extensively used to measure methylation across the human genome. Methylation array analysis has primarily focused on preprocessing, normalisation and identification of differentially methylated CpGs and regions. GOmeth and GOregion are new methods for performing unbiased gene set testing following differential methylation analysis. Benchmarking analyses demonstrate GOmeth outperforms other approaches and GOregion is the first method for gene set testing of differentially methylated regions. Both methods are publicly available in the missMethyl Bioconductor R package.
+
+Jovana Maksimovic^1,2,3^, Alicia Oshlack^1,4^, Belinda Phipson^1,2+^
+
+^1^ Peter MacCallum Cancer Centre, Melbourne, Victoria, 3000, Australia
+^2^ Department of Pediatrics, University of Melbourne, Parkville, Victoria, 
+    3010, Australia
+^3^ Murdoch Children’s Research Institute, Parkville, Victoria, 3052, Australia
+^4^ School of Biosciences, University of Melbourne, Parkville, Victoria, 3010, 
+    Australia
+^+^ corresponding author
+ 
 Analysis
 --------
 1. [Explore EPIC array bias](01_exploreArrayBiasEPIC.html)
@@ -52,14 +65,16 @@ Analysis
 
 Licenses
 --------
-
 The code in this analysis is covered by the [MIT license][mit] and the written
 content on this website is covered by a [Creative Commons CC-BY][cc] license.
 
 
 Citations
 ---------
-
+> Maksimovic J, Oshlack O, Phipson B. Gene set enrichment analysis for 
+> genome-wide DNA methylation data. bioRxiv. 2020. 
+> DOI: [10.1186/s13073-019-0615-0][pp].
 
 [mit]: https://choosealicense.com/licenses/mit/ "MIT License"
 [cc]: https://creativecommons.org/licenses/by/4.0/ "CC-BY License"
+[pp]: https://www.biorxiv.org/content/10.1101/2020.08.24.265702v1 "Pre-print"
