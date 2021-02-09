@@ -374,3 +374,35 @@ dict <- c("mgsa.glm" = "mGLM",
 methodCols <- methodPal[c(1,2,3,5,6,7,8,12,9,7,11,12,12,7,
                           12,5,1,1,1,12,10,1,2,3)]
 names(methodCols) <- unname(dict)
+
+find_modes<- function(x,adjust=1)
+    # modified from http://stackoverflow.com/questions/27418461/calculate-the-modes-in-a-multimodal-distribution-in-r
+    # Written by Dr. Belinda Phipson
+{
+    dens <- density(x,adjust=adjust)
+    dy <- dens$y
+    modes <- NULL
+    for ( i in 2:(length(dy)-1) ){
+        if ( (dy[i] > dy[i-1]) & (dy[i] > dy[i+1]) ) {
+            modes <- c(modes,i)
+        }
+    }
+    if ( length(modes) == 0 ) {
+        return(NA)
+    }
+    return(dens$x[modes])
+}
+
+find_num_modes <- function(x,adjust=1)
+    # for a given set of data, returns the number of modes in the data
+    # Written by Dr. Belinda Phipson
+{
+    dy <- density(x,adjust=adjust)$y
+    modes <- NULL
+    for ( i in 2:(length(dy)-1) ){
+        if ( (dy[i] > dy[i-1]) & (dy[i] > dy[i+1]) ) {
+            modes <- c(modes,i)
+        }
+    }
+    return(length(modes))
+}
