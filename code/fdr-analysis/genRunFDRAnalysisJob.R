@@ -3,7 +3,8 @@
 dir <- here::here("code")
 jobDir <- glue::glue("{dir}/.job")
 outDir <- here::here("output/FDR-analysis")
-input <- here::here("data/datasets/TCGA.KIRC.rds")
+inputs <- list(KIRC = here::here("data/datasets/TCGA.KIRC.rds"),
+               BRCA = here::here("data/datasets/TCGA.BRCA.rds"))
 
 if (!dir.exists(outDir)) dir.create(outDir)
 if (!dir.exists(jobDir)) dir.create(jobDir)
@@ -32,32 +33,36 @@ if (!file.exists(broadFile)){
 
 }
 
-sampleNos <- c(5, 10, 20, 40, 80)
+for (sampleType in names(inputs)){
 
-for (sampleNo in sampleNos) {
+    sampleNos <- c(5, 10, 20, 40, 80)
+    if (sampleType == "BRCA") sampleNos <- sampleNos[-length(sampleNos)]
 
-    # Start writing to this file
-    jobFile <- glue::glue("{jobDir}/FDR.{sampleNo}.job")
-    sink(file = jobFile)
+    for (sampleNo in sampleNos) {
 
-    # the basic job submission script is a bash script
-    cat("#!/bin/bash\n")
-    cat(glue::glue("#SBATCH --job-name=FDR.{sampleNo}.job"), "\n")
-    cat(glue::glue("#SBATCH --output={outDir}/FDR.{sampleNo}.out"), "\n")
-    cat(glue::glue("#SBATCH --error={outDir}/FDR.{sampleNo}.err"), "\n")
-    cat("#SBATCH --time=4:00:00\n")
-    cat("#SBATCH --mem=16384\n")
-    cat("#SBATCH --array=1-100\n")
-    cat("#\n")
-    cat("module load R/3.6.0\n")
-    cat("#\n")
-    cat(glue::glue("Rscript {dir}/runFDRAnalysis.R {sampleNo} $SLURM_ARRAY_TASK_ID {input} {broadFile} {outDir}"),
-        "\n")
+        # Start writing to this file
+        jobFile <- glue::glue("{jobDir}/FDR.{sampleNo}.job")
+        sink(file = jobFile)
 
-    # Close the sink!
-    sink()
+        # the basic job submission script is a bash script
+        cat("#!/bin/bash\n")
+        cat(glue::glue("#SBATCH --job-name=FDR.{sampleNo}.job"), "\n")
+        cat(glue::glue("#SBATCH --output={outDir}/FDR.{sampleNo}.out"), "\n")
+        cat(glue::glue("#SBATCH --error={outDir}/FDR.{sampleNo}.err"), "\n")
+        cat("#SBATCH --time=4:00:00\n")
+        cat("#SBATCH --mem=16384\n")
+        cat("#SBATCH --array=1-100\n")
+        cat("#\n")
+        cat("module load R/3.6.0\n")
+        cat("#\n")
+        cat(glue::glue("Rscript {dir}/runFDRAnalysis.R {sampleNo} $SLURM_ARRAY_TASK_ID {input} {broadFile} {outDir} {sampleType}"),
+            "\n")
 
-    # Submit to run on cluster
-    system(glue::glue("sbatch {jobFile}"))
+        # Close the sink!
+        sink()
 
+        # Submit to run on cluster
+        system(glue::glue("sbatch {jobFile}"))
+
+    }
 }

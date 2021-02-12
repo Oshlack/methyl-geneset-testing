@@ -7,18 +7,20 @@ simNo <- args[2]
 input <- args[3]
 broadFile <- args[4]
 outDir <- args[5]
+sampleType <- args[6]
 
 library(here)
 library(glue)
 library(missMethyl)
-library(ChAMP)
+#library(ChAMP)
+library(ebGSEA)
 library(methylGSA)
 library(minfi)
 library(IlluminaHumanMethylation450kanno.ilmn12.hg19)
 source(here::here("code/utility.R"))
 
 ann <- loadAnnotation(arrayType = "450k")
-dat <- readRDS(input) # read in the KIRC data
+dat <- readRDS(input) # read in the data
 
 # set a seed for each simulation using sim no. indicated by slurm
 set.seed(simNo)
@@ -61,8 +63,12 @@ tmp <- methylRRA(cpg.pval = fit$p.value[, 2], method = "GSEA", FullAnnot = ann,
 gsea <- tmp[,c("ID", "pvalue")]
 
 # run ebGSEA
-tmp <- data.frame(champ.ebGSEA(beta = dat[,subSet], pheno=design[,2], minN=5, adjPval=1,
-                     arraytype="450k")[[1]])
+#tmp <- data.frame(champ.ebGSEA(beta = dat[,subSet], pheno=design[,2], minN=5, adjPval=1,
+#                     arraytype="450k")[[1]])
+gtRanks <- doGT(pheno.v = design[,2], data.m = dat[, subSet], array = "450k",
+              ncores = 1)
+tmp <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = broad$entrez,
+                           ncores = 1, minN = 5, adjPVth = 1)$`Rank(P)`)
 wt <- tibble::rownames_to_column(tmp, var = "ID")[,c("ID","P.WT.")]
 kpmt <- tibble::rownames_to_column(tmp, var = "ID")[,c("ID","P.KPMT.")]
 colnames(wt)[2] <- "pvalue"
@@ -73,13 +79,15 @@ res <- list(mmethyl.gm1000 = gm1k,
             mgsa.glm = glm,
             mgsa.ora = ora,
             mgsa.gsea = gsea,
-            champ.wt = wt,
-            champ.kpmt = kpmt)
+            #champ.wt = wt,
+            ebgsea.wt = wt,
+            #champ.kpmt = kpmt
+            ebgsea.kpmt = kpmt)
 res <- dplyr::bind_rows(res, .id = "method")
 res$simNo <- simNo
 res$sampleNo <- sampleNo
 
 # save results to file
-out <- glue::glue("{outDir}/FDR.{sampleNo}.{simNo}.rds")
+out <- glue::glue("{outDir}/FDR.{sampleType}.{sampleNo}.{simNo}.rds")
 saveRDS(res, out)
 
