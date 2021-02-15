@@ -1,5 +1,5 @@
 #!/bin/bash
-for fn in data/SRP125125/SRR6298*;
+for fn in data/datasets/SRP125125/SRR6298*;
 do
 samp=`basename ${fn}`
 echo "Converting sample ${samp}"
@@ -9,5 +9,5 @@ echo "Quantifying sample ${samp}"
 salmon quant -i ~/Work/genomes/hg19/salmon_v1.2.1_index -l A \
           -1 ${fn}/${samp}_1.fastq \
           -2 ${fn}/${samp}_2.fastq \
-          -p 4 --validateMappings -o data/SRP125125/quants/${samp}_quant
+          -p 4 --validateMappings -o data/datasets/SRP125125/quants/${samp}_quant
 done
