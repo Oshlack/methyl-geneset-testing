@@ -141,9 +141,10 @@ if(!file.exists(outFile)){
 }
 ```
 
+
 # Load data: BRCA
 
-We are using publicly available kidney clear cell carcinoma (BRCA) 450k data from The Cancer Genome Atlas (TCGA). We are using only the normal samples to look at false discovery rate (FDR) control by various methylation gene set testing methods.
+We are using publicly available breast cancer (BRCA) 450k data from The Cancer Genome Atlas (TCGA). We are using only the normal samples to look at false discovery rate (FDR) control by various methylation gene set testing methods.
 
 First, download the data using the `curatedTCGAData` Bioconductor package and then extract the normal samples. The data is provided as β values with masked data points; data points were masked as “NA” if their detection p-value was greater than 0.05 or the probe was annotated as having a SNP within 10 base pairs or repeat within 15 base pairs or the interrogated CpG. We extract only the 97 normal samples.  
 
@@ -198,6 +199,8 @@ p <- ggplot(dat, aes(x = x, y = y, colour = gender)) +
 p
 ```
 
+The density distributions of the beta values for some samples look markedly different to  the others.
+
 ```{r}
 dat <- as_tibble(melt(betasFlt))
 colnames(dat) <- c("cpg", "ID", "beta")
@@ -207,6 +210,8 @@ p <- ggplot(dat, aes(x = beta, group = ID)) +
 
 p + labs(x = "Beta value", y = "Density")
 ```
+
+Calculated the number of modes for the distribution of each sample.
 
 ```{r}
 numModes <- apply(betasFlt, 2, find_num_modes, adjust = 1.35)
@@ -221,6 +226,8 @@ p <- ggplot(dat, aes(x = beta, colour = mode, group = ID)) +
 
 p 
 ```
+
+Colour the MDS plot by the number of modes to confirm outlying samples.
 
 ```{r, message=FALSE}
 dims <- list(c(1,2), c(2,3), c(1,3), c(3,4))
@@ -242,7 +249,6 @@ for(i in 1:length(p)){
 (p[[1]] + p[[2]]) /
     (p[[3]] + p[[4]])
 ```
-
 
 Colour MDS plot using different variables to explore any further structure in the data.
 
@@ -276,7 +282,7 @@ c <- ggplot(dat, aes(x = x, y = y, colour = ethnicity)) +
 (b + c) / a
 ```
 
-Remove samples with more than 2 modes in their density distributions and black or african american samples.
+Remove samples with more than 2 modes in their density distributions and "black or african american" samples.
 
 ```{r}
 keep <- numModes == 2 & meta$race != "black or african american" & !is.na(meta$race)
@@ -284,7 +290,7 @@ betasFlt <- betasFlt[, keep]
 meta <- meta[keep, ]
 ```
 
-Structure of data after removal of outlier samples.
+Examine the structure of data after removal of outlier samples.
 
 ```{r}
 mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE)
@@ -323,28 +329,77 @@ if(!file.exists(outFile)){
 ```
 
 
-# FDR analysis
+# FDR analysis: KIRC
 
 We randomly select 5, 10, 20, 40, 80 samples per "group" from the TCGA KIRC normal samples and then perform differential methylation analysis between the two "groups". We do this 100 times for each "group" size. There should be no significant differential methylation between the groups as the data contains no signal. Consequently, we expect about 5% false gene set discoveries across the 100 simulations from methods that are "holding their size". 
 
-We compare GOmeth (with top 1000 and 5000 ranked CpGs from the DM analysis selected as "significant"), methylglm (mGLM), methylRRA-ORA (mRRA (ORA)), methylRRA-GSEA (mRRA (GSEA)) from the *MethylGSA* package and ebayGSEA from the *ChAMP* package. As ebayGSEA can only be run on its in-built BROAD MSigDB gene sets, to be able to compare across ALL methods, we only used the BROAD MSigDB gene sets provided with *ChAMP* package for this analysis.
+We compare GOmeth (with top 1000 and 5000 ranked CpGs from the DM analysis selected as "significant"), methylglm (mGLM), methylRRA-ORA (mRRA (ORA)), methylRRA-GSEA (mRRA (GSEA)) from the *MethylGSA* package and ebGSEA. The BROAD MSigDB gene sets provided with *ChAMP* package were used for this analysis.
 
 The code used to produce the simulation results can be found in the `code/fdr-analysis` directory. It consists of three scripts: `genRunFDRAnalysisJob.R`, `runFDRAnalysis.R` and `processFDRAnalysis.R`. The `genRunFDRAnalysisJob.R` script creates and submits [Slurm](https://slurm.schedmd.com/overview.html) job scripts that run the `runFDRAnalysis.R` script, in parallel, on a HPC. Each job executes *one* of the 100 simulations, for a "group" size. The results of each job are saved as an RDS file named `FDR.{sampleNo}.{simNo}.rds` in the `output/FDR-analysis` directory. Once all simulation jobs are complete, the `processFDRAnalysis.R` must be executed to collate the results into a single object, which is then saved as `FDR-analysis.rds` in the `output/FDR-analysis` directory. The intermediate RDS files are moved into `output/FDR-analysis/.bin`, which can then be deleted, if no longer required. The subsequent section requires `FDR-analysis.rds` to be present in the `output/FDR-analysis` directory for downstream analysis and plotting.
 
 Load the results of the FDR simulations.
 
 ```{r}
-inFile <- here("output/FDR-analysis/FDR-analysis.rds")
+broad <- readRDS("output/FDR-analysis/BROAD-sets.rds")
+noGenes <- data.frame(noGenes = sapply(broad$entrez, length))
+
+inFile <- here("output/FDR-analysis/FDR.KIRC.analysis.rds")
 if(file.exists(inFile)) dat <- as_tibble(readRDS(inFile))
 ```
 
 The plots below shows that mRRA (ORA) does not control the FDR very well as the median proportion of p-value 0.05 for the 100 simulations is greater than 0.5. mRRA (GSEA) does better, although its median FDR is still relatively high at around 0.25. mGLM has good FDR control with median FDR at around 0.05. ebayGSEA is only slightly anti-conservative using both the Wilcox test (WT) and Known Population Median test (KPMT) with a median FDR at around 0.06-0.08. GOmeth is very consistent although somewhat conservative with a median FDR at around 0.02-0.03. 
 
 ```{r, fig.width=9}  
-dat %>% mutate(method = unname(dict[method])) %>%
-    group_by(simNo, sampleNo, method) %>% 
-    summarise(psig = sum(pvalue < 0.05)/length(pvalue)) %>%
-    mutate(sampleOrd = as.integer(sampleNo)) -> sigDat
+dat %>% left_join(rownames_to_column(noGenes), by = c("ID" = "rowname")) %>%
+  filter(noGenes >= 1) %>%
+  mutate(method = unname(dict[method])) %>%
+  group_by(simNo, sampleNo, method) %>% 
+  summarise(psig = sum(pvalue < 0.05)/length(pvalue)) %>%
+  mutate(sampleOrd = as.integer(sampleNo)) -> sigDat
+
+p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig, 
+                        fill = method)) +
+  geom_violin(scale = "width", width = 0.8, size = 0.3) + 
+  stat_summary(geom = "point", size = 0.5, color = "white",
+               position = position_dodge(0.8),
+               show.legend = FALSE, fun = median) +
+  geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
+  labs(y="Prop. gene sets with p-value < 0.05", x="No. samples per group",
+       fill="Method") +
+  scale_fill_manual(values = methodCols)
+p
+```
+
+Save figure for use in manuscript.
+
+```{r}
+fig <- here("output/figures/Fig-3D.rds")
+saveRDS(p, fig, compress = FALSE)
+```
+
+
+# FDR analysis: BRCA
+
+We randomly select 5, 10, 20, 40 samples per "group" from the TCGA BRCA normal samples and then perform differential methylation analysis between the two "groups". We do this 100 times for each "group" size. There should be no significant differential methylation between the groups as the data contains no signal. Consequently, we expect about 5% false gene set discoveries across the 100 simulations from methods that are "holding their size". 
+
+We compare GOmeth (with top 1000 and 5000 ranked CpGs from the DM analysis selected as "significant"), methylglm (mGLM), methylRRA-ORA (mRRA (ORA)), methylRRA-GSEA (mRRA (GSEA)) from the *MethylGSA* package and ebGSEA. The BROAD MSigDB gene sets provided with *ChAMP* package were used for this analysis.
+
+Load the results of the FDR simulations.
+
+```{r}
+inFile <- here("output/FDR-analysis/FDR.BRCA.analysis.rds")
+if(file.exists(inFile)) dat <- as_tibble(readRDS(inFile))
+```
+
+The plots below shows that mRRA (ORA) does not control the FDR very well as the median proportion of p-value 0.05 for the 100 simulations is greater than 0.5. mRRA (GSEA) does better, although its median FDR is still relatively high at around 0.25. mGLM has good FDR control with median FDR at around 0.05. ebGSEA is only slightly anti-conservative using both the Wilcox test (WT) and Known Population Median test (KPMT) with a median FDR at around 0.06-0.08. GOmeth is very consistent although somewhat conservative with a median FDR at around 0.02-0.03. 
+
+```{r, fig.width=9}  
+dat %>% left_join(rownames_to_column(noGenes), by = c("ID" = "rowname")) %>%
+  filter(noGenes >= 1) %>%
+  mutate(method = unname(dict[method])) %>%
+  group_by(simNo, sampleNo, method) %>% 
+  summarise(psig = sum(pvalue < 0.05)/length(pvalue)) %>%
+  mutate(sampleOrd = as.integer(sampleNo)) -> sigDat
 
 p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig, 
                           fill = method)) +
@@ -359,25 +414,18 @@ p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig,
 p
 ```
 
-Save figure for use in manuscript.
+<!-- Calculate the median number of significant gene sets per method, across simulations and sample numbers. -->
 
-```{r}
-fig <- here("output/figures/Fig-3D.rds")
-saveRDS(p, fig, compress = FALSE)
-```
+<!-- ```{r, message=FALSE, warning=FALSE} -->
+<!-- dat %>% mutate(method = unname(dict[method])) %>% -->
+<!--     group_by(simNo, sampleNo, method) %>%  -->
+<!--     summarise(num = sum(pvalue < 0.05)) %>% -->
+<!--     group_by(sampleNo, method) %>% -->
+<!--     summarise(med = median(num)) %>% -->
+<!--     group_by(method) %>% -->
+<!--     summarise(med = median(med)) -> medNoSets -->
 
-Calculate the median number of significant gene sets per method, across simulations and sample numbers.
-
-```{r, message=FALSE, warning=FALSE}
-dat %>% mutate(method = unname(dict[method])) %>%
-    group_by(simNo, sampleNo, method) %>% 
-    summarise(num = sum(pvalue < 0.05)) %>%
-    group_by(sampleNo, method) %>%
-    summarise(med = median(num)) %>%
-    group_by(method) %>%
-    summarise(med = median(med)) -> medNoSets
-
-medNoSets
-```
+<!-- medNoSets -->
+<!-- ``` -->
 
 
