@@ -6,8 +6,8 @@ set <- args[2]
 input <- args[3]
 outDir <- args[4]
 
-library(org.Hs.eg.db)
-library(ChAMP)
+# library(org.Hs.eg.db)
+# library(ChAMP)
 source(here::here("code/utility.R"))
 
 obj <- readRDS(input)
@@ -37,14 +37,28 @@ if(set == "KEGG"){
   collection <- missMethyl:::.getGO()$idList
 
 } else if (set == "BROAD"){
+  library(ChAMPdata)
+  library(EnsDb.Hsapiens.v75)
+
+  edb <- EnsDb.Hsapiens.v75
+  ensGenes <- ensembldb::genes(edb, columns = c("gene_id", "symbol", "entrezid"),
+                               return.type = "DataFrame")
+  ensGenes$entrezid <- sapply(ensGenes$entrezid, function(x) x[1])
+
   data("PathwayList")
-  k <- keys(org.Hs.eg.db, keytype = "SYMBOL")
-  keep <- sapply(PathwayList,function(x) any(x %in% k))
+
+  #k <- keys(org.Hs.eg.db, keytype = "SYMBOL")
+  keep <- sapply(PathwayList,function(x) any(x %in% ensGenes$symbol))
+  # collection <- suppressMessages(lapply(PathwayList[keep], function(x){
+  #     tmp <- select(org.Hs.eg.db, x, columns = "ENTREZID",
+  #                   keytype = "SYMBOL")$ENTREZID
+  #     tmp[!is.na(tmp)]
+  # }))
   collection <- suppressMessages(lapply(PathwayList[keep], function(x){
-      tmp <- select(org.Hs.eg.db, x, columns = "ENTREZID",
-                    keytype = "SYMBOL")$ENTREZID
-      tmp[!is.na(tmp)]
+    tmp <- ensGenes$entrezid[ensGenes$symbol %in% x]
+    tmp[!is.na(tmp)]
   }))
+
 }
 
 universe <- rownames(mVals)

@@ -1,9 +1,13 @@
 #!/usr/bin/env Rscript
 
+args <- commandArgs(trailingOnly=TRUE)
+
 dir <- here::here("code")
 jobDir <- glue::glue("{dir}/.job")
-outDir <- here::here("output/compare-methods")
-input <- here::here("data/cache-intermediates/blood.contrasts.rds")
+#input <- here::here("data/cache-intermediates/blood.contrasts.rds")
+input <- here::here(args[1])
+outName <- args[2]
+outDir <- here::here(glue::glue("output/compare-methods/{outName}"))
 
 if (!dir.exists(outDir)) dir.create(outDir)
 if (!dir.exists(jobDir)) dir.create(jobDir)
@@ -28,7 +32,7 @@ for (package in packages) {
         cat(glue::glue("#SBATCH --output={outDir}/{package}.{set}.out"), "\n")
         cat(glue::glue("#SBATCH --error={outDir}/{package}.{set}.err"), "\n")
         cat("#SBATCH --time=12:00:00\n")
-        cat("#SBATCH --mem=32GB\n")
+        cat("#SBATCH --mem=64GB\n")
         cat("#\n")
         #cat("module load R/3.6.0\n")
         cat("module load R/4.0.2\n")
