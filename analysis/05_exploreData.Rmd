@@ -208,7 +208,7 @@ The code used to run all the gene set testing analyses using the different metho
 The results of all the gene set testing analyses, using all the different methods, for the different types of gene sets, are loaded into a `list` of `data.frames`. All of the `data.frames` in the `list` are then concatenated into a `tibble` for downstream analysis and plotting.
 
 ```{r}
-inFiles <- list.files(here("output/compare-methods"), pattern = "rds", 
+inFiles <- list.files(here("output/compare-methods/BLOOD"), pattern = "rds", 
                       full.names = TRUE)
 
 res <- lapply(inFiles, function(file){
