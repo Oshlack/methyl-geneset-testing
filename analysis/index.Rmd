@@ -37,44 +37,47 @@ Jovana Maksimovic^1,2,3^, Alicia Oshlack^1,4^, Belinda Phipson^1,2+^
 Analysis
 --------
 1. [Explore EPIC array bias](01_exploreArrayBiasEPIC.html)
-    * Explore the various array biases on the EPIC array that affect gene set testing.
+   - Explore the various array biases on the EPIC array that affect gene set testing.
       
 2. [Explore 450k array bias](02_exploreArrayBias450.html)
-    * Explore the various array biases on the 450k array that affect gene set testing.
+   - Explore the various array biases on the 450k array that affect gene set testing.
 
-3a. [Generate a blood cell RNAseq "truth" set](03_expressionGenesets.html)
-    * Analyse an RNAseq sorted blood cell dataset and identify the top ranked 
-      gene sets for each cell type comparison.
+3.
+    a) [Generate a blood cell RNAseq "truth" set](03_expressionGenesets.html)
+       - Analyse an RNAseq sorted blood cell dataset and identify the top ranked 
+         gene sets for each cell type comparison.
 
-3b. [Generate a breast cancer cell-line RNAseq "truth" set](03_expressionGenesetsNew.html)
-    * Analyse an RNAseq breast cancer cell-line dataset and identify the top ranked 
-      gene sets for each cell type comparison.
+
+    b) [Generate a breast cancer cell-line RNAseq "truth" set](03_expressionGenesetsNew.html)
+       - Analyse an RNAseq breast cancer cell-line dataset and identify the top ranked 
+         gene sets for each cell type comparison.
       
 4. [Compare FDR of different methods](04_fdrAnalysis.html)
-    * Analyse the normal samples from a 450k array KIRC TCGA dataset using 
-      various genset testing methods to estimate their false discovery rate control.
+   - Analyse the normal samples from a 450k array KIRC TCGA dataset using 
+     various genset testing methods to estimate their false discovery rate control.
       
-5a. [Compare performance of different methods](05_exploreData.html)
-    * Analyse an EPIC array sorted blood cell dataset using various gene set 
-      testing methods. Compare how well the different methods perform using several 
-      metrics.
+5.
+    a) [Compare performance of different methods](05_exploreData.html)
+       - Analyse an EPIC array sorted blood cell dataset using various gene set 
+         testing methods. Compare how well the different methods perform using several 
+         metrics.
 
-5b. [Compare performance of different methods](05_exploreDataNew.html)
-    * Analyse an EPIC array breast cancer cell-line dataset using various gene set 
-      testing methods. Compare how well the different methods perform using several 
-      metrics.
+    b) [Compare performance of different methods](05_exploreDataNew.html)
+       - Analyse an EPIC array breast cancer cell-line dataset using various gene set 
+         testing methods. Compare how well the different methods perform using several 
+         metrics.
       
 6. [Compare run-time of different methods](06_runTimeComparison.html)
-    * Analyse an EPIC array sorted blood cell dataset using various gene set 
-      testing methods. Compare the run-time of the different methods.
+   - Analyse an EPIC array sorted blood cell dataset using various gene set 
+     testing methods. Compare the run-time of the different methods.
       
 7. [Evaluate GOregion](07_regionAnalysis.html)
-    * Evalulate GOregion, our extension of gometh for geneset testing of 
-      differentially methylated regions (DMRs) identified by DMR finding software.
+   - Evalulate GOregion, our extension of gometh for geneset testing of 
+     differentially methylated regions (DMRs) identified by DMR finding software.
 
 8. [Effect of gene set size parameters on methylGSA](methylGSAParamSweep.html)
-    * Analyse an EPIC array sorted blood cell dataset using various gene set 
-      testing methods. Compare the run-time of the different methods.
+   - Analyse an EPIC array sorted blood cell dataset using various gene set 
+     testing methods. Compare the run-time of the different methods.
       
 
 Licenses
