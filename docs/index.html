@@ -33,6 +33,15 @@ div.section {
 }
 </style>
 
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
   pre:not([class]) {
@@ -77,6 +86,7 @@ h6 {
   text-align: left;
 }
 </style>
+
 
 
 
@@ -294,7 +304,7 @@ $(document).ready(function () {
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/Oshlack/methyl-geneset-testing">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
     Source code
   </a>
@@ -333,7 +343,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-08-28
+<strong>Last updated:</strong> 2021-03-22
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -364,35 +374,36 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree864b388a17115cf5252e11efc6896a08c3165715targetblank864b388a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/864b388a17115cf5252e11efc6896a08c3165715" target="_blank">864b388</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree0f8a97968b88ba8826d391134657d9723bb208eftargetblank0f8a979a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/0f8a97968b88ba8826d391134657d9723bb208ef" target="_blank">0f8a979</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtree864b388a17115cf5252e11efc6896a08c3165715targetblank864b388a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree0f8a97968b88ba8826d391134657d9723bb208eftargetblank0f8a979a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/864b388a17115cf5252e11efc6896a08c3165715" target="_blank">864b388</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/0f8a97968b88ba8826d391134657d9723bb208ef" target="_blank">0f8a979</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
 </p>
 <pre><code>
 Ignored files:
-    Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/figures.nb.html
     Ignored:    code/.job/
     Ignored:    code/old/
-    Ignored:    data/.DS_Store
     Ignored:    data/annotations/
     Ignored:    data/cache-intermediates/
     Ignored:    data/cache-region/
     Ignored:    data/cache-rnaseq/
     Ignored:    data/cache-runtime/
     Ignored:    data/datasets/GSE110554-data.RData
+    Ignored:    data/datasets/GSE95462-data.RData
+    Ignored:    data/datasets/GSE95462_RAW/
+    Ignored:    data/datasets/SRP100803/
     Ignored:    data/datasets/SRP125125/SRR6298258/
     Ignored:    data/datasets/SRP125125/SRR6298271/
     Ignored:    data/datasets/SRP125125/SRR6298273/
@@ -422,20 +433,21 @@ Ignored files:
     Ignored:    data/datasets/SRP125125/multiqc_data/
     Ignored:    data/datasets/SRP125125/multiqc_report.html
     Ignored:    data/datasets/SRP125125/quants/
+    Ignored:    data/datasets/TCGA.BRCA.rds
     Ignored:    data/datasets/TCGA.KIRC.rds
     Ignored:    data/misc/
-    Ignored:    output/.DS_Store
     Ignored:    output/FDR-analysis/
     Ignored:    output/compare-methods/
     Ignored:    output/figures/
     Ignored:    output/methylgsa-params/
-    Ignored:    output/outputs.tar.gz
     Ignored:    output/random-cpg-sims/
-    Ignored:    output/test/
+
+Untracked files:
+    Untracked:  analysis/05_exploreNewData.Rmd
 
 </code></pre>
 <p>
-Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
 </p>
 </div>
 </div>
@@ -446,7 +458,7 @@ Note that any generated files, e.g. HTML, png, CSS, etc., are not included in th
 <div id="versions" class="tab-pane fade">
 
 <p>
-These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/index.Rmd</code>) and HTML (<code>docs/index.html</code>) files. If you've configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/index.Rmd</code>) and HTML (<code>docs/index.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
 </p>
 <div class="table-responsive">
 <table class="table table-condensed table-hover">
@@ -475,16 +487,16 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/864b388a17115cf5252e11efc6896a08c3165715/analysis/index.Rmd" target="_blank">864b388</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/0f8a97968b88ba8826d391134657d9723bb208ef/analysis/index.Rmd" target="_blank">0f8a979</a>
 </td>
 <td>
-JovMaksimovic
+Jovana Maksimovic
 </td>
 <td>
-2020-08-28
+2021-03-22
 </td>
 <td>
-wflow_publish(&quot;analysis/index.Rmd&quot;)
+wflow_publish(c(“analysis/03_expressionGenesetsNew.Rmd”, “analysis/index.Rmd”))
 </td>
 </tr>
 <tr>
@@ -492,7 +504,7 @@ wflow_publish(&quot;analysis/index.Rmd&quot;)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/df00043c6144ec1b2e33ce19eb94be6996db4c2b/docs/index.html" target="_blank">df00043</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/3af3b82135ee41031301b39fb8059195e0c893c1/docs/index.html" target="_blank">3af3b82</a>
 </td>
 <td>
 JovMaksimovic
@@ -509,7 +521,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/59480d3f934fd9b9ba8f72d90d8c08728bb28f6f/analysis/index.Rmd" target="_blank">59480d3</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/864b388a17115cf5252e11efc6896a08c3165715/analysis/index.Rmd" target="_blank">864b388</a>
 </td>
 <td>
 JovMaksimovic
@@ -518,7 +530,7 @@ JovMaksimovic
 2020-08-28
 </td>
 <td>
-wflow_publish(&quot;analysis/index.Rmd&quot;)
+wflow_publish(“analysis/index.Rmd”)
 </td>
 </tr>
 <tr>
@@ -526,7 +538,7 @@ wflow_publish(&quot;analysis/index.Rmd&quot;)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/d3675c57e18b80e964f6c175e76e1e9fdde07120/docs/index.html" target="_blank">d3675c5</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/df00043c6144ec1b2e33ce19eb94be6996db4c2b/docs/index.html" target="_blank">df00043</a>
 </td>
 <td>
 JovMaksimovic
@@ -543,7 +555,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/562f140aa61ac43c285f2da11a48bb1bffe03d11/analysis/index.Rmd" target="_blank">562f140</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/59480d3f934fd9b9ba8f72d90d8c08728bb28f6f/analysis/index.Rmd" target="_blank">59480d3</a>
 </td>
 <td>
 JovMaksimovic
@@ -552,7 +564,7 @@ JovMaksimovic
 2020-08-28
 </td>
 <td>
-wflow_publish(c(&quot;analysis/03_expressionGenesets.Rmd&quot;, &quot;analysis/gettingStarted.Rmd&quot;,
+wflow_publish(“analysis/index.Rmd”)
 </td>
 </tr>
 <tr>
@@ -560,7 +572,41 @@ wflow_publish(c(&quot;analysis/03_expressionGenesets.Rmd&quot;, &quot;analysis/g
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/index.html" target="_blank">555069b</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d3675c57e18b80e964f6c175e76e1e9fdde07120/docs/index.html" target="_blank">d3675c5</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-28
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/562f140aa61ac43c285f2da11a48bb1bffe03d11/analysis/index.Rmd" target="_blank">562f140</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-28
+</td>
+<td>
+wflow_publish(c(“analysis/03_expressionGenesets.Rmd”, “analysis/gettingStarted.Rmd”,
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/index.html" target="_blank">555069b</a>
 </td>
 <td>
 JovMaksimovic
@@ -577,7 +623,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/91699a8d1b57e40650c7101a0b7db675e67658a1/analysis/index.Rmd" target="_blank">91699a8</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/91699a8d1b57e40650c7101a0b7db675e67658a1/analysis/index.Rmd" target="_blank">91699a8</a>
 </td>
 <td>
 JovMaksimovic
@@ -586,7 +632,7 @@ JovMaksimovic
 2020-08-14
 </td>
 <td>
-wflow_publish(&quot;analysis/_site.yml&quot;, republish = TRUE, all = TRUE)
+wflow_publish("analysis/_site.yml", republish = TRUE, all = TRUE)
 </td>
 </tr>
 <tr>
@@ -594,7 +640,7 @@ wflow_publish(&quot;analysis/_site.yml&quot;, republish = TRUE, all = TRUE)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/696481cde2d1b9ab3e031fda924e15f6d340ba9b/docs/index.html" target="_blank">696481c</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/696481cde2d1b9ab3e031fda924e15f6d340ba9b/docs/index.html" target="_blank">696481c</a>
 </td>
 <td>
 JovMaksimovic
@@ -611,7 +657,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/5e79b2e0bd7880aa01f837ca3784a8de595653e4/analysis/index.Rmd" target="_blank">5e79b2e</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/5e79b2e0bd7880aa01f837ca3784a8de595653e4/analysis/index.Rmd" target="_blank">5e79b2e</a>
 </td>
 <td>
 JovMaksimovic
@@ -620,7 +666,7 @@ JovMaksimovic
 2020-08-10
 </td>
 <td>
-wflow_publish(c(&quot;analysis/regionAnalysis.Rmd&quot;, &quot;analysis/index.Rmd&quot;,
+wflow_publish(c(“analysis/regionAnalysis.Rmd”, “analysis/index.Rmd”,
 </td>
 </tr>
 <tr>
@@ -628,7 +674,7 @@ wflow_publish(c(&quot;analysis/regionAnalysis.Rmd&quot;, &quot;analysis/index.Rm
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/e16272544567fe917fbc3e2de666e31899209b81/docs/index.html" target="_blank">e162725</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/e16272544567fe917fbc3e2de666e31899209b81/docs/index.html" target="_blank">e162725</a>
 </td>
 <td>
 JovMaksimovic
@@ -645,7 +691,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/ea6f88dda55a42c7a1514b69150d73c28bcc2ee0/analysis/index.Rmd" target="_blank">ea6f88d</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/ea6f88dda55a42c7a1514b69150d73c28bcc2ee0/analysis/index.Rmd" target="_blank">ea6f88d</a>
 </td>
 <td>
 JovMaksimovic
@@ -654,7 +700,7 @@ JovMaksimovic
 2020-07-27
 </td>
 <td>
-wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/gettingStarted.Rmd&quot;))
+wflow_publish(c(“analysis/index.Rmd”, “analysis/gettingStarted.Rmd”))
 </td>
 </tr>
 <tr>
@@ -662,7 +708,7 @@ wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/gettingStarted.Rm
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/d439b3224d9c6dc4ab48db1f14a361d28fb0bbbc/docs/index.html" target="_blank">d439b32</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d439b3224d9c6dc4ab48db1f14a361d28fb0bbbc/docs/index.html" target="_blank">d439b32</a>
 </td>
 <td>
 JovMaksimovic
@@ -679,7 +725,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/6278674aaa36496fbfdb518beff75a6d45e70323/analysis/index.Rmd" target="_blank">6278674</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/6278674aaa36496fbfdb518beff75a6d45e70323/analysis/index.Rmd" target="_blank">6278674</a>
 </td>
 <td>
 JovMaksimovic
@@ -688,7 +734,7 @@ JovMaksimovic
 2020-07-27
 </td>
 <td>
-wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/gettingStarted.Rmd&quot;))
+wflow_publish(c(“analysis/index.Rmd”, “analysis/gettingStarted.Rmd”))
 </td>
 </tr>
 <tr>
@@ -696,7 +742,7 @@ wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/gettingStarted.Rm
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/e631347d2fe362ed5b7fb0ec0a237be681daa314/docs/index.html" target="_blank">e631347</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/e631347d2fe362ed5b7fb0ec0a237be681daa314/docs/index.html" target="_blank">e631347</a>
 </td>
 <td>
 JovMaksimovic
@@ -713,7 +759,7 @@ Build site.
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/fd3abe58ef898e25fc2aa4ef58b8a25a672c4f77/docs/index.html" target="_blank">fd3abe5</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/fd3abe58ef898e25fc2aa4ef58b8a25a672c4f77/docs/index.html" target="_blank">fd3abe5</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -730,7 +776,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/1be6051747a985e644fc44036fca1c5f3d478b13/analysis/index.Rmd" target="_blank">1be6051</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/1be6051747a985e644fc44036fca1c5f3d478b13/analysis/index.Rmd" target="_blank">1be6051</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -739,7 +785,7 @@ Jovana Maksimovic
 2020-06-16
 </td>
 <td>
-wflow_publish(&quot;analysis/index.Rmd&quot;)
+wflow_publish(“analysis/index.Rmd”)
 </td>
 </tr>
 <tr>
@@ -747,7 +793,7 @@ wflow_publish(&quot;analysis/index.Rmd&quot;)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/2460d188cad32fa6996662a68e73e4591e6a964c/docs/index.html" target="_blank">2460d18</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/2460d188cad32fa6996662a68e73e4591e6a964c/docs/index.html" target="_blank">2460d18</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -764,7 +810,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/5221ff045f63160f03b8b32015bee9b583395c1c/analysis/index.Rmd" target="_blank">5221ff0</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/5221ff045f63160f03b8b32015bee9b583395c1c/analysis/index.Rmd" target="_blank">5221ff0</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -773,7 +819,7 @@ Jovana Maksimovic
 2020-06-16
 </td>
 <td>
-wflow_publish(&quot;analysis/index.Rmd&quot;)
+wflow_publish(“analysis/index.Rmd”)
 </td>
 </tr>
 <tr>
@@ -781,7 +827,7 @@ wflow_publish(&quot;analysis/index.Rmd&quot;)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/61f5fff9f6d243878a74ee7ee4114f63c99d090a/docs/index.html" target="_blank">61f5fff</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/61f5fff9f6d243878a74ee7ee4114f63c99d090a/docs/index.html" target="_blank">61f5fff</a>
 </td>
 <td>
 JovMaksimovic
@@ -798,7 +844,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/4e771035387622cad43bb9ebd7c6a8327c36efdc/analysis/index.Rmd" target="_blank">4e77103</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/4e771035387622cad43bb9ebd7c6a8327c36efdc/analysis/index.Rmd" target="_blank">4e77103</a>
 </td>
 <td>
 JovMaksimovic
@@ -807,7 +853,7 @@ JovMaksimovic
 2020-06-01
 </td>
 <td>
-wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/gomethByFeature.Rmd&quot;))
+wflow_publish(c(“analysis/index.Rmd”, “analysis/gomethByFeature.Rmd”))
 </td>
 </tr>
 <tr>
@@ -815,7 +861,7 @@ wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/gomethByFeature.R
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/922496602738ae496a3b3caff5183b0c0fd4140e/docs/index.html" target="_blank">9224966</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/922496602738ae496a3b3caff5183b0c0fd4140e/docs/index.html" target="_blank">9224966</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -832,7 +878,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/49cf1670562da834f16a26dd224cc38fb074216a/analysis/index.Rmd" target="_blank">49cf167</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/49cf1670562da834f16a26dd224cc38fb074216a/analysis/index.Rmd" target="_blank">49cf167</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -841,7 +887,7 @@ Jovana Maksimovic
 2020-05-29
 </td>
 <td>
-wflow_publish(c(&quot;analysis/methylGSAParamSweep.Rmd&quot;, &quot;analysis/index.Rmd&quot;))
+wflow_publish(c(“analysis/methylGSAParamSweep.Rmd”, “analysis/index.Rmd”))
 </td>
 </tr>
 <tr>
@@ -849,7 +895,7 @@ wflow_publish(c(&quot;analysis/methylGSAParamSweep.Rmd&quot;, &quot;analysis/ind
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/c381d87e61054c0eba8a0695885875eda65fa260/docs/index.html" target="_blank">c381d87</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c381d87e61054c0eba8a0695885875eda65fa260/docs/index.html" target="_blank">c381d87</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -866,7 +912,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/ff86a788617ffec04756bd48e5d5ff574aac6ca8/analysis/index.Rmd" target="_blank">ff86a78</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/ff86a788617ffec04756bd48e5d5ff574aac6ca8/analysis/index.Rmd" target="_blank">ff86a78</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -875,7 +921,7 @@ Jovana Maksimovic
 2020-05-19
 </td>
 <td>
-wflow_publish(&quot;analysis/index.Rmd&quot;)
+wflow_publish(“analysis/index.Rmd”)
 </td>
 </tr>
 <tr>
@@ -883,7 +929,7 @@ wflow_publish(&quot;analysis/index.Rmd&quot;)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/2c18577124cc295d7e159311cad8754577ec37f9/docs/index.html" target="_blank">2c18577</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/2c18577124cc295d7e159311cad8754577ec37f9/docs/index.html" target="_blank">2c18577</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -900,7 +946,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/b7daadd4026c6dab6bc73614ae0152d84d807df2/analysis/index.Rmd" target="_blank">b7daadd</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/b7daadd4026c6dab6bc73614ae0152d84d807df2/analysis/index.Rmd" target="_blank">b7daadd</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -909,7 +955,7 @@ Jovana Maksimovic
 2020-05-19
 </td>
 <td>
-wflow_publish(&quot;analysis/index.Rmd&quot;)
+wflow_publish(“analysis/index.Rmd”)
 </td>
 </tr>
 <tr>
@@ -917,7 +963,7 @@ wflow_publish(&quot;analysis/index.Rmd&quot;)
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/f2da7f99969ab14f267f78072bbee83baec2c0d6/docs/index.html" target="_blank">f2da7f9</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/f2da7f99969ab14f267f78072bbee83baec2c0d6/docs/index.html" target="_blank">f2da7f9</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -934,7 +980,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/68a0f24f7acb1a1be1d1d154739e0022d1733735/analysis/index.Rmd" target="_blank">68a0f24</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/68a0f24f7acb1a1be1d1d154739e0022d1733735/analysis/index.Rmd" target="_blank">68a0f24</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -943,7 +989,7 @@ Jovana Maksimovic
 2020-05-15
 </td>
 <td>
-wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/runTimeComparison.Rmd&quot;))
+wflow_publish(c(“analysis/index.Rmd”, “analysis/runTimeComparison.Rmd”))
 </td>
 </tr>
 <tr>
@@ -951,7 +997,7 @@ wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/runTimeComparison
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/06648a4b8d1af9a4113520a3844b4400395f7a21/docs/index.html" target="_blank">06648a4</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/06648a4b8d1af9a4113520a3844b4400395f7a21/docs/index.html" target="_blank">06648a4</a>
 </td>
 <td>
 JovMaksimovic
@@ -968,7 +1014,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/89af32354ddfff9490bb55a4340a7d9a4d0b9605/analysis/index.Rmd" target="_blank">89af323</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/89af32354ddfff9490bb55a4340a7d9a4d0b9605/analysis/index.Rmd" target="_blank">89af323</a>
 </td>
 <td>
 JovMaksimovic
@@ -977,7 +1023,7 @@ JovMaksimovic
 2020-04-27
 </td>
 <td>
-wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/exploreData.Rmd&quot;,
+wflow_publish(c(“analysis/index.Rmd”, “analysis/exploreData.Rmd”,
 </td>
 </tr>
 <tr>
@@ -985,7 +1031,7 @@ wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/exploreData.Rmd&q
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/64432deef9b7ce9126b6f4b7edd30520829879fb/docs/index.html" target="_blank">64432de</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/64432deef9b7ce9126b6f4b7edd30520829879fb/docs/index.html" target="_blank">64432de</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -1002,7 +1048,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/90b90efadca81fd1af36d08cbf7427ab4349b479/analysis/index.Rmd" target="_blank">90b90ef</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/90b90efadca81fd1af36d08cbf7427ab4349b479/analysis/index.Rmd" target="_blank">90b90ef</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -1019,7 +1065,7 @@ Updated home link to FDR analysis
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/244474d1ededdea7d83b837736931b8a5e75713b/docs/index.html" target="_blank">244474d</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/244474d1ededdea7d83b837736931b8a5e75713b/docs/index.html" target="_blank">244474d</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -1036,7 +1082,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/d7cd66e771da5cd568aab4e5999ae8b7be7a88ec/analysis/index.Rmd" target="_blank">d7cd66e</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d7cd66e771da5cd568aab4e5999ae8b7be7a88ec/analysis/index.Rmd" target="_blank">d7cd66e</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -1053,7 +1099,7 @@ Initial Commit
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/18404093182d57d32414b057613f96813408d5f5/analysis/index.Rmd" target="_blank">1840409</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/18404093182d57d32414b057613f96813408d5f5/analysis/index.Rmd" target="_blank">1840409</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -1097,18 +1143,18 @@ Start workflowr project.
 <ul>
 <li>Explore the various array biases on the 450k array that affect gene set testing.</li>
 </ul></li>
-<li><a href="03_expressionGenesets.html">Generate a blood cell RNAseq &quot;truth&quot; set</a>
-<ul>
-<li>Analyse an RNAseq sorted blood cell dataset and identify the top ranked gene sets for each cell type comparison.</li>
-</ul></li>
+</ol>
+<p>3a. <a href="03_expressionGenesets.html">Generate a blood cell RNAseq “truth” set</a> * Analyse an RNAseq sorted blood cell dataset and identify the top ranked gene sets for each cell type comparison.</p>
+<p>3b. <a href="03_expressionGenesetsNew.html">Generate a breast cancer cell-line RNAseq “truth” set</a> * Analyse an RNAseq breast cancer cell-line dataset and identify the top ranked gene sets for each cell type comparison.</p>
+<ol start="4" style="list-style-type: decimal">
 <li><a href="04_fdrAnalysis.html">Compare FDR of different methods</a>
 <ul>
 <li>Analyse the normal samples from a 450k array KIRC TCGA dataset using various genset testing methods to estimate their false discovery rate control.</li>
 </ul></li>
-<li><a href="05_exploreData.html">Compare performance of different methods</a>
-<ul>
-<li>Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare how well the different methods perform using several metrics.</li>
-</ul></li>
+</ol>
+<p>5a. <a href="05_exploreData.html">Compare performance of different methods</a> * Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare how well the different methods perform using several metrics.</p>
+<p>5b. <a href="05_exploreDataNew.html">Compare performance of different methods</a> * Analyse an EPIC array breast cancer cell-line dataset using various gene set testing methods. Compare how well the different methods perform using several metrics.</p>
+<ol start="6" style="list-style-type: decimal">
 <li><a href="06_runTimeComparison.html">Compare run-time of different methods</a>
 <ul>
 <li>Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare the run-time of the different methods.</li>
@@ -1155,7 +1201,7 @@ footer is added to webpages before the MathJax javascript. -->
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
