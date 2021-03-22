@@ -374,16 +374,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree82d6037a16a3ac870482ee6dda1534690bd9bc4btargetblank82d6037a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/82d6037a16a3ac870482ee6dda1534690bd9bc4b" target="_blank">82d6037</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreebda4d93c1d423cda32ca14878ab9215bf7d3991ftargetblankbda4d93a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/bda4d93c1d423cda32ca14878ab9215bf7d3991f" target="_blank">bda4d93</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree82d6037a16a3ac870482ee6dda1534690bd9bc4btargetblank82d6037a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreebda4d93c1d423cda32ca14878ab9215bf7d3991ftargetblankbda4d93a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/82d6037a16a3ac870482ee6dda1534690bd9bc4b" target="_blank">82d6037</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/bda4d93c1d423cda32ca14878ab9215bf7d3991f" target="_blank">bda4d93</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -443,6 +443,7 @@ Ignored files:
     Ignored:    output/random-cpg-sims/
 
 Untracked files:
+    Untracked:  analysis/04_fdrAnalysisNew.Rmd
     Untracked:  analysis/05_exploreNewData.Rmd
 
 </code></pre>
@@ -482,6 +483,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/bda4d93c1d423cda32ca14878ab9215bf7d3991f/analysis/index.Rmd" target="_blank">bda4d93</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-22
+</td>
+<td>
+wflow_publish(c(“analysis/index.Rmd”, “analysis/04_fdrAnalysis.Rmd”))
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/59d648cac03da63b7bf28b7705ddf7114868d1a7/docs/index.html" target="_blank">59d648c</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-22
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1187,10 +1222,16 @@ Start workflowr project.
 <li>Analyse an RNAseq breast cancer cell-line dataset and identify the top ranked gene sets for each cell type comparison.</li>
 </ul></li>
 </ol></li>
+<li><ol style="list-style-type: lower-alpha">
 <li><a href="04_fdrAnalysis.html">Compare FDR of different methods</a>
 <ul>
-<li>Analyse the normal samples from a 450k array KIRC TCGA dataset using various genset testing methods to estimate their false discovery rate control.</li>
+<li>Analyse the normal samples from a 450k array KIRC TCGA dataset using various gene set testing methods to estimate their false discovery rate control.</li>
 </ul></li>
+<li><a href="04_fdrAnalysisNew.html">Compare FDR of different methods</a>
+<ul>
+<li>Analyse the normal samples from a 450k array BRCA TCGA dataset using various gene set testing methods to estimate their false discovery rate control.</li>
+</ul></li>
+</ol></li>
 <li><ol style="list-style-type: lower-alpha">
 <li><a href="05_exploreData.html">Compare performance of different methods</a>
 <ul>
