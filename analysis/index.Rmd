@@ -52,10 +52,15 @@ Analysis
        - Analyse an RNAseq breast cancer cell-line dataset and identify the top ranked 
          gene sets for each cell type comparison.
       
-4. [Compare FDR of different methods](04_fdrAnalysis.html)
-   - Analyse the normal samples from a 450k array KIRC TCGA dataset using 
-     various genset testing methods to estimate their false discovery rate control.
-      
+4. 
+    a) [Compare FDR of different methods](04_fdrAnalysis.html)
+       - Analyse the normal samples from a 450k array KIRC TCGA dataset using 
+         various gene set testing methods to estimate their false discovery rate control.
+
+    b) [Compare FDR of different methods](04_fdrAnalysisNew.html)
+       - Analyse the normal samples from a 450k array BRCA TCGA dataset using 
+         various gene set testing methods to estimate their false discovery rate control.
+         
 5.
     a) [Compare performance of different methods](05_exploreData.html)
        - Analyse an EPIC array sorted blood cell dataset using various gene set 
