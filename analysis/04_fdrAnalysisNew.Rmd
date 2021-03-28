@@ -1,0 +1,256 @@
+---
+title: 'Gene set testing for Illumina HumanMethylation Arrays'
+subtitle: "Comparing the false discovery rate of different methods"
+author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: html_document
+---
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+library(here)
+library(minfi)
+library(paletteer)
+library(limma)
+library(reshape2)
+library(missMethyl)
+library(ggplot2)
+library(glue)
+library(tibble)
+library(dplyr)
+library(curatedTCGAData)
+library(MultiAssayExperiment)
+library(TCGAutils)
+library(DMRcate)
+library(patchwork)
+source(here("code/utility.R"))
+```
+
+# Load data: BRCA
+
+We are using publicly available breast cancer (BRCA) 450k data from The Cancer Genome Atlas (TCGA). We are using only the normal samples to look at false discovery rate (FDR) control by various methylation gene set testing methods.
+
+First, download the data using the `curatedTCGAData` Bioconductor package and then extract the normal samples. The data is provided as β values with masked data points; data points were masked as “NA” if their detection p-value was greater than 0.05 or the probe was annotated as having a SNP within 10 base pairs or repeat within 15 base pairs or the interrogated CpG. We extract only the 97 normal samples.  
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+brca <- curatedTCGAData(diseaseCode = "BRCA", assays = "Methylation_methyl450", 
+                        dry.run = FALSE)
+brca <- splitAssays(brca, c("11")) # extract only the normal samples
+exp <- experiments(brca)[[1]]
+meta <- colData(brca)
+betas <- as.matrix(assay(exp))
+colnames(betas) <- substr(colnames(betas), 1, 12)
+m <- match(colnames(betas), meta$patientID)
+meta <- meta[m, ]
+head(meta[, 1:5])
+```
+
+## Quality control
+
+Removed any probes with >1 NA value.
+
+```{r}
+betasNoNA <- betas[rowSums(is.na(betas)) == 0, ]
+mds <- plotMDS(betasNoNA, gene.selection = "common", plot = FALSE)
+dat <- tibble(x = mds$x, y = mds$y, gender = meta$gender)
+
+ggplot(dat, aes(x = x, y = y, colour = gender)) +
+  geom_point() +
+  labs(x = "Principal Component 1", y = "Principal Component 2", 
+       colour = "Sex")
+```
+
+Remove any remaining SNP-affected probes and multi-mapping probes. We do not remove sex chromosome probes as all the samples are from females. This leaves 371,789 probes for downstream analysis.
+
+```{r, message=FALSE}
+betasFlt <- rmSNPandCH(betasNoNA, rmXY = FALSE, rmcrosshyb = TRUE)
+dim(betasFlt)
+```
+
+The structure of the data looks similar.
+
+```{r, message=FALSE}
+mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE)
+dat <- tibble(x = mds$x, y = mds$y, gender = meta$gender)
+
+pal <- paletteer::paletteer_d("wesanderson::Moonrise3", 2)
+cols <- c("female" = pal[2], "male" = pal[1])
+p <- ggplot(dat, aes(x = x, y = y, colour = gender)) +
+  geom_point(size = 2) +
+  labs(x = "Principal Component 1", y = "Principal Component 2", 
+       colour = "Sex") +
+    scale_color_manual(values = cols)
+p
+```
+
+The density distributions of the beta values for some samples look markedly different to  the others.
+
+```{r}
+dat <- as_tibble(melt(betasFlt))
+colnames(dat) <- c("cpg", "ID", "beta")
+
+p <- ggplot(dat, aes(x = beta, group = ID)) + 
+  geom_density(size=0.5, alpha=0.5, show.legend = FALSE)
+
+p + labs(x = "Beta value", y = "Density")
+```
+
+Calculated the number of modes for the distribution of each sample.
+
+```{r}
+numModes <- apply(betasFlt, 2, find_num_modes, adjust = 1.35)
+
+dat <- as_tibble(melt(betasFlt))
+colnames(dat) <- c("cpg", "ID", "beta")
+dat$mode <- rep(as.character(numModes), each = nrow(betasFlt))
+
+p <- ggplot(dat, aes(x = beta, colour = mode, group = ID)) + 
+    geom_density(size=0.5, alpha=0.5) +
+    labs(color = "No. modes", x = "Beta value", y = "Density")
+
+p 
+```
+
+Colour the MDS plot by the number of modes to confirm outlying samples.
+
+```{r, message=FALSE}
+dims <- list(c(1,2), c(2,3), c(1,3), c(3,4))
+p <- vector("list", 4)
+
+for(i in 1:length(p)){
+    mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE,
+               dim.plot = dims[[i]])
+    dat <- tibble(x = mds$x, y = mds$y, mode = as.character(numModes))
+    
+    p[[i]] <- ggplot(dat, aes(x = x, y = y, colour = mode)) +
+        geom_point(size = 2) +
+        labs(x = glue("Principal Component {dims[[i]][1]}") , 
+             y = glue("Principal Component {dims[[i]][2]}"), 
+             colour = "No. Modes") 
+    
+}
+
+(p[[1]] + p[[2]]) /
+    (p[[3]] + p[[4]])
+```
+
+Colour MDS plot using different variables to explore any further structure in the data.
+
+```{r, fig.width=8, fig.height=7}
+mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE, 
+               dim.plot = c(1,3))
+dat <- tibble(x = mds$x, y = mds$y, gender = meta$gender)
+
+dat$age <- meta$years_to_birth
+dat$race <- sub(" or", "\nor", meta$race)
+dat$ethnicity <- sub(" or", "\nor", meta$ethnicity)
+
+a <- ggplot(dat, aes(x = x, y = y, colour = age)) +
+  geom_point() +
+  labs(x = "Principal Component 1", y = "Principal Component 3", 
+       colour = "Age") +
+  viridis::scale_color_viridis(direction = -1)
+
+b <- ggplot(dat, aes(x = x, y = y, colour = race)) +
+  geom_point() +
+  labs(x = "Principal Component 1", y = "Principal Component 3", 
+       colour = "Race") +
+  theme(legend.text = element_text(size = 7))
+
+c <- ggplot(dat, aes(x = x, y = y, colour = ethnicity)) +
+  geom_point() +
+  labs(x = "Principal Component 1", y = "Principal Component 3", 
+       colour = "Ethnicity")  +
+  theme(legend.text = element_text(size = 7))
+
+(b + c) / a
+```
+
+Remove samples with more than 2 modes in their density distributions and "black or african american" samples.
+
+```{r}
+keep <- numModes == 2 & meta$race != "black or african american" & !is.na(meta$race)
+betasFlt <- betasFlt[, keep]
+meta <- meta[keep, ]
+```
+
+Examine the structure of data after removal of outlier samples.
+
+```{r}
+mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE)
+dat <- tibble(x = mds$x, y = mds$y)
+
+p1 <- ggplot(dat, aes(x = x, y = y)) +
+  geom_point(size = 2) +
+  labs(x = "Principal Component 1", y = "Principal Component 2")
+
+mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE, 
+               dim.plot = c(1,3))
+dat <- tibble(x = mds$x, y = mds$y)
+
+p2 <- ggplot(dat, aes(x = x, y = y)) +
+  geom_point(size = 2) +
+  labs(x = "Principal Component 1", y = "Principal Component 3")
+
+dat <- as_tibble(melt(betasFlt))
+colnames(dat) <- c("cpg", "ID", "beta")
+
+p3 <- ggplot(dat, aes(x = beta, group = ID)) + 
+    geom_density(size = 0.5, alpha = 0.5) +
+    labs(x = "Beta value", y = "Density")
+
+(p1 + p2) / p3 
+```
+
+Save the filtered TCGA BRCA data for use in subsequent FDR analysis.
+
+```{r}
+outFile <- here("data/datasets/TCGA.BRCA.rds")
+
+if(!file.exists(outFile)){
+    saveRDS(betasFlt, file = outFile)
+}
+```
+
+# FDR analysis: BRCA
+
+We randomly select 5, 10, 20, 40 samples per "group" from the TCGA BRCA normal samples and then perform differential methylation analysis between the two "groups". We do this 100 times for each "group" size. There should be no significant differential methylation between the groups as the data contains no signal. Consequently, we expect about 5% false gene set discoveries across the 100 simulations from methods that are "holding their size". 
+
+We compare GOmeth (with top 1000 and 5000 ranked CpGs from the DM analysis selected as "significant"), methylglm (mGLM), methylRRA-ORA (mRRA (ORA)), methylRRA-GSEA (mRRA (GSEA)) from the *MethylGSA* package and ebGSEA. The BROAD MSigDB gene sets provided with *ChAMP* package were used for this analysis.
+
+Load the results of the FDR simulations.
+
+```{r}
+broad <- readRDS(here("output/FDR-analysis/BROAD-sets.rds"))
+noGenes <- data.frame(noGenes = sapply(broad$entrez, length))
+
+inFile <- here("output/FDR-analysis/FDR.BRCA.analysis.rds")
+if(file.exists(inFile)) dat <- as_tibble(readRDS(inFile))
+```
+
+The plots below shows that mRRA (ORA) does not control the FDR very well as the median proportion of p-value 0.05 for the 100 simulations is greater than 0.5. mRRA (GSEA) does better, although its median FDR is still relatively high at around 0.25. mGLM has good FDR control with median FDR at around 0.05. ebGSEA is only slightly anti-conservative using both the Wilcox test (WT) and Known Population Median test (KPMT) with a median FDR at around 0.06-0.08. GOmeth is very consistent although somewhat conservative with a median FDR at around 0.02-0.03. 
+
+```{r, fig.width=9}  
+dat %>% 
+  #left_join(rownames_to_column(noGenes), by = c("ID" = "rowname")) %>%
+  #filter(noGenes >= 1) %>%
+  mutate(method = unname(dict[method])) %>%
+  group_by(simNo, sampleNo, method) %>% 
+  summarise(psig = sum(pvalue < 0.05)/length(pvalue)) %>%
+  mutate(sampleOrd = as.integer(sampleNo)) -> sigDat
+
+p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig, 
+                          fill = method)) +
+    geom_violin(scale = "width", width = 0.8, size = 0.3) + 
+    stat_summary(geom = "point", size = 0.5, color = "white",
+                 position = position_dodge(0.8),
+                 show.legend = FALSE, fun = median) +
+    geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
+    labs(y="Prop. gene sets with p-value < 0.05", x="No. samples per group",
+         fill="Method") +
+    scale_fill_manual(values = methodCols)
+p
+```
+
+
+
+
