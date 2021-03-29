@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
+
+<meta name="date" content="2021-03-29" />
+
+<title>Gene set testing for Illumina HumanMethylation Arrays</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">methyl-geneset-testing</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/Oshlack/methyl-geneset-testing">
+    <span class="fas fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
+<h3 class="subtitle">Comparing the false discovery rate of different methods</h3>
+<h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
+<h4 class="date">March 29, 2021</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-03-29
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>methyl-geneset-testing/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it's best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200302code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200302)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200302code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200302)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreeb33d804ef53140a2f145ec4d6696b1352253e3b3targetblankb33d804a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/b33d804ef53140a2f145ec4d6696b1352253e3b3" target="_blank">b33d804</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreeb33d804ef53140a2f145ec4d6696b1352253e3b3targetblankb33d804a" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/b33d804ef53140a2f145ec4d6696b1352253e3b3" target="_blank">b33d804</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .DS_Store
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/figures.nb.html
+    Ignored:    code/.DS_Store
+    Ignored:    code/.Rhistory
+    Ignored:    code/.job/
+    Ignored:    code/old/
+    Ignored:    data/.DS_Store
+    Ignored:    data/annotations/
+    Ignored:    data/cache-intermediates/
+    Ignored:    data/cache-region/
+    Ignored:    data/cache-rnaseq/
+    Ignored:    data/cache-runtime/
+    Ignored:    data/datasets/.DS_Store
+    Ignored:    data/datasets/GSE110554-data.RData
+    Ignored:    data/datasets/GSE120854/
+    Ignored:    data/datasets/GSE120854_RAW.tar
+    Ignored:    data/datasets/GSE135446-data.RData
+    Ignored:    data/datasets/GSE135446/
+    Ignored:    data/datasets/GSE135446_RAW.tar
+    Ignored:    data/datasets/GSE95460_RAW.tar
+    Ignored:    data/datasets/GSE95460_RAW/
+    Ignored:    data/datasets/GSE95462-data.RData
+    Ignored:    data/datasets/GSE95462/
+    Ignored:    data/datasets/GSE95462_RAW/
+    Ignored:    data/datasets/SRP100803/
+    Ignored:    data/datasets/SRP125125/.DS_Store
+    Ignored:    data/datasets/SRP125125/SRR6298*/
+    Ignored:    data/datasets/SRP125125/SRR_Acc_List.txt
+    Ignored:    data/datasets/SRP125125/SRR_Acc_List_Full.txt
+    Ignored:    data/datasets/SRP125125/SraRunTable.txt
+    Ignored:    data/datasets/SRP125125/multiqc_data/
+    Ignored:    data/datasets/SRP125125/multiqc_report.html
+    Ignored:    data/datasets/SRP125125/quants/
+    Ignored:    data/datasets/SRP166862/
+    Ignored:    data/datasets/SRP217468/
+    Ignored:    data/datasets/TCGA.BRCA.rds
+    Ignored:    data/datasets/TCGA.KIRC.rds
+    Ignored:    data/misc/
+    Ignored:    output/.DS_Store
+    Ignored:    output/FDR-analysis/
+    Ignored:    output/compare-methods/
+    Ignored:    output/figures/
+    Ignored:    output/methylgsa-params/
+    Ignored:    output/outputs.tar.gz
+    Ignored:    output/random-cpg-sims/
+    Ignored:    output/test/
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/03_fdrAnalysisBRCA.Rmd</code>) and HTML (<code>docs/03_fdrAnalysisBRCA.html</code>) files. If you've configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/d44c029e0d104c81502cbc0b72fe1767bdf5e90d/analysis/03_fdrAnalysisBRCA.Rmd" target="_blank">d44c029</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-03-29
+</td>
+<td>
+Rename analysis files to reflect addition of new datasets
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<pre class="r"><code>library(here)
+library(minfi)
+library(paletteer)
+library(limma)
+library(reshape2)
+library(missMethyl)
+library(ggplot2)
+library(glue)
+library(tibble)
+library(dplyr)
+library(curatedTCGAData)
+library(MultiAssayExperiment)
+library(TCGAutils)
+library(DMRcate)
+library(patchwork)
+source(here(&quot;code/utility.R&quot;))</code></pre>
+<div id="load-data-brca" class="section level1">
+<h1>Load data: BRCA</h1>
+<p>We are using publicly available breast cancer (BRCA) 450k data from The Cancer Genome Atlas (TCGA). We are using only the normal samples to look at false discovery rate (FDR) control by various methylation gene set testing methods.</p>
+<p>First, download the data using the <code>curatedTCGAData</code> Bioconductor package and then extract the normal samples. The data is provided as β values with masked data points; data points were masked as “NA” if their detection p-value was greater than 0.05 or the probe was annotated as having a SNP within 10 base pairs or repeat within 15 base pairs or the interrogated CpG. We extract only the 97 normal samples.</p>
+<pre class="r"><code>brca &lt;- curatedTCGAData(diseaseCode = &quot;BRCA&quot;, assays = &quot;Methylation_methyl450&quot;, 
+                        dry.run = FALSE)
+brca &lt;- splitAssays(brca, c(&quot;11&quot;)) # extract only the normal samples
+exp &lt;- experiments(brca)[[1]]
+meta &lt;- colData(brca)
+betas &lt;- as.matrix(assay(exp))
+colnames(betas) &lt;- substr(colnames(betas), 1, 12)
+m &lt;- match(colnames(betas), meta$patientID)
+meta &lt;- meta[m, ]
+head(meta[, 1:5])</code></pre>
+<div id="quality-control" class="section level2">
+<h2>Quality control</h2>
+<p>Removed any probes with &gt;1 NA value.</p>
+<pre class="r"><code>betasNoNA &lt;- betas[rowSums(is.na(betas)) == 0, ]
+mds &lt;- plotMDS(betasNoNA, gene.selection = &quot;common&quot;, plot = FALSE)
+dat &lt;- tibble(x = mds$x, y = mds$y, gender = meta$gender)
+
+ggplot(dat, aes(x = x, y = y, colour = gender)) +
+  geom_point() +
+  labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 2&quot;, 
+       colour = &quot;Sex&quot;)</code></pre>
+<p><img src="figure/03_fdrAnalysisBRCA.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Remove any remaining SNP-affected probes and multi-mapping probes. We do not remove sex chromosome probes as all the samples are from females. This leaves 371,789 probes for downstream analysis.</p>
+<pre class="r"><code>betasFlt &lt;- rmSNPandCH(betasNoNA, rmXY = FALSE, rmcrosshyb = TRUE)
+dim(betasFlt)</code></pre>
+<pre><code>[1] 371789     97</code></pre>
+<p>The structure of the data looks similar.</p>
+<pre class="r"><code>mds &lt;- plotMDS(betasFlt, gene.selection = &quot;common&quot;, plot = FALSE)
+dat &lt;- tibble(x = mds$x, y = mds$y, gender = meta$gender)
+
+pal &lt;- paletteer::paletteer_d(&quot;wesanderson::Moonrise3&quot;, 2)
+cols &lt;- c(&quot;female&quot; = pal[2], &quot;male&quot; = pal[1])
+p &lt;- ggplot(dat, aes(x = x, y = y, colour = gender)) +
+  geom_point(size = 2) +
+  labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 2&quot;, 
+       colour = &quot;Sex&quot;) +
+    scale_color_manual(values = cols)
+p</code></pre>
+<p><img src="figure/03_fdrAnalysisBRCA.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>The density distributions of the beta values for some samples look markedly different to the others.</p>
+<pre class="r"><code>dat &lt;- as_tibble(melt(betasFlt))
+colnames(dat) &lt;- c(&quot;cpg&quot;, &quot;ID&quot;, &quot;beta&quot;)
+
+p &lt;- ggplot(dat, aes(x = beta, group = ID)) + 
+  geom_density(size=0.5, alpha=0.5, show.legend = FALSE)
+
+p + labs(x = &quot;Beta value&quot;, y = &quot;Density&quot;)</code></pre>
+<p><img src="figure/03_fdrAnalysisBRCA.Rmd/unnamed-chunk-6-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Calculated the number of modes for the distribution of each sample.</p>
+<pre class="r"><code>numModes &lt;- apply(betasFlt, 2, find_num_modes, adjust = 1.35)
+
+dat &lt;- as_tibble(melt(betasFlt))
+colnames(dat) &lt;- c(&quot;cpg&quot;, &quot;ID&quot;, &quot;beta&quot;)
+dat$mode &lt;- rep(as.character(numModes), each = nrow(betasFlt))
+
+p &lt;- ggplot(dat, aes(x = beta, colour = mode, group = ID)) + 
+    geom_density(size=0.5, alpha=0.5) +
+    labs(color = &quot;No. modes&quot;, x = &quot;Beta value&quot;, y = &quot;Density&quot;)
+
+p </code></pre>
+<p><img src="figure/03_fdrAnalysisBRCA.Rmd/unnamed-chunk-7-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Colour the MDS plot by the number of modes to confirm outlying samples.</p>
+<pre class="r"><code>dims &lt;- list(c(1,2), c(2,3), c(1,3), c(3,4))
+p &lt;- vector(&quot;list&quot;, 4)
+
+for(i in 1:length(p)){
+    mds &lt;- plotMDS(betasFlt, gene.selection = &quot;common&quot;, plot = FALSE,
+               dim.plot = dims[[i]])
+    dat &lt;- tibble(x = mds$x, y = mds$y, mode = as.character(numModes))
+    
+    p[[i]] &lt;- ggplot(dat, aes(x = x, y = y, colour = mode)) +
+        geom_point(size = 2) +
+        labs(x = glue(&quot;Principal Component {dims[[i]][1]}&quot;) , 
+             y = glue(&quot;Principal Component {dims[[i]][2]}&quot;), 
+             colour = &quot;No. Modes&quot;) 
+    
+}
+
+(p[[1]] + p[[2]]) /
+    (p[[3]] + p[[4]])</code></pre>
+<p><img src="figure/03_fdrAnalysisBRCA.Rmd/unnamed-chunk-8-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Colour MDS plot using different variables to explore any further structure in the data.</p>
+<pre class="r"><code>mds &lt;- plotMDS(betasFlt, gene.selection = &quot;common&quot;, plot = FALSE, 
+               dim.plot = c(1,3))
+dat &lt;- tibble(x = mds$x, y = mds$y, gender = meta$gender)
+
+dat$age &lt;- meta$years_to_birth
+dat$race &lt;- sub(&quot; or&quot;, &quot;\nor&quot;, meta$race)
+dat$ethnicity &lt;- sub(&quot; or&quot;, &quot;\nor&quot;, meta$ethnicity)
+
+a &lt;- ggplot(dat, aes(x = x, y = y, colour = age)) +
+  geom_point() +
+  labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 3&quot;, 
+       colour = &quot;Age&quot;) +
+  viridis::scale_color_viridis(direction = -1)
+
+b &lt;- ggplot(dat, aes(x = x, y = y, colour = race)) +
+  geom_point() +
+  labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 3&quot;, 
+       colour = &quot;Race&quot;) +
+  theme(legend.text = element_text(size = 7))
+
+c &lt;- ggplot(dat, aes(x = x, y = y, colour = ethnicity)) +
+  geom_point() +
+  labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 3&quot;, 
+       colour = &quot;Ethnicity&quot;)  +
+  theme(legend.text = element_text(size = 7))
+
+(b + c) / a</code></pre>
+<p><img src="figure/03_fdrAnalysisBRCA.Rmd/unnamed-chunk-9-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Remove samples with more than 2 modes in their density distributions and &quot;black or african american&quot; samples.</p>
+<pre class="r"><code>keep &lt;- numModes == 2 &amp; meta$race != &quot;black or african american&quot; &amp; !is.na(meta$race)
+betasFlt &lt;- betasFlt[, keep]
+meta &lt;- meta[keep, ]</code></pre>
+<p>Examine the structure of data after removal of outlier samples.</p>
+<pre class="r"><code>mds &lt;- plotMDS(betasFlt, gene.selection = &quot;common&quot;, plot = FALSE)
+dat &lt;- tibble(x = mds$x, y = mds$y)
+
+p1 &lt;- ggplot(dat, aes(x = x, y = y)) +
+  geom_point(size = 2) +
+  labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 2&quot;)
+
+mds &lt;- plotMDS(betasFlt, gene.selection = &quot;common&quot;, plot = FALSE, 
+               dim.plot = c(1,3))
+dat &lt;- tibble(x = mds$x, y = mds$y)
+
+p2 &lt;- ggplot(dat, aes(x = x, y = y)) +
+  geom_point(size = 2) +
+  labs(x = &quot;Principal Component 1&quot;, y = &quot;Principal Component 3&quot;)
+
+dat &lt;- as_tibble(melt(betasFlt))
+colnames(dat) &lt;- c(&quot;cpg&quot;, &quot;ID&quot;, &quot;beta&quot;)
+
+p3 &lt;- ggplot(dat, aes(x = beta, group = ID)) + 
+    geom_density(size = 0.5, alpha = 0.5) +
+    labs(x = &quot;Beta value&quot;, y = &quot;Density&quot;)
+
+(p1 + p2) / p3 </code></pre>
+<p><img src="figure/03_fdrAnalysisBRCA.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Save the filtered TCGA BRCA data for use in subsequent FDR analysis.</p>
+<pre class="r"><code>outFile &lt;- here(&quot;data/datasets/TCGA.BRCA.rds&quot;)
+
+if(!file.exists(outFile)){
+    saveRDS(betasFlt, file = outFile)
+}</code></pre>
+</div>
+</div>
+<div id="fdr-analysis-brca" class="section level1">
+<h1>FDR analysis: BRCA</h1>
+<p>We randomly select 5, 10, 20, 40 samples per &quot;group&quot; from the TCGA BRCA normal samples and then perform differential methylation analysis between the two &quot;groups&quot;. We do this 100 times for each &quot;group&quot; size. There should be no significant differential methylation between the groups as the data contains no signal. Consequently, we expect about 5% false gene set discoveries across the 100 simulations from methods that are &quot;holding their size&quot;.</p>
+<p>We compare GOmeth (with top 1000 and 5000 ranked CpGs from the DM analysis selected as &quot;significant&quot;), methylglm (mGLM), methylRRA-ORA (mRRA (ORA)), methylRRA-GSEA (mRRA (GSEA)) from the <em>MethylGSA</em> package and ebGSEA. The BROAD MSigDB gene sets provided with <em>ChAMP</em> package were used for this analysis.</p>
+<p>Load the results of the FDR simulations.</p>
+<pre class="r"><code>broad &lt;- readRDS(here(&quot;output/FDR-analysis/BROAD-sets.rds&quot;))
+noGenes &lt;- data.frame(noGenes = sapply(broad$entrez, length))
+
+inFile &lt;- here(&quot;output/FDR-analysis/FDR.BRCA.analysis.rds&quot;)
+if(file.exists(inFile)) dat &lt;- as_tibble(readRDS(inFile))</code></pre>
+<p>The plots below shows that mRRA (ORA) does not control the FDR very well as the median proportion of p-value 0.05 for the 100 simulations is greater than 0.5. mRRA (GSEA) does better, although its median FDR is still relatively high at around 0.25. mGLM has good FDR control with median FDR at around 0.05. ebGSEA is only slightly anti-conservative using both the Wilcox test (WT) and Known Population Median test (KPMT) with a median FDR at around 0.06-0.08. GOmeth is very consistent although somewhat conservative with a median FDR at around 0.02-0.03.</p>
+<pre class="r"><code>dat %&gt;% 
+  #left_join(rownames_to_column(noGenes), by = c(&quot;ID&quot; = &quot;rowname&quot;)) %&gt;%
+  #filter(noGenes &gt;= 1) %&gt;%
+  mutate(method = unname(dict[method])) %&gt;%
+  group_by(simNo, sampleNo, method) %&gt;% 
+  summarise(psig = sum(pvalue &lt; 0.05)/length(pvalue)) %&gt;%
+  mutate(sampleOrd = as.integer(sampleNo)) -&gt; sigDat</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;simNo&#39;, &#39;sampleNo&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>p &lt;- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig, 
+                          fill = method)) +
+    geom_violin(scale = &quot;width&quot;, width = 0.8, size = 0.3) + 
+    stat_summary(geom = &quot;point&quot;, size = 0.5, color = &quot;white&quot;,
+                 position = position_dodge(0.8),
+                 show.legend = FALSE, fun = median) +
+    geom_hline(yintercept=0.05, linetype=&quot;dashed&quot;, color = &quot;red&quot;) +
+    labs(y=&quot;Prop. gene sets with p-value &lt; 0.05&quot;, x=&quot;No. samples per group&quot;,
+         fill=&quot;Method&quot;) +
+    scale_fill_manual(values = methodCols)
+p</code></pre>
+<p><img src="figure/03_fdrAnalysisBRCA.Rmd/unnamed-chunk-14-1.png" width="864" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
+Running under: macOS Mojave 10.14.6
+
+Matrix products: default
+BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
+
+locale:
+[1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
+
+attached base packages:
+[1] stats4    parallel  stats     graphics  grDevices utils     datasets 
+[8] methods   base     
+
+other attached packages:
+ [1] DMRcatedata_2.8.2                                  
+ [2] ExperimentHub_1.16.0                               
+ [3] AnnotationHub_2.22.0                               
+ [4] BiocFileCache_1.14.0                               
+ [5] dbplyr_2.1.0                                       
+ [6] rhdf5_2.34.0                                       
+ [7] patchwork_1.1.1                                    
+ [8] DMRcate_2.4.1                                      
+ [9] TCGAutils_1.10.0                                   
+[10] curatedTCGAData_1.12.0                             
+[11] MultiAssayExperiment_1.16.0                        
+[12] dplyr_1.0.5                                        
+[13] tibble_3.1.0                                       
+[14] glue_1.4.2                                         
+[15] ggplot2_3.3.3                                      
+[16] missMethyl_1.24.0                                  
+[17] IlluminaHumanMethylationEPICanno.ilm10b4.hg19_0.6.0
+[18] IlluminaHumanMethylation450kanno.ilmn12.hg19_0.6.0 
+[19] reshape2_1.4.4                                     
+[20] limma_3.46.0                                       
+[21] paletteer_1.3.0                                    
+[22] minfi_1.36.0                                       
+[23] bumphunter_1.32.0                                  
+[24] locfit_1.5-9.4                                     
+[25] iterators_1.0.13                                   
+[26] foreach_1.5.1                                      
+[27] Biostrings_2.58.0                                  
+[28] XVector_0.30.0                                     
+[29] SummarizedExperiment_1.20.0                        
+[30] Biobase_2.50.0                                     
+[31] MatrixGenerics_1.2.1                               
+[32] matrixStats_0.58.0                                 
+[33] GenomicRanges_1.42.0                               
+[34] GenomeInfoDb_1.26.4                                
+[35] IRanges_2.24.1                                     
+[36] S4Vectors_0.28.1                                   
+[37] BiocGenerics_0.36.0                                
+[38] here_1.0.1                                         
+[39] workflowr_1.6.2                                    
+
+loaded via a namespace (and not attached):
+  [1] utf8_1.2.1                    R.utils_2.10.1               
+  [3] tidyselect_1.1.0              htmlwidgets_1.5.3            
+  [5] RSQLite_2.2.5                 AnnotationDbi_1.52.0         
+  [7] grid_4.0.3                    BiocParallel_1.24.1          
+  [9] munsell_0.5.0                 codetools_0.2-18             
+ [11] preprocessCore_1.52.1         statmod_1.4.35               
+ [13] withr_2.4.1                   colorspace_2.0-0             
+ [15] highr_0.8                     knitr_1.31                   
+ [17] rstudioapi_0.13               labeling_0.4.2               
+ [19] git2r_0.28.0                  GenomeInfoDbData_1.2.4       
+ [21] farver_2.1.0                  bit64_4.0.5                  
+ [23] rprojroot_2.0.2               vctrs_0.3.6                  
+ [25] generics_0.1.0                xfun_0.22                    
+ [27] biovizBase_1.38.0             R6_2.5.0                     
+ [29] illuminaio_0.32.0             AnnotationFilter_1.14.0      
+ [31] bitops_1.0-6                  rhdf5filters_1.2.0           
+ [33] cachem_1.0.4                  reshape_0.8.8                
+ [35] DelayedArray_0.16.3           assertthat_0.2.1             
+ [37] bsseq_1.26.0                  promises_1.2.0.1             
+ [39] scales_1.1.1                  nnet_7.3-15                  
+ [41] gtable_0.3.0                  ensembldb_2.14.0             
+ [43] rlang_0.4.10                  genefilter_1.72.1            
+ [45] splines_4.0.3                 lazyeval_0.2.2               
+ [47] rtracklayer_1.50.0            DSS_2.38.0                   
+ [49] GEOquery_2.58.0               dichromat_2.0-0              
+ [51] prismatic_1.0.0               checkmate_2.0.0              
+ [53] BiocManager_1.30.12           yaml_2.2.1                   
+ [55] backports_1.2.1               GenomicFeatures_1.42.2       
+ [57] httpuv_1.5.5                  Hmisc_4.5-0                  
+ [59] tools_4.0.3                   nor1mix_1.3-0                
+ [61] ellipsis_0.3.1                jquerylib_0.1.3              
+ [63] RColorBrewer_1.1-2            siggenes_1.64.0              
+ [65] Rcpp_1.0.6                    plyr_1.8.6                   
+ [67] base64enc_0.1-3               sparseMatrixStats_1.2.1      
+ [69] progress_1.2.2                zlibbioc_1.36.0              
+ [71] purrr_0.3.4                   RCurl_1.98-1.3               
+ [73] prettyunits_1.1.1             rpart_4.1-15                 
+ [75] openssl_1.4.3                 viridis_0.5.1                
+ [77] cluster_2.1.1                 fs_1.5.0                     
+ [79] magrittr_2.0.1                data.table_1.14.0            
+ [81] whisker_0.4                   ProtGenerics_1.22.0          
+ [83] hms_1.0.0                     mime_0.10                    
+ [85] evaluate_0.14                 xtable_1.8-4                 
+ [87] XML_3.99-0.6                  jpeg_0.1-8.1                 
+ [89] readxl_1.3.1                  mclust_5.4.7                 
+ [91] gridExtra_2.3                 compiler_4.0.3               
+ [93] biomaRt_2.46.3                crayon_1.4.1                 
+ [95] R.oo_1.24.0                   htmltools_0.5.1.1            
+ [97] later_1.1.0.1                 Formula_1.2-4                
+ [99] tidyr_1.1.3                   DBI_1.1.1                    
+[101] MASS_7.3-53.1                 rappdirs_0.3.3               
+[103] Matrix_1.3-2                  readr_1.4.0                  
+[105] permute_0.9-5                 R.methodsS3_1.8.1            
+[107] quadprog_1.5-8                Gviz_1.34.1                  
+[109] pkgconfig_2.0.3               GenomicAlignments_1.26.0     
+[111] foreign_0.8-81                xml2_1.3.2                   
+[113] annotate_1.68.0               bslib_0.2.4                  
+[115] rngtools_1.5                  multtest_2.46.0              
+[117] beanplot_1.2                  rvest_1.0.0                  
+[119] doRNG_1.8.2                   scrime_1.3.5                 
+[121] VariantAnnotation_1.36.0      stringr_1.4.0                
+[123] digest_0.6.27                 cellranger_1.1.0             
+[125] rmarkdown_2.7                 base64_2.0                   
+[127] htmlTable_2.1.0               edgeR_3.32.1                 
+[129] DelayedMatrixStats_1.12.3     curl_4.3                     
+[131] gtools_3.8.2                  shiny_1.6.0                  
+[133] Rsamtools_2.6.0               lifecycle_1.0.0              
+[135] nlme_3.1-152                  GenomicDataCommons_1.14.0    
+[137] jsonlite_1.7.2                Rhdf5lib_1.12.1              
+[139] viridisLite_0.3.0             askpass_1.1                  
+[141] BSgenome_1.58.0               fansi_0.4.2                  
+[143] pillar_1.5.1                  lattice_0.20-41              
+[145] fastmap_1.1.0                 httr_1.4.2                   
+[147] survival_3.2-10               interactiveDisplayBase_1.28.0
+[149] png_0.1-7                     BiocVersion_3.12.0           
+[151] bit_4.0.4                     stringi_1.5.3                
+[153] sass_0.3.1                    HDF5Array_1.18.1             
+[155] rematch2_2.1.2                blob_1.2.1                   
+[157] org.Hs.eg.db_3.12.0           latticeExtra_0.6-29          
+[159] memoise_2.0.0                </code></pre>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
