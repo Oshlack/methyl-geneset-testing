@@ -37,60 +37,60 @@ Jovana Maksimovic^1,2,3^, Alicia Oshlack^1,4^, Belinda Phipson^1,2+^
 Analysis
 --------
 1. [Explore EPIC array bias](01_exploreArrayBiasEPIC.html)
-   - Explore the various array biases on the EPIC array that affect gene set testing.
+   Explore the various array biases on the EPIC array that affect gene set testing.
       
 2. [Explore 450k array bias](02_exploreArrayBias450.html)
-   - Explore the various array biases on the 450k array that affect gene set testing.
+   Explore the various array biases on the 450k array that affect gene set testing.
 
 3. 
-    a) [Compare FDR of different methods](03_fdrAnalysisKIRC.html)
-       - Analyse the normal samples from a 450k array KIRC TCGA dataset using 
-         various gene set testing methods to estimate their false discovery rate control.
+   a) [Compare FDR of different methods (KIRC)](03_fdrAnalysisKIRC.html)
+   Analyse the normal samples from a 450k array KIRC TCGA dataset using 
+   various gene set testing methods to estimate their false discovery rate control.
 
-    b) [Compare FDR of different methods](03_fdrAnalysisBRCA.html)
-       - Analyse the normal samples from a 450k array BRCA TCGA dataset using 
-         various gene set testing methods to estimate their false discovery rate control.
+   b) [Compare FDR of different methods (BRCA)](03_fdrAnalysisBRCA.html)
+   Analyse the normal samples from a 450k array BRCA TCGA dataset using 
+   various gene set testing methods to estimate their false discovery rate control.
          
 4.
-    a) [Generate a blood cell RNAseq "truth" set](04_expressionGenesets.html)
-       - Analyse an RNAseq sorted blood cell dataset and identify the top ranked 
-         gene sets for each cell type comparison.
+   a) [Generate a blood cell RNAseq "truth" set](04_expressionGenesets.html)
+   Analyse an RNAseq sorted blood cell dataset and identify the top ranked 
+   gene sets for each cell type comparison.
 
-    b) [Generate a breast cancer cell-line RNAseq "truth" set](04_expressionGenesetsCellLines.html)
-       - Analyse an RNAseq breast cancer cell-line dataset and identify the top ranked 
-         gene sets for each cell type comparison.
+   b) [Generate a breast cancer cell-line RNAseq "truth" set](04_expressionGenesetsCellLines.html)
+   Analyse an RNAseq breast cancer cell-line dataset and identify the top ranked 
+   gene sets for each cell type comparison.
     
-    c) [Generate a uterine fibroid RNAseq "truth" set](04_expressionGenesetsFibroid.html)
-       - Analyse an RNAseq normal and fibroid uterine tissue dataset and identify the top ranked 
-         gene sets for each tissue comparison.
+   c) [Generate a uterine fibroid RNAseq "truth" set](04_expressionGenesetsFibroid.html)
+   Analyse an RNAseq normal and fibroid uterine tissue dataset and identify the top ranked 
+   gene sets for each tissue comparison.
          
 5.
-    a) [Compare performance of different methods](05_compareMethods.html)
-       - Analyse an EPIC array sorted blood cell dataset using various gene set 
-         testing methods. Compare how well the different methods perform using several 
-         metrics.
+   a) [Compare performance of different methods](05_compareMethods.html)
+   Analyse an EPIC array sorted blood cell dataset using various gene set 
+   testing methods. Compare how well the different methods perform using several 
+   metrics.
 
-    b) [Compare performance of different methods](05_compareMethodsCellLines.html)
-       - Analyse an EPIC array breast cancer cell-line dataset using various gene set 
-         testing methods. Compare how well the different methods perform using several 
-         metrics.
+   b) [Compare performance of different methods](05_compareMethodsCellLines.html)
+   Analyse an EPIC array breast cancer cell-line dataset using various gene set 
+   testing methods. Compare how well the different methods perform using several 
+   metrics.
          
-    c) [Compare performance of different methods](05_compareMethodsFibroid.html)
-       - Analyse an EPIC array normal and fibroid uterine tissue dataset using various gene set 
-         testing methods. Compare how well the different methods perform using several 
-         metrics.
+   c) [Compare performance of different methods](05_compareMethodsFibroid.html)
+   Analyse an EPIC array normal and fibroid uterine tissue dataset using various gene set 
+   testing methods. Compare how well the different methods perform using several 
+   metrics.
          
 6. [Compare run-time of different methods](06_runTimeComparison.html)
-   - Analyse an EPIC array sorted blood cell dataset using various gene set 
-     testing methods. Compare the run-time of the different methods.
+   Analyse an EPIC array sorted blood cell dataset using various gene set 
+   testing methods. Compare the run-time of the different methods.
       
 7. [Evaluate GOregion](07_regionAnalysis.html)
-   - Evalulate GOregion, our extension of gometh for geneset testing of 
-     differentially methylated regions (DMRs) identified by DMR finding software.
+   Evalulate GOregion, our extension of gometh for geneset testing of 
+   differentially methylated regions (DMRs) identified by DMR finding software.
 
 8. [Effect of gene set size parameters on methylGSA](methylGSAParamSweep.html)
-   - Analyse an EPIC array sorted blood cell dataset using various gene set 
-     testing methods. Compare the run-time of the different methods.
+   Analyse an EPIC array sorted blood cell dataset using various gene set 
+   testing methods. Compare the run-time of the different methods.
       
 
 Licenses
