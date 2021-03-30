@@ -201,24 +201,25 @@ saveRDS(p[[1]], fig, compress = FALSE)
 The TMM normalised data was transformed using `voomWithQualityWeights`. This takes into account the differing library sizes and the mean variance relationship in the data as well as calculating sample-specific quality weights. Linear models were fit using `limma`, taking into account the `voom` weights. 
 
 ```{r}
-design <- model.matrix(~0+y$samples$group, data = targets)
-colnames(design) <- c(levels(factor(y$samples$group)))
-colnames(design) <- gsub("-","_", colnames(design))
-v <- voomWithQualityWeights(y, design, plot = TRUE)
-cont <- makeContrasts(AU565_nonevSKBR3_none=AU565_none-SKBR3_none,
-                      #AU565_nonevAU565_DAC=AU565_none-AU565_DAC,
-                      #SKBR3_nonevSKBR3_DAC=SKBR3_none-SKBR3_DAC,
-                      NonevDAC=0.5*(AU565_none+SKBR3_none)-0.5*(AU565_DAC+SKBR3_DAC),
-                      levels=design)
+design <- model.matrix(~0+targets$tissue+targets$isolate)
+colnames(design) <- c(levels(factor(targets$tissue)), 
+                      levels(factor(targets$isolate))[-1])
+v <- voom(y, design, plot = TRUE)
+fit <- lmFit(v, design)
+cont <- makeContrasts(MyometriumVCervix=Myometrium-Cervix,
+                             MyometriumVFibroid=Myometrium-Fibroid,
+                             CervixVFibroid=Cervix-Fibroid,
+                             levels=design)
 fit <- lmFit(v, design)
 cfit <- contrasts.fit(fit, cont)
 fit2 <- eBayes(cfit, robust = TRUE)
-tfit <- treat(fit2, lfc = 1)
-summary(decideTests(tfit, p.value = 0.05))
+#tfit <- treat(fit2, lfc = 1)
+summary(decideTests(fit2, p.value = 0.05))
 ```
 
 ```{r}
-fitSum <- summary(decideTests(tfit, p.value = 0.05))
+#fitSum <- summary(decideTests(tfit, p.value = 0.05))
+fitSum <- summary(decideTests(fit2, p.value = 0.05))
 dat <- reshape2::melt(fitSum[rownames(fitSum) != "NotSig", ])
 colnames(dat) <- c("dir", "comp", "value") 
 
@@ -247,8 +248,8 @@ go <- NULL
 kegg <- NULL
 
 for(i in 1:ncol(cont)){
-    #top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
-    top <- topTreat(tfit, coef = i, p.value = 0.05, number = Inf)
+    top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
+    #top <- topTreat(tfit, coef = i, p.value = 0.05, number = Inf)
     
     tmp <- goana(top$entrezid, universe = v$genes$entrezid, 
                  covariate = v$genes$length)
@@ -286,8 +287,8 @@ entrez <- suppressMessages(lapply(PathwayList[keep], function(x){
 
 gsa <- NULL
 for(i in 1:ncol(cont)){
-    #top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
-    top <- topTreat(tfit, coef = i, p.value = 0.05, number = Inf)
+    top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
+    #top <- topTreat(tfit, coef = i, p.value = 0.05, number = Inf)
     
     tmp <- gsaseq(top$entrezid, universe = v$genes$entrezid, 
                   collection = entrez, gene.length = v$genes$length)
