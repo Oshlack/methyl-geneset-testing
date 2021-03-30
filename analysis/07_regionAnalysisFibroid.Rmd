@@ -84,7 +84,7 @@ Identify differentially methylated regions using the *DMRcate* package.
 outDir <- here::here("data/cache-region")
 if (!dir.exists(outDir)) dir.create(outDir)
 
-outFile <- here("data/cache-region/dmrcate-results.rds")
+outFile <- here("data/cache-region/dmrcate-results-GSE135446.rds")
 
 if(!file.exists(outFile)){
   dmrList <- vector("list", ncol(cont.matrix))
@@ -140,7 +140,7 @@ saveRDS(p, fig, compress = FALSE)
 Run GO analysis on the differentially methylated regions (DMRs) identified by DMRcate for each of the contrasts.
 
 ```{r}
-outFile <- here("data/cache-region/dmrcate-go.rds")
+outFile <- here("data/cache-region/dmrcate-go-GSE135446.rds")
 anno <- loadAnnotation(arrayType = "EPIC")
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
 hg19Genes <- GenomicFeatures::genes(txdb)
@@ -255,10 +255,6 @@ saveRDS(p[[2]], fig, compress = FALSE)
 ### Compare GOregion with other approaches
 
 ```{r}
-immuneGO <- unique(read.csv(here("data/genesets/GO-immune-system-process.txt"), 
-                            stringsAsFactors = FALSE, header = FALSE, 
-                            col.names = "GOID"))
-
 rnaseqGO <- readRDS(here("data/cache-rnaseq/RNAseq-GO.rds"))
 rnaseqGO %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
@@ -289,7 +285,7 @@ for(i in 1:length(p)){
                                                       contrast])) %>%
         mutate(truth = "RNAseq Terms") -> rnaseqSum
     
-    truthSum <- bind_rows(immuneSum, rnaseqSum)
+    truthSum <- rnaseqSum
     
     p[[i]] <- ggplot(truthSum, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
