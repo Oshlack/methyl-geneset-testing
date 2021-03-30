@@ -298,7 +298,7 @@ p
 We also examine results when top ranked 100 GO terms from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
 ```{r}
-rnaseqGO <- readRDS(here("data/cache-rnaseq/RNAseq-SRP100803-GO.rds"))
+rnaseqGO <- readRDS(here("data/cache-rnaseq/RNAseq-SRP217468-GO.rds"))
 rnaseqGO %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topGOSets
@@ -487,7 +487,7 @@ Now test KEGG pathways with at least 5 genes and 5000 at most.
 Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
 ```{r, fig.height=7, fig.width=9}
-rnaseqKEGG <- readRDS(here("data/cache-rnaseq/RNAseq-SRP100803-KEGG.rds"))
+rnaseqKEGG <- readRDS(here("data/cache-rnaseq/RNAseq-SRP217468-KEGG.rds"))
 rnaseqKEGG %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topKEGG
@@ -651,7 +651,7 @@ p
 As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. Using the top 100 ranked gene sets as identified by Belinda's `gsaseq` analysis of the corresponding RNAseq data as "truth".
 
 ```{r}
-rnaseqBROAD <- readRDS(here("data/cache-rnaseq/RNAseq-SRP100803-BROAD-GSA.rds"))
+rnaseqBROAD <- readRDS(here("data/cache-rnaseq/RNAseq-SRP217468-BROAD-GSA.rds"))
 rnaseqBROAD %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topBROAD
