@@ -518,16 +518,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreef8067882394d49c33a2e9026964ccd9018d940d8targetblankf806788a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/f8067882394d49c33a2e9026964ccd9018d940d8" target="_blank">f806788</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreece815f55e93b1a7711b1e3fe39fd0edcd7101c17targetblankce815f5a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/ce815f55e93b1a7711b1e3fe39fd0edcd7101c17" target="_blank">ce815f5</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreef8067882394d49c33a2e9026964ccd9018d940d8targetblankf806788a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreece815f55e93b1a7711b1e3fe39fd0edcd7101c17targetblankce815f5a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/f8067882394d49c33a2e9026964ccd9018d940d8" target="_blank">f806788</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/ce815f55e93b1a7711b1e3fe39fd0edcd7101c17" target="_blank">ce815f5</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -630,6 +630,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/ce815f55e93b1a7711b1e3fe39fd0edcd7101c17/analysis/05_compareMethodsFibroid.Rmd" target="_blank">ce815f5</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+<td>
+wflow_publish(“analysis/05_compareMethodsFibroid.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/05_compareMethodsFibroid.html" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -749,6 +783,43 @@ ggplot(dat, aes(y = mean, x = sample, fill = group)) +
          y = &quot;Mean detection p-value&quot;) +
   theme(axis.text.x = element_text(angle = 90, vjust = 0.5))</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-3-1">
+Past versions of unnamed-chunk-3-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-3-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-3-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code># plot normalised beta value distribution
 bVals &lt;- getBeta(fltGr)
 dat &lt;- as_tibble(reshape2::melt(bVals))
@@ -761,6 +832,43 @@ p &lt;- ggplot(dat, aes(x = beta, colour = group, group = ID)) +
 
 p </code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-4-1">
+Past versions of unnamed-chunk-4-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-4-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-4-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>dims &lt;- list(c(1,2), c(1,3), c(2,3), c(3,4))
 p &lt;- vector(&quot;list&quot;, length(dims))
 
@@ -779,6 +887,43 @@ for(i in 1:length(dims)){
 
 (p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = &quot;collect&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-5-1">
+Past versions of unnamed-chunk-5-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-5-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-5-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>outDir &lt;- here::here(&quot;output/figures&quot;)
 if (!dir.exists(outDir)) dir.create(outDir)
@@ -825,6 +970,43 @@ Up               307           2328          13598</code></pre>
 p</code></pre>
 <pre><code>`geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-9-1">
+Past versions of unnamed-chunk-9-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-9-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-9-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-1B.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
@@ -838,6 +1020,43 @@ p &lt;- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
     scale_fill_brewer(palette = &quot;Set1&quot;, direction = -1)
 p</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-11-1">
+Past versions of unnamed-chunk-11-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-11-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-11-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-4B.rds&quot;)
 saveRDS(p, fig, compress = FALSE)</code></pre>
@@ -924,6 +1143,43 @@ sub %&gt;% group_by(contrast, method, bin) %&gt;%
     scale_color_manual(values = methodCols)
 p</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-16-1">
+Past versions of unnamed-chunk-16-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-16-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-16-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>We also examine results when top ranked 100 GO terms from RNA-seq analysis of the same cell type comparisons is used as “truth”.</p>
 <pre class="r"><code>rnaseqGO &lt;- readRDS(here(&quot;data/cache-rnaseq/RNAseq-SRP217468-GO.rds&quot;))
 rnaseqGO %&gt;% group_by(contrast) %&gt;%
@@ -959,10 +1215,121 @@ for(i in 1:length(unique(dat$contrast))){
 
 p[[1]] + ggtitle(sort(unique(dat$contrast))[1]) </code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-1">
+Past versions of unnamed-chunk-17-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-17-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>p[[2]] + ggtitle(sort(unique(dat$contrast))[2])</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-17-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-2">
+Past versions of unnamed-chunk-17-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-17-2.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>p[[3]] + ggtitle(sort(unique(dat$contrast))[3]) </code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-17-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-17-3">
+Past versions of unnamed-chunk-17-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-17-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-17-3.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-4C.rds&quot;)
 saveRDS(p[[1]], fig, compress = FALSE)
@@ -1026,10 +1393,121 @@ for(i in 1:length(p)){
 
 shift_legend(p[[1]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-20-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-1">
+Past versions of unnamed-chunk-20-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-20-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>shift_legend(p[[2]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-20-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-2">
+Past versions of unnamed-chunk-20-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-20-2.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>shift_legend(p[[3]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-20-3.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-20-3">
+Past versions of unnamed-chunk-20-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-20-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-20-3.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-4D.rds&quot;)
 saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
@@ -1057,6 +1535,43 @@ ggplot(subDat, aes(pvalue, fill = method)) +
     labs(x = &quot;P-value&quot;, y = &quot;Frequency&quot;, fill = &quot;Method&quot;) +
     scale_fill_manual(values = methodCols)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-22-1">
+Past versions of unnamed-chunk-22-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-22-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-22-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="compare-gometh-results-using-different-dm-cpg-significance-cutoffs" class="section level4">
 <h4>Compare GOmeth results using different DM CpG significance cutoffs</h4>
 <p>As the results of GOmeth depend on the list of significant CpGs provided as input to the function, we explored the effect of selecting “significant” CpGs in different ways on the gene set testing performance of GOmeth.</p>
@@ -1082,6 +1597,43 @@ p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     theme(legend.position = &quot;bottom&quot;)
 p</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-23-1">
+Past versions of unnamed-chunk-23-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-23-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-23-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="kegg-pathways" class="section level3">
@@ -1112,6 +1664,43 @@ p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
 
 p</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-24-1.png" width="864" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-24-1">
+Past versions of unnamed-chunk-24-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-24-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-24-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <!-- ```{r} -->
 <!-- fig <- here("output/figures/SFig-7A.rds") -->
@@ -1170,10 +1759,121 @@ for(i in 1:length(p)){
 
 shift_legend(p[[1]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-26-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-26-1">
+Past versions of unnamed-chunk-26-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-26-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-26-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>shift_legend(p[[2]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-26-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-26-2">
+Past versions of unnamed-chunk-26-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-26-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-26-2.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>shift_legend(p[[3]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-26-3.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-26-3">
+Past versions of unnamed-chunk-26-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-26-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-26-3.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-7C.rds&quot;)
 saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
@@ -1201,6 +1901,43 @@ ggplot(subDat, aes(pvalue, fill = method)) +
     labs(x = &quot;P-value&quot;, y = &quot;Frequency&quot;, fill = &quot;Method&quot;) +
     scale_fill_manual(values = methodCols)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-28-1">
+Past versions of unnamed-chunk-28-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-28-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-28-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="compare-gometh-results-using-different-dm-cpg-significance-cutoffs-1" class="section level4">
 <h4>Compare GOmeth results using different DM CpG significance cutoffs</h4>
 <pre class="r"><code>dat %&gt;% filter(set == &quot;KEGG&quot;) %&gt;%
@@ -1224,6 +1961,43 @@ p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     theme(legend.position = &quot;bottom&quot;)
 p</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-29-1">
+Past versions of unnamed-chunk-29-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-29-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-29-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 </div>
 </div>
 <div id="broad-gene-sets" class="section level3">
@@ -1260,10 +2034,121 @@ for(i in 1:length(unique(dat$contrast))){
 
 p[[1]]</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-30-1">
+Past versions of unnamed-chunk-30-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-30-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-30-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>p[[2]]</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-30-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-30-2">
+Past versions of unnamed-chunk-30-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-30-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-30-2.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>p[[3]]</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-30-3.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-30-3">
+Past versions of unnamed-chunk-30-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-30-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-30-3.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-8A.rds&quot;)
 saveRDS(p[[1]], fig, compress = FALSE)
@@ -1323,10 +2208,121 @@ for(i in 1:length(p)){
 
 shift_legend(p[[1]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-33-1.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-33-1">
+Past versions of unnamed-chunk-33-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-33-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-33-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>shift_legend(p[[2]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-33-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-33-2">
+Past versions of unnamed-chunk-33-2.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-33-2" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-33-2.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <pre class="r"><code>shift_legend(p[[3]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-33-3.png" width="768" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-33-3">
+Past versions of unnamed-chunk-33-3.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-33-3" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-33-3.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>Save figure for use in manuscript.</p>
 <pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-8B.rds&quot;)
 saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
@@ -1354,6 +2350,43 @@ ggplot(subDat, aes(pvalue, fill = method)) +
     labs(x = &quot;P-value&quot;, y = &quot;Frequency&quot;, fill = &quot;Method&quot;) +
     scale_fill_manual(values = methodCols)</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-35-1">
+Past versions of unnamed-chunk-35-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-35-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-35-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <div id="compare-gometh-results-using-different-dm-cpg-significance-cutoffs-2" class="section level4">
 <h4>Compare GOmeth results using different DM CpG significance cutoffs</h4>
 <p>As the results of GOmeth depend on the list of significant CpGs provided as input to the function, we explored the effect of selecting “significant” CpGs in different ways on the gene set testing performance of GOmeth.</p>
@@ -1377,6 +2410,43 @@ p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     theme(legend.position = &quot;bottom&quot;)
 p</code></pre>
 <p><img src="figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>
+<button type="button" class="btn btn-default btn-xs btn-workflowr btn-workflowr-fig" data-toggle="collapse" data-target="#fig-unnamed-chunk-36-1">
+Past versions of unnamed-chunk-36-1.png
+</button>
+</p>
+<div id="fig-unnamed-chunk-36-1" class="collapse">
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c7c54db725866058c6a178f7205e10e8d818d65e/docs/figure/05_compareMethodsFibroid.Rmd/unnamed-chunk-36-1.png" target="_blank">c7c54db</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-03-31
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <br>
 <p>
 <button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
