@@ -297,7 +297,7 @@ p
 
 We also examine results when top ranked 100 GO terms from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
-```{r, fig.width=7, fig.height=12}
+```{r}
 rnaseqGO <- readRDS(here("data/cache-rnaseq/RNAseq-SRP217468-GO.rds"))
 rnaseqGO %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
