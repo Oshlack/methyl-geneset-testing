@@ -57,6 +57,10 @@ Analysis
     gene sets for each cell type comparison.
     
     b) [Generate a uterine fibroid RNAseq "truth" set](04_expressionGenesetsFibroid.html)
+    Analyse an RNAseq breast cancer cell line data and identify the top ranked 
+    gene sets for each comparison.
+    
+    c) [Generate a uterine fibroid RNAseq "truth" set](04_expressionGenesetsCellLines.html)
     Analyse an RNAseq normal and fibroid uterine tissue dataset and identify the top ranked 
     gene sets for each tissue comparison.
          
@@ -66,7 +70,12 @@ Analysis
     testing methods. Compare how well the different methods perform using several 
     metrics.
          
-    b) [Compare performance of different methods](05_compareMethodsFibroid.html)
+    b) [Compare performance of different methods](05_compareMethodsCellLines.html)
+    Analyse an EPIC array breast cancer cell line data using various gene set 
+    testing methods. Compare how well the different methods perform using several 
+    metrics.
+    
+    c) [Compare performance of different methods](05_compareMethodsFibroid.html)
     Analyse an EPIC array normal and fibroid uterine tissue dataset using various gene set 
     testing methods. Compare how well the different methods perform using several 
     metrics.

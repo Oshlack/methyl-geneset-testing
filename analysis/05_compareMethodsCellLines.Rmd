@@ -347,9 +347,6 @@ saveRDS(p[[1]], fig, compress = FALSE)
 
 fig <- here("output/figures/SFig-5A.rds")
 saveRDS(p[[2]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-6A.rds")
-saveRDS(p[[3]], fig, compress = FALSE)
 ```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
@@ -374,8 +371,8 @@ dat %>% filter(set == "GO") %>%
 
 ```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
 p <- vector("list", length(unique(sub$contrast)))
-truthPal <- scales::hue_pal()(4)
-names(truthPal) <- c("Both", "ISP", "Neither", "RNAseq")
+truthPal <- scales::hue_pal()(4)[3:4]
+names(truthPal) <- c("None", "RNAseq")
 
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
@@ -388,15 +385,8 @@ for(i in 1:length(p)){
     names(setLabs) <- tmp$idx
     
     tmp %>% mutate(rna = ID %in% topGOSets$ID[topGOSets$contrast %in% cont],
-                   isp = ID %in% immuneGO$GOID,
-                   both = rna + isp,
-                   col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
-                                       ifelse(both == 1 & isp == 1, 
-                                              "ISP", "Neither")))) %>%
-        mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
-                                       "Neither"))) -> tmp
+                   col = ifelse(rna == 1, "RNAseq","None")) %>%
+        mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
         geom_point(aes(size = n), alpha = 0.7) +
@@ -430,11 +420,6 @@ saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
 
 fig <- here("output/figures/SFig-5B.rds")
 saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-6B.rds")
-saveRDS(shift_legend(p[[3]] + theme(plot.title = element_blank()),
                      pos = "left"), 
         fig, compress = FALSE)
 ```
@@ -488,7 +473,7 @@ Now test KEGG pathways with at least 5 genes and 5000 at most.
 
 Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
-```{r, fig.height=7, fig.width=9}
+```{r}
 rnaseqKEGG <- readRDS(here("data/cache-rnaseq/RNAseq-SRP100803-KEGG.rds"))
 rnaseqKEGG %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
@@ -516,13 +501,6 @@ p
 
 Save figure for use in manuscript.
 
-```{r}
-fig <- here("output/figures/SFig-7A.rds")
-saveRDS(p1, fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-7B.rds")
-saveRDS(p2, fig, compress = FALSE)
-```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
@@ -557,15 +535,8 @@ for(i in 1:length(p)){
     names(setLabs) <- tmp$idx
     
     tmp %>% mutate(rna = ID %in% topKEGG$PID[topKEGG$contrast %in% cont],
-                   isp = ID %in% immuneKEGG$PID,
-                   both = rna + isp,
-                   col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
-                                       ifelse(both == 1 & isp == 1, 
-                                              "ISP", "Neither")))) %>%
-        mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
-                                       "Neither"))) -> tmp
+                   col = ifelse(rna == 1, "RNAseq","None")) %>%
+        mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
         geom_point(aes(size = n), alpha = 0.7) +
@@ -601,10 +572,6 @@ saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
                      pos = "left"), 
         fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-7E.rds")
-saveRDS(shift_legend(p[[3]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
 ```
 
 P-value histograms for the different methods for all contrasts on KEGG pathways.
@@ -695,8 +662,6 @@ saveRDS(p[[1]], fig, compress = FALSE)
 fig <- here("output/figures/SFig-9A.rds")
 saveRDS(p[[2]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-10A.rds")
-saveRDS(p[[3]], fig, compress = FALSE)
 ```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
@@ -739,7 +704,7 @@ for(i in 1:length(p)){
         scale_size(limits = c(min(sub$n), max(sub$n))) +
         facet_wrap(vars(method), ncol = 2, scales = "free") +
         scale_y_discrete(labels = setLabs) +
-        scale_color_manual(values = scales::hue_pal()(4)[3:4]) +
+        scale_color_manual(values = truthPal) +
         labs(y = "", size = "No. genes", colour = "In truth set") +
         theme(axis.text.y = element_text(size = 6),
               axis.text.x = element_text(size = 6),
@@ -765,11 +730,6 @@ saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
 
 fig <- here("output/figures/SFig-9B.rds")
 saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-10B.rds")
-saveRDS(shift_legend(p[[3]] + theme(plot.title = element_blank()),
                      pos = "left"), 
         fig, compress = FALSE)
 ```
