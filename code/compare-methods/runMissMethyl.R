@@ -28,7 +28,7 @@ contList <- lapply(colnames(tfit$contrasts), function(coef){
 })
 names(contList) <- colnames(tfit$contrasts)
 
-if(nrow(mVals) > 500000) arrayType <- "EPIC" else arrayType <- "450K"
+if(nrow(mVals) > 500000) arrayType <- "EPIC" else arrayType <- "450k"
 ann <- loadAnnotation(arrayType=arrayType)
 
 if(set == "KEGG"){
