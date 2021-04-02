@@ -205,7 +205,7 @@ The TMM normalised data was transformed using `voomWithQualityWeights`. This tak
 design <- model.matrix(~0+targets$tissue+targets$isolate)
 colnames(design) <- c(levels(factor(targets$tissue)), 
                       levels(factor(targets$isolate))[-1])
-v <- voom(y, design, plot = TRUE)
+v <- voomWithQualityWeights(y, design, plot = TRUE)
 fit <- lmFit(v, design)
 cont <- makeContrasts(NormalVCervix=Normal-Cervix,
                              NormalVFibroid=Normal-Fibroid,
@@ -215,7 +215,9 @@ fit <- lmFit(v, design)
 cfit <- contrasts.fit(fit, cont)
 fit2 <- eBayes(cfit, robust = TRUE)
 #tfit <- treat(fit2, lfc = 1)
-summary(decideTests(fit2, p.value = 0.05))
+summary(decideTests(fit2, p.value = 0.01))
+#summary(decideTests(tfit, p.value = 0.05))
+saveRDS(fit2, here("data/datasets/SRP217468/DEgenes.rds"))
 ```
 
 ```{r}

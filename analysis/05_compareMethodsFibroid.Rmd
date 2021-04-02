@@ -33,7 +33,7 @@ source(here("code/utility.R"))
 
 # Load data
 
-We are using publicly available EPIC data [GSE95462](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE95462) generated from SBR3 and AU565 cell lines none, treated or treated with CAF-conditionned medium or with Decitabine in duplicate. The data is normalised and filtered (bad probes, multi-mapping probes, SNP probes, sex chromosomes).
+We are using publicly available EPIC data [GSE135446](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE135446) generated from generated from normal and fibroid uterine tissue. The data is normalised and filtered (bad probes, multi-mapping probes, SNP probes, sex chromosomes).
 
 ```{r, message=FALSE, warning=FALSE}
 # load data
@@ -150,6 +150,56 @@ tfit <- treat(fit2, lfc = 0.5)
 pval <- 0.05
 fitSum <- summary(decideTests(tfit, p.value = pval))
 fitSum
+```
+
+
+```{r, fig.height=10, fig.width=5}
+de <- readRDS("/oshlack_lab/jovana.maksimovic/research/methyl-geneset-testing/data/datasets/SRP217468/DEgenes.rds")
+
+flat <- missMethyl:::.getFlatAnnotation("EPIC")
+flat %>% inner_join(as.data.frame(de$genes) %>% 
+                        mutate(entrezid = as.character(entrezid)),
+                    by = c("entrezid" = "entrezid")) %>%
+    inner_join(rownames_to_column(as.data.frame(tfit$coefficients), 
+                                  var = "cpg")) %>%
+    inner_join(rownames_to_column(as.data.frame(de$coefficients), 
+                                  var = "gene_id"), 
+               by = c("gene_id" = "gene_id"))-> foo
+
+dea <- topTable(de, coef = "NormalVCervix", p.value = 0.05, num=Inf)$entrezid
+deb <- topTable(de, coef = "NormalVFibroid", p.value = 0.05, num=Inf)$entrezid
+dec <- topTable(de, coef = "CervixVFibroid", p.value = 0.05, num=Inf)$entrezid
+
+dma <- rownames(topTreat(tfit, coef = "NormalVCervix", p.value = 0.05, num=Inf))
+dmb <- rownames(topTreat(tfit, coef = "NormalVFibroid", p.value = 0.05, num=Inf))
+dmc <- rownames(topTreat(tfit, coef = "CervixVFibroid", p.value = 0.05, num=Inf))
+
+a <- ifelse(foo$entrezid %in% dea & foo$cpg %in% dma, "red",
+            ifelse(foo$entrezid %in% dea, "blue",
+                   ifelse(foo$cpg %in% dma, "green", "grey")))
+b <- ifelse(foo$entrezid %in% deb & foo$cpg %in% dmb, "red",
+            ifelse(foo$entrezid %in% deb, "blue",
+                   ifelse(foo$cpg %in% dmb, "green", "grey")))
+c <- ifelse(foo$entrezid %in% dec & foo$cpg %in% dmc, "red",
+            ifelse(foo$entrezid %in% dec, "blue",
+                   ifelse(foo$cpg %in% dmc, "green", "grey")))
+
+par(mfrow =c(3,1))
+plot(foo$NormalVCervix.x, foo$NormalVCervix.y, pch = ".", col=a,ylim = c(-6,6), 
+     xlim=c(-5,5))
+
+text(x = -4, y =4, 
+     labels = paste0("Spearman: ", round(cor(foo$NormalVCervix.x, 
+                                            foo$NormalVCervix.y, 
+                                            method = "spearman"), 2)))
+plot(foo$NormalVFibroid.x, foo$NormalVFibroid.y, pch = ".", col=b,ylim = c(-6,6), xlim=c(-5,5))
+text(x = -4, y =4, 
+     labels = paste0("Spearman: ", round(cor(foo$NormalVFibroid.x, foo$NormalVFibroid.y, 
+                                            method = "spearman"), 2)))
+plot(foo$CervixVFibroid.x, foo$CervixVFibroid.y, pch = ".", col=c,ylim = c(-6,6), xlim=c(-5,5))
+text(x = -4, y =4, 
+     labels = paste0("Spearman: ", round(cor(foo$CervixVFibroid.x, foo$CervixVFibroid.y, 
+                                            method = "spearman"), 2)))
 ```
 
 ```{r}
@@ -477,7 +527,7 @@ Now test KEGG pathways with at least 5 genes and 5000 at most.
 
 Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
-```{r, fig.height=7, fig.width=9}
+```{r}
 rnaseqKEGG <- readRDS(here("data/cache-rnaseq/RNAseq-SRP217468-KEGG.rds"))
 rnaseqKEGG %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
