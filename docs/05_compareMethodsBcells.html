@@ -1,0 +1,1572 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Jovana Maksimovic, Alicia Oshlack and Belinda Phipson" />
+
+<meta name="date" content="2021-04-02" />
+
+<title>Gene set testing for Illumina HumanMethylation Arrays</title>
+
+<script src="site_libs/header-attrs-2.6/header-attrs.js"></script>
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/textmate.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<link rel="icon" href="https://github.com/workflowr/workflowr-assets/raw/master/img/reproducible.png">
+<!-- Add a small amount of space between sections. -->
+<style type="text/css">
+div.section {
+  padding-top: 12px;
+}
+</style>
+
+
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">methyl-geneset-testing</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="license.html">License</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="https://github.com/Oshlack/methyl-geneset-testing">
+    <span class="fas fa-github"></span>
+     
+    Source code
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">Gene set testing for Illumina HumanMethylation Arrays</h1>
+<h3 class="subtitle">Evaluating the performance of different methods</h3>
+<h4 class="author">Jovana Maksimovic, Alicia Oshlack and Belinda Phipson</h4>
+<h4 class="date">April 02, 2021</h4>
+
+</div>
+
+
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-report" data-toggle="collapse" data-target="#workflowr-report">
+<span class="glyphicon glyphicon-list" aria-hidden="true"></span> workflowr <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span>
+</button>
+</p>
+<div id="workflowr-report" class="collapse">
+<ul class="nav nav-tabs">
+<li class="active">
+<a data-toggle="tab" href="#summary">Summary</a>
+</li>
+<li>
+<a data-toggle="tab" href="#checks"> Checks <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> </a>
+</li>
+<li>
+<a data-toggle="tab" href="#versions">Past versions</a>
+</li>
+</ul>
+<div class="tab-content">
+<div id="summary" class="tab-pane fade in active">
+<p>
+<strong>Last updated:</strong> 2021-04-02
+</p>
+<p>
+<strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
+</p>
+<p>
+<strong>Knit directory:</strong> <code>methyl-geneset-testing/</code> <span class="glyphicon glyphicon-question-sign" aria-hidden="true" title="This is the local directory in which the code in this file was executed."> </span>
+</p>
+<p>
+This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis was created with <a
+  href="https://github.com/jdblischak/workflowr">workflowr</a> (version 1.6.2). The <em>Checks</em> tab describes the reproducibility checks that were applied when the results were created. The <em>Past versions</em> tab lists the development history.
+</p>
+<hr>
+</div>
+<div id="checks" class="tab-pane fade">
+<div id="workflowr-checks" class="panel-group">
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRMarkdownfilestronguptodate"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>R Markdown file:</strong> up-to-date </a>
+</p>
+</div>
+<div id="strongRMarkdownfilestronguptodate" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great! Since the R Markdown file has been committed to the Git repository, you know the exact version of the code that produced these results.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongEnvironmentstrongempty"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Environment:</strong> empty </a>
+</p>
+</div>
+<div id="strongEnvironmentstrongempty" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! The global environment was empty. Objects defined in the global environment can affect the analysis in your R Markdown file in unknown ways. For reproduciblity it’s best to always run the code in an empty environment.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSeedstrongcodesetseed20200302code"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Seed:</strong> <code>set.seed(20200302)</code> </a>
+</p>
+</div>
+<div id="strongSeedstrongcodesetseed20200302code" class="panel-collapse collapse">
+<div class="panel-body">
+<p>The command <code>set.seed(20200302)</code> was run prior to running the code in the R Markdown file. Setting a seed ensures that any results that rely on randomness, e.g. subsampling or permutations, are reproducible.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongSessioninformationstrongrecorded"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Session information:</strong> recorded </a>
+</p>
+</div>
+<div id="strongSessioninformationstrongrecorded" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Recording the operating system, R version, and package versions is critical for reproducibility.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongCachestrongnone"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Cache:</strong> none </a>
+</p>
+</div>
+<div id="strongCachestrongnone" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Nice! There were no cached chunks for this analysis, so you can be confident that you successfully produced the results during this run.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongFilepathsstrongrelative"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>File paths:</strong> relative </a>
+</p>
+</div>
+<div id="strongFilepathsstrongrelative" class="panel-collapse collapse">
+<div class="panel-body">
+<p>Great job! Using relative paths to the files within your workflowr project makes it easier to run your code on other machines.</p>
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+<p class="panel-title">
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreec62fb2c928d4a2fbfca8a2f52dc5700649a7ff6dtargetblankc62fb2ca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/c62fb2c928d4a2fbfca8a2f52dc5700649a7ff6d" target="_blank">c62fb2c</a> </a>
+</p>
+</div>
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreec62fb2c928d4a2fbfca8a2f52dc5700649a7ff6dtargetblankc62fb2ca" class="panel-collapse collapse">
+<div class="panel-body">
+<p>
+Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
+</p>
+<p>
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/c62fb2c928d4a2fbfca8a2f52dc5700649a7ff6d" target="_blank">c62fb2c</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+</p>
+<p>
+Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
+</p>
+<pre><code>
+Ignored files:
+    Ignored:    .Rhistory
+    Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
+    Ignored:    analysis/figures.nb.html
+    Ignored:    code/.job/
+    Ignored:    code/old/
+    Ignored:    data/annotations/
+    Ignored:    data/cache-intermediates/
+    Ignored:    data/cache-region/
+    Ignored:    data/cache-rnaseq/
+    Ignored:    data/cache-runtime/
+    Ignored:    data/datasets/GSE110554-data.RData
+    Ignored:    data/datasets/GSE135446-data.RData
+    Ignored:    data/datasets/GSE45459-data.RData
+    Ignored:    data/datasets/GSE45459_Matrix_signal_intensities.txt
+    Ignored:    data/datasets/GSE95462-data.RData
+    Ignored:    data/datasets/GSE95462_RAW/
+    Ignored:    data/datasets/SRP100803/
+    Ignored:    data/datasets/SRP125125/SRR6298258/
+    Ignored:    data/datasets/SRP125125/SRR6298271/
+    Ignored:    data/datasets/SRP125125/SRR6298273/
+    Ignored:    data/datasets/SRP125125/SRR6298278/
+    Ignored:    data/datasets/SRP125125/SRR6298281/
+    Ignored:    data/datasets/SRP125125/SRR6298284/
+    Ignored:    data/datasets/SRP125125/SRR6298286/
+    Ignored:    data/datasets/SRP125125/SRR6298299/
+    Ignored:    data/datasets/SRP125125/SRR6298302/
+    Ignored:    data/datasets/SRP125125/SRR6298307/
+    Ignored:    data/datasets/SRP125125/SRR6298310/
+    Ignored:    data/datasets/SRP125125/SRR6298313/
+    Ignored:    data/datasets/SRP125125/SRR6298315/
+    Ignored:    data/datasets/SRP125125/SRR6298328/
+    Ignored:    data/datasets/SRP125125/SRR6298331/
+    Ignored:    data/datasets/SRP125125/SRR6298336/
+    Ignored:    data/datasets/SRP125125/SRR6298339/
+    Ignored:    data/datasets/SRP125125/SRR6298342/
+    Ignored:    data/datasets/SRP125125/SRR6298344/
+    Ignored:    data/datasets/SRP125125/SRR6298365/
+    Ignored:    data/datasets/SRP125125/SRR6298370/
+    Ignored:    data/datasets/SRP125125/SRR6298373/
+    Ignored:    data/datasets/SRP125125/SRR6298376/
+    Ignored:    data/datasets/SRP125125/SRR_Acc_List.txt
+    Ignored:    data/datasets/SRP125125/SRR_Acc_List_Full.txt
+    Ignored:    data/datasets/SRP125125/SraRunTable.txt
+    Ignored:    data/datasets/SRP125125/multiqc_data/
+    Ignored:    data/datasets/SRP125125/multiqc_report.html
+    Ignored:    data/datasets/SRP125125/quants/
+    Ignored:    data/datasets/SRP166862/
+    Ignored:    data/datasets/SRP217468/
+    Ignored:    data/datasets/SraRunTable.txt
+    Ignored:    data/datasets/TCGA.BRCA.rds
+    Ignored:    data/datasets/TCGA.KIRC.rds
+    Ignored:    data/misc/
+    Ignored:    output/FDR-analysis/
+    Ignored:    output/compare-methods/
+    Ignored:    output/figures/
+    Ignored:    output/methylgsa-params/
+    Ignored:    output/random-cpg-sims/
+
+Unstaged changes:
+    Modified:   .Rprofile
+
+</code></pre>
+<p>
+Note that any generated files, e.g. HTML, png, CSS, etc., are not included in this status report because it is ok for generated content to have uncommitted changes.
+</p>
+</div>
+</div>
+</div>
+</div>
+<hr>
+</div>
+<div id="versions" class="tab-pane fade">
+
+<p>
+These are the previous versions of the repository in which changes were made to the R Markdown (<code>analysis/05_compareMethodsBcells.Rmd</code>) and HTML (<code>docs/05_compareMethodsBcells.html</code>) files. If you’ve configured a remote Git repository (see <code>?wflow_git_remote</code>), click on the hyperlinks in the table below to view the files as they were in that past version.
+</p>
+<div class="table-responsive">
+<table class="table table-condensed table-hover">
+<thead>
+<tr>
+<th>
+File
+</th>
+<th>
+Version
+</th>
+<th>
+Author
+</th>
+<th>
+Date
+</th>
+<th>
+Message
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/c62fb2c928d4a2fbfca8a2f52dc5700649a7ff6d/analysis/05_compareMethodsBcells.Rmd" target="_blank">c62fb2c</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-04-02
+</td>
+<td>
+wflow_publish(“analysis/05_compareMethodsBcells.Rmd”)
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/18ac8e362272e045f4ecc3d6065e42c3ada5eda3/analysis/05_compareMethodsBcells.Rmd" target="_blank">18ac8e3</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-04-02
+</td>
+<td>
+Methods comparison using B-cell development data.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/73c6790fc69835681aed8b837d5856a48cf5320d/analysis/05_compareMethodsBcells.Rmd" target="_blank">73c6790</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-02
+</td>
+<td>
+Analysis of B-cell data
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr>
+</div>
+</div>
+</div>
+<pre class="r"><code>library(here)
+library(minfi)
+library(paletteer)
+library(limma)
+library(BiocParallel)
+library(reshape2)
+library(gridExtra)
+library(missMethyl)
+library(ggplot2)
+library(glue)
+library(grid)
+library(tidyverse)
+library(rbin)
+library(patchwork)
+library(ChAMPdata)
+library(lemon)
+source(here(&quot;code/utility.R&quot;))</code></pre>
+<div id="load-data" class="section level1">
+<h1>Load data</h1>
+<p>We are using publicly available EPIC data <a href="https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE45459">GSE45459</a> generated from developing human B-cells. The data is normalised and filtered (bad probes, multi-mapping probes, SNP probes, sex chromosomes).</p>
+<pre class="r"><code># load data
+dataFile &lt;- here(&quot;data/datasets/GSE45459-data.RData&quot;)
+
+if(file.exists(dataFile)){
+    # load processed data and sample information
+    load(dataFile)
+    
+} else {
+    
+    raw &lt;- read.delim(here(&quot;data/datasets/GSE45459_Matrix_signal_intensities.txt&quot;),
+                      row.names = &quot;ID_REF&quot;)
+    M &lt;- raw[,grepl(&quot;Methylated&quot;, colnames(raw))]
+    U &lt;- raw[,grepl(&quot;Unmethylated&quot;, colnames(raw))]
+    detP &lt;- raw[,grepl(&quot;Pval&quot;, colnames(raw))]
+    targets &lt;- as.data.frame(strsplit2(colnames(detP),&quot;_&quot;)[,1:2])
+    colnames(targets) &lt;- c(&quot;ID&quot;,&quot;Stage&quot;)
+    mSet &lt;- MethylSet(Meth = as.matrix(M), Unmeth = as.matrix(U),
+                      annotation = c(array = &quot;IlluminaHumanMethylation450k&quot;, 
+                                     annotation = &quot;ilmn12.hg19&quot;))
+    colnames(mSet) &lt;- targets$ID
+    grRaw &lt;- minfi::mapToGenome(mSet)
+
+    #normalise
+    normGr &lt;- preprocessQuantile(grRaw)
+    #filter
+    fltGr &lt;- filterQual(normGr = normGr, detP = detP)
+    fltGr &lt;- filterProbes(fltGr)
+    
+    save(detP, normGr, fltGr, targets, file = dataFile)
+    
+}</code></pre>
+<div id="qc-plots" class="section level2">
+<h2>QC plots</h2>
+<pre class="r"><code># plot mean detection p-values across all samples
+dat &lt;- tibble::tibble(mean = colMeans(detP), group = targets$Stage, 
+                      sample = targets$ID)
+ggplot(dat, aes(y = mean, x = sample, fill = group)) +
+    geom_bar(stat = &quot;identity&quot;) +
+    labs(fill = &quot;Stage&quot;, 
+         x = &quot;Sample&quot;, 
+         y = &quot;Mean detection p-value&quot;) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5))</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># plot normalised beta value distribution
+bVals &lt;- getBeta(fltGr)
+dat &lt;- as_tibble(reshape2::melt(bVals))
+colnames(dat) &lt;- c(&quot;cpg&quot;, &quot;ID&quot;, &quot;beta&quot;)
+dat$group &lt;- rep(targets$Stage, each = nrow(bVals))
+
+p &lt;- ggplot(dat, aes(x = beta, colour = group, group = ID)) + 
+    geom_density(size=0.5, alpha=0.5) +
+    labs(color = &quot;Stage&quot;, x = &quot;Beta value&quot;, y = &quot;Density&quot;)
+
+p </code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-4-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>dims &lt;- list(c(1,2), c(1,3), c(2,3), c(3,4))
+p &lt;- vector(&quot;list&quot;, length(dims))
+
+for(i in 1:length(dims)){
+    tmp &lt;- plotMDS(getM(fltGr), top=1000, 
+                   gene.selection=&quot;common&quot;, plot = FALSE,
+                   dim.plot = dims[[i]])
+    
+    dat &lt;- data.frame(x = tmp$x, y = tmp$y, group = targets$Stage)
+    p[[i]] &lt;- ggplot(dat, aes(x = x, y = y, colour = group)) +
+        geom_point() +
+        labs(colour = &quot;Stage&quot;, x = glue(&quot;PC {tmp$dim.plot[1]}&quot;),
+             y = glue(&quot;PC {tmp$dim.plot[2]}&quot;))
+    
+}
+
+(p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = &quot;collect&quot;)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<pre class="r"><code>outDir &lt;- here::here(&quot;output/figures&quot;)
+if (!dir.exists(outDir)) dir.create(outDir)
+
+fig &lt;- here(&quot;output/figures/Fig-4A.rds&quot;)
+saveRDS(p, fig, compress = FALSE)</code></pre>
+</div>
+<div id="statistical-analysis" class="section level2">
+<h2>Statistical analysis</h2>
+<p>Compare several sets of sorted immune cells. Consider results significant at FDR &lt; 0.05 and delta beta &gt; 10% (~ lfc = 0.5).</p>
+<pre class="r"><code>mVals &lt;- getM(fltGr)
+bVals &lt;- getBeta(fltGr)</code></pre>
+<pre class="r"><code>Stage &lt;- factor(targets$Stage)
+design &lt;- model.matrix(~0+Stage)
+
+fit &lt;- lmFit(mVals, design)
+cont.matrix &lt;- makeContrasts(S1vS2=StageS1-StageS2,
+                             S2vS3=StageS2-StageS3,
+                             levels=design)
+fit2 &lt;- contrasts.fit(fit, cont.matrix)
+fit2 &lt;- eBayes(fit2, robust=TRUE, trend=TRUE)
+tfit &lt;- treat(fit2, lfc = 0.5)
+pval &lt;- 0.05
+fitSum &lt;- summary(decideTests(tfit, p.value = pval))
+fitSum</code></pre>
+<pre><code>        S1vS2  S2vS3
+Down     1083      0
+NotSig 366973 369336
+Up       2065    785</code></pre>
+<pre class="r"><code>bDat &lt;- getBiasDat(rownames(topTreat(tfit, coef = 1, num = 5000, 
+                                     p.value = 0.05)), 
+                   array.type = &quot;450K&quot;)</code></pre>
+<pre><code>All input CpGs are used for testing.</code></pre>
+<pre class="r"><code>p &lt;- ggplot(bDat, aes(x = avgbias, y = propDM)) +
+    geom_point(shape = 1, size = 2) +
+    geom_smooth() +
+    labs(x = &quot;No. CpGs per gene (binned)&quot;,
+         y = &quot;Prop. differential methylation&quot;) +
+    theme_minimal() +
+    theme(panel.grid = element_blank(),
+          axis.line = element_line(colour = &quot;black&quot;))
+p</code></pre>
+<pre><code>`geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-9-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-1B.rds&quot;)
+saveRDS(p, fig, compress = FALSE)</code></pre>
+<p>Examine only the independent contrasts.</p>
+<pre class="r"><code>dat &lt;- reshape2::melt(fitSum[rownames(fitSum) != &quot;NotSig&quot;, ])
+colnames(dat) &lt;- c(&quot;dir&quot;,&quot;comp&quot;,&quot;num&quot;)
+
+p &lt;- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
+    geom_bar(stat = &quot;identity&quot;, position = &quot;dodge&quot;) +
+    labs(x = &quot;Comparison&quot;, y = &quot;No. DM CpGs (FDR &lt; 0.05)&quot;, fill = &quot;Direction&quot;) +
+    scale_fill_brewer(palette = &quot;Set1&quot;, direction = -1)
+p</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-11-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-4B.rds&quot;)
+saveRDS(p, fig, compress = FALSE)</code></pre>
+</div>
+</div>
+<div id="compare-performance-of-different-gene-set-testing-methods" class="section level1">
+<h1>Compare performance of different gene set testing methods</h1>
+<p>We compare the performance of the following gene set testing methods available for methylation arrays: a standard hypergeometric test (HGT), GOmeth from the <em>missMethyl</em> package, methylglm (mGLM), methylRRA-ORA (mRRA (ORA)) and methylRRA-GSEA (mRRA (GSEA)) from the <em>methylGSA</em> package and ebayGSEA from the <em>ChAMP</em> package.</p>
+<p>We perform gene set testing on the results of all three blood cell type comparisons: B-cells vs. NK cells, CD4 T-cells vs. CD8 T-cells and monocytes vs. neutrophils, using all of the different gene set testing methods.</p>
+<p>Gene set testing is performed for each comparison using GO categories, KEGG pathways and the BROAD MSigDB gene sets for the following methods: HGT, GOmeth, mGLM, mRRA (ORA) and mRRA (GSEA)</p>
+<p>As gene set testing can only be performed using the BROAD MSigDB gene sets provided with the <em>ChAMP</em> package, the ebayGSEA method is only tested using the BROAD MSigDB gene sets for the three blood cell comparisons.</p>
+<p>Furthermore, as the methylGSA methods do not work well with sets that only contain very few genes or very many genes, we only test sets with at least 5 genes and at most 5000 genes.</p>
+<p>Firstly, the results of the statistical analysis of the three blood cell comparisons are saved as an RDS object.</p>
+<pre class="r"><code>minsize &lt;- 5
+maxsize &lt;- 5000
+
+outDir &lt;- here::here(&quot;data/cache-intermediates/BCELLS&quot;)
+if (!dir.exists(outDir)) dir.create(outDir)
+
+outFile &lt;- here(&quot;data/cache-intermediates/bcells.contrasts.rds&quot;)
+
+if(!file.exists(outFile)){
+  obj &lt;- NULL
+  obj$tfit &lt;- tfit
+  obj$maxsize &lt;- maxsize
+  obj$minsize &lt;- minsize
+  obj$mVals &lt;- mVals
+  obj$targets &lt;- targets
+
+  saveRDS(obj, file = outFile)
+
+} </code></pre>
+<p>As some of the methods take a considerable amount of time to perform the gene set testing analysis, we have created several scripts in order to run the analyses in parallel on a HPC. The code used to run all the gene set testing analyses using the different methods can be found in the <code>code/compare-methods</code> directory. It consists of four scripts: <code>genRunMethodJob.R</code>, <code>runChAMP.R</code>, <code>runMethylGSA.R</code> and <code>runMissMethyl.R</code>. The <code>genRunMethodJob.R</code> script creates and submits <a href="https://slurm.schedmd.com/overview.html">Slurm</a> job scripts that run the <code>runChAMP.R</code>, <code>runMethylGSA.R</code> and <code>runMissMethyl.R</code> scripts, for <em>each</em> gene set type, in parallel, on a HPC. The results of each job are saved as an RDS file named <code>{package}.{set}.rds</code> in the <code>output/compare-methods</code> directory. Once all analysis jobs are complete, all of the suvbsequent analyses in this document can be executed.</p>
+<div id="load-output-for-all-methods" class="section level2">
+<h2>Load output for all methods</h2>
+<p>The results of all the gene set testing analyses, using all the different methods, for the different types of gene sets, are loaded into a <code>list</code> of <code>data.frames</code>. All of the <code>data.frames</code> in the <code>list</code> are then concatenated into a <code>tibble</code> for downstream analysis and plotting.</p>
+<pre class="r"><code>inFiles &lt;- list.files(here(&quot;output/compare-methods/BCELLS&quot;), pattern = &quot;rds&quot;, 
+                      full.names = TRUE)
+
+res &lt;- lapply(inFiles, function(file){
+    readRDS(file)
+})
+
+dat &lt;- as_tibble(dplyr::bind_rows(res))</code></pre>
+</div>
+<div id="explore-analysis-results" class="section level2">
+<h2>Explore analysis results</h2>
+<div id="go-categories" class="section level3">
+<h3>GO categories</h3>
+<p>Examine the performance of the different methods when gene set testing was performed on GO categories.</p>
+<pre class="r"><code>ann &lt;- loadAnnotation(&quot;450k&quot;)
+flatAnn &lt;- loadFlatAnnotation(ann)
+cpgEgGo &lt;- cpgsEgGoFreqs(flatAnn)
+
+cpgEgGo %&gt;% 
+  group_by(GO) %&gt;%
+  summarise(med = median(Freq)) -&gt; medCpgEgGo</code></pre>
+<p>In order to examine whether the probe-number bias influenced the significantly enriched GO categories for the five different methods, we split the GO categories into bins based on the median number of CpGs per gene per GO category. We then calculated the proportion of significantly enriched GO categories in each bin for each of the three comparisons. As GOmeth explicitly corrects for this bias it showed very little trend. However mRRA (ORA) tended to have more significant GO categories when the genes had larger numbers of CpGs. The hypergeometric test and mRRA (GSEA) tended to have more significant GO categories with average numbers of CpGs associated per gene ranging from 27 - 44. The mGLM method appears to control for the probe-number bias of the array fairly well.</p>
+<pre class="r"><code>dat %&gt;% filter(set == &quot;GO&quot;) %&gt;%
+    filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;% 
+    mutate(method = unname(dict[method])) %&gt;% 
+    inner_join(medCpgEgGo, by = c(&quot;ID&quot; = &quot;GO&quot;)) -&gt; sub
+
+bins &lt;- rbin_quantiles(sub, ID, med, bins = 11)
+sub$bin &lt;- as.factor(findInterval(sub$med, bins$upper_cut))
+
+binLabs &lt;- paste0(&quot;&lt;&quot;, bins$upper_cut)
+names(binLabs) &lt;- levels(sub$bin)
+binLabs[length(binLabs)] &lt;- gsub(&quot;&lt;&quot;, &quot;\u2265&quot;, binLabs[length(binLabs) - 1])
+    
+sub %&gt;% group_by(contrast, method, bin) %&gt;%
+  summarise(prop = sum(pvalue &lt; 0.05)/n()) -&gt; pdat</code></pre>
+<pre><code>`summarise()` has grouped output by &#39;contrast&#39;, &#39;method&#39;. You can override using the `.groups` argument.</code></pre>
+<pre class="r"><code>p &lt;- ggplot(pdat, aes(x = as.numeric(bin), y = prop, color = method)) +
+  geom_line() +
+  facet_wrap(vars(contrast), ncol = 3) +
+  scale_x_continuous(breaks = as.numeric(levels(pdat$bin)), labels = binLabs) +
+  theme(axis.text.x = element_text(angle=45, hjust = 1, vjust = 1,
+                                   size = 7),
+        legend.position = &quot;bottom&quot;) +
+  labs(x = &quot;Med. No. CpGs per Gene per GO Cat. (binned)&quot;,
+       y = &quot;Prop. GO Cat. with p-value &lt; 0.05&quot;,
+       colour = &quot;Method&quot;) +
+    scale_color_manual(values = methodCols)
+p</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-16-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>We also examine results when top ranked 100 GO terms from RNA-seq analysis of the same cell type comparisons is used as “truth”.</p>
+<pre class="r"><code>rnaseqGO &lt;- readRDS(here(&quot;data/cache-rnaseq/RNAseq-GSE45460-GO.rds&quot;))
+rnaseqGO %&gt;% group_by(contrast) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; topGOSets
+
+p &lt;- vector(&quot;list&quot;, length(unique(dat$contrast)))
+
+for(i in 1:length(unique(dat$contrast))){
+    cont &lt;- sort(unique(dat$contrast))[i]
+    
+    dat %&gt;% filter(set == &quot;GO&quot;) %&gt;%
+        filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;%
+        filter(contrast == cont) %&gt;%
+        mutate(method = unname(dict[method])) %&gt;% 
+        arrange(method, pvalue) %&gt;%
+        group_by(method) %&gt;%
+        mutate(rank = 1:n()) %&gt;%
+        filter(rank &lt;= 100) %&gt;%
+        mutate(csum = cumsum(ID %in% topGOSets$ID[topGOSets$contrast %in% 
+                                                         contrast])) %&gt;%
+        mutate(truth = &quot;RNAseq Terms&quot;) -&gt; rnaseqSum
+    
+    p[[i]] &lt;- ggplot(rnaseqSum, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(truth), ncol = 2) +
+    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
+    labs(colour = &quot;Method&quot;, x = &quot;Rank&quot;, 
+         y = &quot;Cumulative no. sets in truth&quot;) +
+    theme(legend.position = &quot;bottom&quot;) +
+    scale_color_manual(values = methodCols)
+}
+
+(p[[1]] + ggtitle(sort(unique(dat$contrast))[1]) | 
+  p[[2]] + ggtitle(sort(unique(dat$contrast))[2])) + 
+    plot_layout(guides = &quot;collect&quot;) &amp; 
+    theme(legend.position = &quot;bottom&quot;)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-4C.rds&quot;)
+saveRDS(p[[1]], fig, compress = FALSE)
+
+fig &lt;- here(&quot;output/figures/SFig-5A.rds&quot;)
+saveRDS(p[[2]], fig, compress = FALSE)</code></pre>
+<p>Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.</p>
+<pre class="r"><code>terms &lt;- missMethyl:::.getGO()$idTable
+nGenes &lt;- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList, 
+                                                   length)), 
+                             var = &quot;ID&quot;)
+
+dat %&gt;% filter(set == &quot;GO&quot;) %&gt;%
+    filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;% 
+    mutate(method = unname(dict[method])) %&gt;% 
+    arrange(contrast, method, pvalue) %&gt;%
+    group_by(contrast, method) %&gt;%
+    mutate(FDR = p.adjust(pvalue, method = &quot;BH&quot;)) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 10) %&gt;% 
+    inner_join(terms, by = c(&quot;ID&quot; = &quot;GOID&quot;)) %&gt;%
+    inner_join(nGenes) -&gt; sub</code></pre>
+<pre><code>Joining, by = &quot;ID&quot;</code></pre>
+<pre class="r"><code>p &lt;- vector(&quot;list&quot;, length(unique(sub$contrast)))
+truthPal &lt;- scales::hue_pal()(4)[3:4]
+names(truthPal) &lt;- c(&quot;None&quot;, &quot;RNAseq&quot;)
+
+for(i in 1:length(p)){
+    cont &lt;- sort(unique(sub$contrast))[i]
+    sub %&gt;% filter(contrast == cont) %&gt;%
+        arrange(method, -rank) %&gt;%
+        ungroup() %&gt;%
+        mutate(idx = as.factor(1:n())) -&gt; tmp
+    
+    setLabs &lt;- substr(tmp$TERM, 1, 40)
+    names(setLabs) &lt;- tmp$idx
+    
+      tmp %&gt;% mutate(rna = ID %in% topGOSets$ID[topGOSets$contrast %in% cont],
+                   col = ifelse(rna == 1, &quot;RNAseq&quot;,&quot;None&quot;)) %&gt;%
+        mutate(col = factor(col, levels = c(&quot;RNAseq&quot;, &quot;None&quot;))) -&gt; tmp
+    
+    p[[i]] &lt;- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
+        geom_point(aes(size = n), alpha = 0.7) +
+        scale_size(limits = c(min(sub$n), max(sub$n))) +
+        facet_wrap(vars(method), ncol = 2, scales = &quot;free&quot;) +
+        scale_y_discrete(labels = setLabs) +
+        scale_colour_manual(values = truthPal) +
+        labs(y = &quot;&quot;, size = &quot;No. genes&quot;, colour = &quot;In truth set&quot;) +
+        theme(axis.text.y = element_text(size = 6),
+              axis.text.x = element_text(size = 6),
+              legend.box = &quot;horizontal&quot;,
+              legend.margin = margin(0, 0, 0, 0, unit = &quot;lines&quot;),
+              panel.spacing.x = unit(1, &quot;lines&quot;)) +
+        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-80))) +
+        geom_vline(xintercept = -log10(0.05), linetype = &quot;dashed&quot;) +
+        ggtitle(cont)
+}
+
+shift_legend(p[[1]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-20-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>shift_legend(p[[2]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-20-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<pre class="r"><code>fig &lt;- here(&quot;output/figures/Fig-4D.rds&quot;)
+saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
+                     pos = &quot;left&quot;), 
+        fig, compress = FALSE)
+
+fig &lt;- here(&quot;output/figures/SFig-5B.rds&quot;)
+saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
+                     pos = &quot;left&quot;), 
+        fig, compress = FALSE)</code></pre>
+<p>P-value histograms for the different methods for all contrasts on GO categories.</p>
+<pre class="r"><code>dat %&gt;% filter(set == &quot;GO&quot;) %&gt;%
+    filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;%
+    mutate(method = unname(dict[method])) -&gt; subDat 
+    
+ggplot(subDat, aes(pvalue, fill = method)) +
+    geom_histogram(binwidth = 0.025) +
+    facet_grid(cols = vars(contrast), rows = vars(method)) +
+    theme(legend.position = &quot;bottom&quot;) +
+    labs(x = &quot;P-value&quot;, y = &quot;Frequency&quot;, fill = &quot;Method&quot;) +
+    scale_fill_manual(values = methodCols)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-22-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="compare-gometh-results-using-different-dm-cpg-significance-cutoffs" class="section level4">
+<h4>Compare GOmeth results using different DM CpG significance cutoffs</h4>
+<p>As the results of GOmeth depend on the list of significant CpGs provided as input to the function, we explored the effect of selecting “significant” CpGs in different ways on the gene set testing performance of GOmeth.</p>
+<pre class="r"><code>dat %&gt;% filter(set == &quot;GO&quot;) %&gt;%
+    filter(grepl(&quot;mmethyl&quot;, method)) %&gt;%
+    mutate(method = unname(dict[method])) %&gt;%
+    arrange(contrast, method, pvalue) %&gt;%
+    group_by(contrast, method, sub) %&gt;%
+    mutate(csum = cumsum(ID %in% topGOSets$ID[topGOSets$contrast %in% 
+                                                  contrast])) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    mutate(cut = ifelse(sub == &quot;c1&quot;, &quot;Top 5000&quot;, 
+                        ifelse(sub == &quot;c2&quot;, &quot;Top 10000&quot;,
+                               ifelse(sub == &quot;p1&quot;, &quot;FDR &lt; 0.01&quot;, &quot;FDR &lt; 0.05&quot;)))) %&gt;%
+    filter(rank &lt;= 100) -&gt; sub
+
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
+    geom_line() +
+    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = &quot;free&quot;) +
+    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
+    labs(colour = &quot;Sig. select&quot;, x = &quot;Rank&quot;, 
+         y = glue(&quot;Cumulative no. RNAseq sets&quot;)) +
+    theme(legend.position = &quot;bottom&quot;)
+p</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-23-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="kegg-pathways" class="section level3">
+<h3>KEGG pathways</h3>
+<p>Now test KEGG pathways with at least 5 genes and 5000 at most.</p>
+<p>Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as “truth”.</p>
+<pre class="r"><code>rnaseqKEGG &lt;- readRDS(here(&quot;data/cache-rnaseq/RNAseq-GSE45460-KEGG.rds&quot;))
+rnaseqKEGG %&gt;% group_by(contrast) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; topKEGG
+
+dat %&gt;% filter(set == &quot;KEGG&quot;) %&gt;%
+    filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;%
+    mutate(method = unname(dict[method])) %&gt;%
+    arrange(contrast, method, pvalue) %&gt;%
+    group_by(contrast, method) %&gt;%
+    mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% contrast])) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; sub
+
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), ncol=3, scales = &quot;free_y&quot;) +
+    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
+    labs(colour = &quot;Method&quot;, x = &quot;Rank&quot;, y = &quot;Cumulative no. RNAseq sets&quot;) +
+    theme(legend.position = &quot;bottom&quot;) + 
+    scale_color_manual(values = methodCols)
+
+p</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-24-1.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<p>Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.</p>
+<pre class="r"><code>terms &lt;- missMethyl:::.getKEGG()$idTable
+nGenes &lt;- rownames_to_column(data.frame(n = sapply(missMethyl:::.getKEGG()$idList, 
+                                                   length)), 
+                             var = &quot;ID&quot;)
+
+dat %&gt;% filter(set == &quot;KEGG&quot;) %&gt;%
+    filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;% 
+    mutate(method = unname(dict[method])) %&gt;%
+    arrange(contrast, method, pvalue) %&gt;%
+    group_by(contrast, method) %&gt;%
+    mutate(FDR = p.adjust(pvalue, method = &quot;BH&quot;)) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 10) %&gt;% 
+    inner_join(terms, by = c(&quot;ID&quot; = &quot;PathwayID&quot;)) %&gt;%
+    inner_join(nGenes) -&gt; sub</code></pre>
+<pre><code>Joining, by = &quot;ID&quot;</code></pre>
+<pre class="r"><code>p &lt;- vector(&quot;list&quot;, length(unique(sub$contrast)))
+for(i in 1:length(p)){
+    cont &lt;- sort(unique(sub$contrast))[i]
+    sub %&gt;% filter(contrast == cont) %&gt;%
+        arrange(method, -rank) %&gt;%
+        ungroup() %&gt;%
+        mutate(idx = as.factor(1:n())) -&gt; tmp
+    
+    setLabs &lt;- substr(tmp$Description, 1, 40)
+    names(setLabs) &lt;- tmp$idx
+    
+      tmp %&gt;% mutate(rna = ID %in% topKEGG$PID[topKEGG$contrast %in% cont],
+                   col = ifelse(rna == 1, &quot;RNAseq&quot;,&quot;None&quot;)) %&gt;%
+        mutate(col = factor(col, levels = c(&quot;RNAseq&quot;, &quot;None&quot;))) -&gt; tmp
+    
+    p[[i]] &lt;- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
+        geom_point(aes(size = n), alpha = 0.7) +
+        scale_size(limits = c(min(sub$n), max(sub$n))) +
+        facet_wrap(vars(method), ncol = 2, scales = &quot;free&quot;) +
+        scale_y_discrete(labels = setLabs) +
+        scale_colour_manual(values = truthPal) +
+        labs(y = &quot;&quot;, size = &quot;No. genes&quot;, colour = &quot;In truth set&quot;) +
+        theme(axis.text.y = element_text(size = 6),
+              axis.text.x = element_text(size = 6),
+              legend.box = &quot;horizontal&quot;,
+              legend.margin = margin(0, 0, 0, 0, unit = &quot;lines&quot;),
+              panel.spacing.x = unit(1, &quot;lines&quot;)) +
+        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-80))) +
+        geom_vline(xintercept = -log10(0.05), linetype = &quot;dashed&quot;) +
+        ggtitle(cont)
+}
+
+shift_legend(p[[1]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-26-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>shift_legend(p[[2]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-26-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-7C.rds&quot;)
+saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
+                     pos = &quot;left&quot;), 
+        fig, compress = FALSE)
+
+fig &lt;- here(&quot;output/figures/SFig-7D.rds&quot;)
+saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
+                     pos = &quot;left&quot;), 
+        fig, compress = FALSE)</code></pre>
+<p>P-value histograms for the different methods for all contrasts on KEGG pathways.</p>
+<pre class="r"><code>dat %&gt;% filter(set == &quot;KEGG&quot;) %&gt;%
+    filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;%
+    mutate(method = unname(dict[method])) -&gt; subDat 
+    
+ggplot(subDat, aes(pvalue, fill = method)) +
+    geom_histogram(binwidth = 0.025) +
+    facet_grid(cols = vars(contrast), rows = vars(method)) +
+    theme(legend.position = &quot;bottom&quot;) +
+    labs(x = &quot;P-value&quot;, y = &quot;Frequency&quot;, fill = &quot;Method&quot;) +
+    scale_fill_manual(values = methodCols)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-28-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="compare-gometh-results-using-different-dm-cpg-significance-cutoffs-1" class="section level4">
+<h4>Compare GOmeth results using different DM CpG significance cutoffs</h4>
+<pre class="r"><code>dat %&gt;% filter(set == &quot;KEGG&quot;) %&gt;%
+    filter(grepl(&quot;mmethyl&quot;, method)) %&gt;% 
+    mutate(method = unname(dict[method])) %&gt;%
+    arrange(contrast, method, pvalue) %&gt;%
+    group_by(contrast, method, sub) %&gt;%
+    mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% contrast])) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    mutate(cut = ifelse(sub == &quot;c1&quot;, &quot;Top 5000&quot;, 
+                        ifelse(sub == &quot;c2&quot;, &quot;Top 10000&quot;,
+                               ifelse(sub == &quot;p1&quot;, &quot;FDR &lt; 0.01&quot;, &quot;FDR &lt; 0.05&quot;)))) %&gt;%
+    filter(rank &lt;= 100) -&gt; sub
+
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
+    geom_line() +
+    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = &quot;free&quot;) +
+    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
+    labs(colour = &quot;Sig. select&quot;, x = &quot;Rank&quot;, 
+         y = glue(&quot;Cumulative no. RNAseq sets&quot;)) +
+    theme(legend.position = &quot;bottom&quot;)
+p</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-29-1.png" width="672" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="broad-gene-sets" class="section level3">
+<h3>BROAD gene sets</h3>
+<p>As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. Using the top 100 ranked gene sets as identified by Belinda’s <code>gsaseq</code> analysis of the corresponding RNAseq data as “truth”.</p>
+<pre class="r"><code>rnaseqBROAD &lt;- readRDS(here(&quot;data/cache-rnaseq/RNAseq-GSE45460-BROAD-GSA.rds&quot;))
+rnaseqBROAD %&gt;% group_by(contrast) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; topBROAD
+
+p &lt;- vector(&quot;list&quot;, length(unique(dat$contrast)))
+
+for(i in 1:length(unique(dat$contrast))){
+    cont &lt;- sort(unique(dat$contrast))[i]
+    
+    dat %&gt;% filter(set == &quot;BROAD&quot;) %&gt;%
+        filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;%
+        filter(contrast == cont) %&gt;%
+        mutate(method = unname(dict[method])) %&gt;% 
+    arrange(contrast, method, pvalue) %&gt;%
+    group_by(contrast, method) %&gt;%
+    mutate(csum = cumsum(ID %in% topBROAD$ID[topBROAD$contrast %in% contrast])) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 100) -&gt; sub
+    
+    p[[i]] &lt;- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
+    labs(colour = &quot;Method&quot;, x = &quot;Rank&quot;, y = &quot;Cumulative no. RNAseq sets&quot;) +
+    theme(legend.position = &quot;bottom&quot;) +
+    scale_color_manual(values = methodCols) +
+        ggtitle(cont)
+}
+
+p[[1]]</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-30-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>p[[2]]</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-30-2.png" width="672" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-8A.rds&quot;)
+saveRDS(p[[1]], fig, compress = FALSE)
+
+fig &lt;- here(&quot;output/figures/SFig-9A.rds&quot;)
+saveRDS(p[[2]], fig, compress = FALSE)</code></pre>
+<p>Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.</p>
+<pre class="r"><code>data(PathwayList)
+nGenes &lt;- rownames_to_column(data.frame(n = sapply(PathwayList, 
+                                                   length)), 
+                             var = &quot;ID&quot;)
+
+dat %&gt;% filter(set == &quot;BROAD&quot;) %&gt;%
+    filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;% 
+    mutate(method = unname(dict[method])) %&gt;% 
+    arrange(contrast, method, pvalue) %&gt;%
+    group_by(contrast, method) %&gt;%
+    mutate(FDR = p.adjust(pvalue, method = &quot;BH&quot;)) %&gt;%
+    mutate(rank = 1:n()) %&gt;%
+    filter(rank &lt;= 10) %&gt;% 
+    inner_join(nGenes) -&gt; sub</code></pre>
+<pre><code>Joining, by = &quot;ID&quot;</code></pre>
+<pre class="r"><code>p &lt;- vector(&quot;list&quot;, length(unique(sub$contrast)))
+for(i in 1:length(p)){
+    cont &lt;- sort(unique(sub$contrast))[i]
+    sub %&gt;% filter(contrast == cont) %&gt;%
+        arrange(method, -rank) %&gt;%
+        ungroup() %&gt;%
+        mutate(idx = as.factor(1:n())) -&gt; tmp
+    
+    setLabs &lt;- substr(tmp$ID, 1, 30)
+    names(setLabs) &lt;- tmp$idx
+    
+    tmp %&gt;% mutate(rna = ID %in% topBROAD$ID[topBROAD$contrast %in% cont],
+                   col = ifelse(rna == 1, &quot;RNAseq&quot;, &quot;None&quot;)) %&gt;%
+        mutate(col = factor(col, levels = c(&quot;RNAseq&quot;, &quot;None&quot;))) -&gt; tmp
+    
+    p[[i]] &lt;- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
+        geom_point(aes(size = n), alpha = 0.7) +
+        scale_size(limits = c(min(sub$n), max(sub$n))) +
+        facet_wrap(vars(method), ncol = 2, scales = &quot;free&quot;) +
+        scale_y_discrete(labels = setLabs) +
+        scale_color_manual(values = truthPal) +
+        labs(y = &quot;&quot;, size = &quot;No. genes&quot;, colour = &quot;In truth set&quot;) +
+        theme(axis.text.y = element_text(size = 6),
+              axis.text.x = element_text(size = 6),
+              legend.box = &quot;horizontal&quot;,
+              legend.margin = margin(0, 0, 0, 0, unit = &quot;lines&quot;),
+              panel.spacing.x = unit(1, &quot;lines&quot;)) +
+        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-100))) +
+        geom_vline(xintercept = -log10(0.05), linetype = &quot;dashed&quot;) +
+        ggtitle(cont)
+}
+
+shift_legend(p[[1]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-33-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>shift_legend(p[[2]], plot = TRUE, pos = &quot;left&quot;)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-33-2.png" width="768" style="display: block; margin: auto;" /></p>
+<p>Save figure for use in manuscript.</p>
+<pre class="r"><code>fig &lt;- here(&quot;output/figures/SFig-8B.rds&quot;)
+saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
+                     pos = &quot;left&quot;), 
+        fig, compress = FALSE)
+
+fig &lt;- here(&quot;output/figures/SFig-9B.rds&quot;)
+saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
+                     pos = &quot;left&quot;), 
+        fig, compress = FALSE)</code></pre>
+<p>P-value histograms for the different methods for all contrasts on BROAD gene sets.</p>
+<pre class="r"><code>dat %&gt;% filter(set == &quot;BROAD&quot;) %&gt;%
+    filter(sub %in% c(&quot;n&quot;,&quot;c1&quot;)) %&gt;%
+    mutate(method = unname(dict[method])) -&gt; subDat 
+    
+ggplot(subDat, aes(pvalue, fill = method)) +
+    geom_histogram(binwidth = 0.025) +
+    facet_grid(cols = vars(contrast), rows = vars(method)) +
+    theme(legend.position = &quot;bottom&quot;) +
+    labs(x = &quot;P-value&quot;, y = &quot;Frequency&quot;, fill = &quot;Method&quot;) +
+    scale_fill_manual(values = methodCols)</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-35-1.png" width="672" style="display: block; margin: auto;" /></p>
+<div id="compare-gometh-results-using-different-dm-cpg-significance-cutoffs-2" class="section level4">
+<h4>Compare GOmeth results using different DM CpG significance cutoffs</h4>
+<p>As the results of GOmeth depend on the list of significant CpGs provided as input to the function, we explored the effect of selecting “significant” CpGs in different ways on the gene set testing performance of GOmeth.</p>
+<pre class="r"><code>dat %&gt;% filter(set == &quot;BROAD&quot;) %&gt;%
+    filter(grepl(&quot;mmethyl&quot;, method)) %&gt;% 
+    mutate(method = unname(dict[method])) %&gt;%
+    arrange(contrast, method, pvalue) %&gt;%
+    group_by(contrast, method, sub) %&gt;%
+    mutate(csum = cumsum(ID %in% topBROAD$ID)) %&gt;% 
+    mutate(rank = 1:n()) %&gt;%
+    mutate(cut = ifelse(sub == &quot;c1&quot;, &quot;Top 5000&quot;, 
+                        ifelse(sub == &quot;c2&quot;, &quot;Top 10000&quot;,
+                               ifelse(sub == &quot;p1&quot;, &quot;FDR &lt; 0.01&quot;, &quot;FDR &lt; 0.05&quot;)))) %&gt;%
+    filter(rank &lt;= 100) -&gt; sub
+
+p &lt;- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
+    geom_line() +
+    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = &quot;free&quot;) +
+    geom_vline(xintercept = 10, linetype = &quot;dotted&quot;) +
+    labs(colour = &quot;Sig. select&quot;, x = &quot;Rank&quot;, y = &quot;Cumulative no. immune sets&quot;) +
+    theme(legend.position = &quot;bottom&quot;)
+p</code></pre>
+<p><img src="figure/05_compareMethodsBcells.Rmd/unnamed-chunk-36-1.png" width="672" style="display: block; margin: auto;" /></p>
+<br>
+<p>
+<button type="button" class="btn btn-default btn-workflowr btn-workflowr-sessioninfo" data-toggle="collapse" data-target="#workflowr-sessioninfo" style="display: block;">
+<span class="glyphicon glyphicon-wrench" aria-hidden="true"></span> Session information
+</button>
+</p>
+<div id="workflowr-sessioninfo" class="collapse">
+<pre class="r"><code>sessionInfo()</code></pre>
+<pre><code>R version 4.0.2 (2020-06-22)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: CentOS Linux 7 (Core)
+
+Matrix products: default
+BLAS:   /config/binaries/R/4.0.2/lib64/R/lib/libRblas.so
+LAPACK: /config/binaries/R/4.0.2/lib64/R/lib/libRlapack.so
+
+locale:
+ [1] LC_CTYPE=en_AU.UTF-8       LC_NUMERIC=C              
+ [3] LC_TIME=en_AU.UTF-8        LC_COLLATE=en_AU.UTF-8    
+ [5] LC_MONETARY=en_AU.UTF-8    LC_MESSAGES=en_AU.UTF-8   
+ [7] LC_PAPER=en_AU.UTF-8       LC_NAME=C                 
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C            
+[11] LC_MEASUREMENT=en_AU.UTF-8 LC_IDENTIFICATION=C       
+
+attached base packages:
+ [1] grid      stats4    parallel  stats     graphics  grDevices utils    
+ [8] datasets  methods   base     
+
+other attached packages:
+ [1] lemon_0.4.5                                        
+ [2] ChAMPdata_2.22.0                                   
+ [3] patchwork_1.1.1                                    
+ [4] rbin_0.2.0                                         
+ [5] forcats_0.5.1                                      
+ [6] stringr_1.4.0                                      
+ [7] dplyr_1.0.4                                        
+ [8] purrr_0.3.4                                        
+ [9] readr_1.4.0                                        
+[10] tidyr_1.1.2                                        
+[11] tibble_3.0.6                                       
+[12] tidyverse_1.3.0                                    
+[13] glue_1.4.2                                         
+[14] ggplot2_3.3.3                                      
+[15] missMethyl_1.24.0                                  
+[16] IlluminaHumanMethylationEPICanno.ilm10b4.hg19_0.6.0
+[17] IlluminaHumanMethylation450kanno.ilmn12.hg19_0.6.0 
+[18] gridExtra_2.3                                      
+[19] reshape2_1.4.4                                     
+[20] BiocParallel_1.24.1                                
+[21] limma_3.46.0                                       
+[22] paletteer_1.3.0                                    
+[23] minfi_1.36.0                                       
+[24] bumphunter_1.32.0                                  
+[25] locfit_1.5-9.4                                     
+[26] iterators_1.0.13                                   
+[27] foreach_1.5.1                                      
+[28] Biostrings_2.58.0                                  
+[29] XVector_0.30.0                                     
+[30] SummarizedExperiment_1.20.0                        
+[31] Biobase_2.50.0                                     
+[32] MatrixGenerics_1.2.1                               
+[33] matrixStats_0.58.0                                 
+[34] GenomicRanges_1.42.0                               
+[35] GenomeInfoDb_1.26.2                                
+[36] IRanges_2.24.1                                     
+[37] S4Vectors_0.28.1                                   
+[38] BiocGenerics_0.36.0                                
+[39] here_1.0.1                                         
+[40] workflowr_1.6.2                                    
+
+loaded via a namespace (and not attached):
+  [1] readxl_1.3.1              backports_1.2.1          
+  [3] BiocFileCache_1.14.0      plyr_1.8.6               
+  [5] splines_4.0.2             digest_0.6.27            
+  [7] htmltools_0.5.1.1         GO.db_3.12.1             
+  [9] magrittr_2.0.1            memoise_2.0.0            
+ [11] annotate_1.68.0           modelr_0.1.8             
+ [13] askpass_1.1               siggenes_1.64.0          
+ [15] prettyunits_1.1.1         colorspace_2.0-0         
+ [17] rvest_0.3.6               blob_1.2.1               
+ [19] rappdirs_0.3.3            haven_2.3.1              
+ [21] xfun_0.21                 jsonlite_1.7.2           
+ [23] crayon_1.4.1              RCurl_1.98-1.2           
+ [25] genefilter_1.72.1         GEOquery_2.58.0          
+ [27] survival_3.2-7            gtable_0.3.0             
+ [29] zlibbioc_1.36.0           DelayedArray_0.16.1      
+ [31] Rhdf5lib_1.12.1           HDF5Array_1.18.1         
+ [33] scales_1.1.1              DBI_1.1.1                
+ [35] rngtools_1.5              Rcpp_1.0.6               
+ [37] xtable_1.8-4              progress_1.2.2           
+ [39] bit_4.0.4                 mclust_5.4.7             
+ [41] preprocessCore_1.52.1     httr_1.4.2               
+ [43] RColorBrewer_1.1-2        ellipsis_0.3.1           
+ [45] farver_2.0.3              pkgconfig_2.0.3          
+ [47] reshape_0.8.8             XML_3.99-0.5             
+ [49] dbplyr_2.1.0              labeling_0.4.2           
+ [51] tidyselect_1.1.0          rlang_0.4.10             
+ [53] later_1.1.0.1             AnnotationDbi_1.52.0     
+ [55] cellranger_1.1.0          munsell_0.5.0            
+ [57] tools_4.0.2               cachem_1.0.4             
+ [59] cli_2.3.0                 generics_0.1.0           
+ [61] RSQLite_2.2.3             broom_0.7.4              
+ [63] evaluate_0.14             fastmap_1.1.0            
+ [65] yaml_2.2.1                rematch2_2.1.2           
+ [67] org.Hs.eg.db_3.12.0       knitr_1.31               
+ [69] bit64_4.0.5               fs_1.5.0                 
+ [71] beanplot_1.2              scrime_1.3.5             
+ [73] nlme_3.1-152              doRNG_1.8.2              
+ [75] sparseMatrixStats_1.2.0   whisker_0.4              
+ [77] nor1mix_1.3-0             xml2_1.3.2               
+ [79] biomaRt_2.46.3            rstudioapi_0.13          
+ [81] compiler_4.0.2            curl_4.3                 
+ [83] reprex_1.0.0              statmod_1.4.35           
+ [85] stringi_1.5.3             highr_0.8                
+ [87] GenomicFeatures_1.42.1    lattice_0.20-41          
+ [89] Matrix_1.3-2              multtest_2.46.0          
+ [91] vctrs_0.3.6               pillar_1.4.7             
+ [93] lifecycle_0.2.0           rhdf5filters_1.2.0       
+ [95] cowplot_1.1.1             data.table_1.13.6        
+ [97] bitops_1.0-6              httpuv_1.5.5             
+ [99] rtracklayer_1.50.0        R6_2.5.0                 
+[101] promises_1.2.0.1          codetools_0.2-18         
+[103] MASS_7.3-53.1             assertthat_0.2.1         
+[105] rhdf5_2.34.0              openssl_1.4.3            
+[107] rprojroot_2.0.2           withr_2.4.1              
+[109] GenomicAlignments_1.26.0  Rsamtools_2.6.0          
+[111] GenomeInfoDbData_1.2.4    mgcv_1.8-33              
+[113] hms_1.0.0                 quadprog_1.5-8           
+[115] base64_2.0                rmarkdown_2.6            
+[117] DelayedMatrixStats_1.12.3 illuminaio_0.32.0        
+[119] git2r_0.28.0              lubridate_1.7.9.2        </code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<!-- Adjust MathJax settings so that all math formulae are shown using
+TeX fonts only; see
+http://docs.mathjax.org/en/latest/configuration.html.  This will make
+the presentation more consistent at the cost of the webpage sometimes
+taking slightly longer to load. Note that this only works because the
+footer is added to webpages before the MathJax javascript. -->
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    "HTML-CSS": { availableFonts: ["TeX"] }
+  });
+</script>
+
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
