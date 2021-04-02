@@ -37,7 +37,8 @@ pvalList <- lapply(colnames(tfit$contrasts), function(coef){
 })
 names(pvalList) <- colnames(tfit$contrasts)
 
-ann <- loadAnnotation(arrayType="EPIC")
+if(nrow(mVals) > 500000) arrayType <- "EPIC" else arrayType <- "450K"
+ann <- loadAnnotation(arrayType=arrayType)
 
 if(set == "KEGG"){
   collection <- missMethyl:::.getKEGG()$idList

@@ -18,6 +18,8 @@ obj$minsize -> minsize
 minfi::ilogit2(obj$mVals) -> bVals
 obj$targets -> targets
 
+if(nrow(mVals) > 500000) arrayType <- "EPIC" else arrayType <- "450K"
+
 if(set == "KEGG"){
     collection <- missMethyl:::.getKEGG()$idList
 
@@ -63,7 +65,7 @@ res <- lapply(1:ncol(tfit), function(i){
 
     gtRanks <- doGT(pheno.v = pheno,
                     data.m = bVals[, samps],
-                    array = "EPIC",
+                    array = arrayType,
                     ncores = 1)
     ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = collection,
                                ncores = 1, minN = minsize, adjPVth = 1)$`Rank(P)`)
