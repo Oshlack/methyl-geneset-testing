@@ -1,0 +1,282 @@
+---
+title: 'Gene set testing for Illumina HumanMethylation Arrays'
+subtitle: 'Generating "truth" gene sets from RNA-seq data'
+author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
+date: '`r format(Sys.Date(), "%B %d, %Y")`'
+output: html_document
+---
+
+```{r, message=FALSE, warning=FALSE, results='hide'}
+library(oligo)
+library(pd.hugene.1.0.st.v1)
+library(hugene10sttranscriptcluster.db)
+library(here)
+library(tidyverse)
+library(limma)
+library(glue)
+library(patchwork)
+library(ChAMP)
+source(here("code/utility.R"))
+```
+
+
+```{r, message=FALSE}
+files <- list.files(here("data/datasets/GSE45460"), pattern = "CEL",
+                    full.names = TRUE)
+raw_data <- oligo::read.celfiles(filenames = files)
+targets <- as.data.frame(strsplit2(rownames(raw_data@phenoData),"_")[,2:3])
+colnames(targets) <- c("ID","Stage")
+targets$Stage <- gsub(".CEL","",targets$Stage, fixed = TRUE)
+rownames(targets) <- rownames(raw_data@phenoData)
+Biobase::pData(raw_data) <- targets
+```
+
+Multi-dimensional scaling (MDS) plots show the largest sources of variation in the data. They are a good way of exploring the relationships between the samples and identifying structure in the data. The following series of MDS plots examines the first four principal components. 
+
+```{r}
+dims <- list(c(1,2), c(1,3), c(2,3), c(3,4))
+p <- vector("list", length(dims))
+
+for(i in 1:length(dims)){
+    tmp <- plotMDS(exp_raw <- log2(Biobase::exprs(raw_data)), top=1000, 
+                   gene.selection="common", plot = FALSE,
+                   dim.plot = dims[[i]])
+    
+    dat <- data.frame(x = tmp$x, y = tmp$y, group = targets$Stage)
+    p[[i]] <- ggplot(dat, aes(x = x, y = y, colour = group)) +
+        geom_point() +
+        labs(colour = "Stage", x = glue("PC {tmp$dim.plot[1]}"),
+             y = glue("PC {tmp$dim.plot[2]}"))
+    
+}
+
+(p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = "collect")
+```
+
+```{r}
+oligo::boxplot(raw_data, target = "core", xaxt = "none",
+               main = "Boxplot of log2-intensitites for the raw data")
+axis(1, at = 1:nrow(targets), labels = targets$ID, las = 2)
+```
+
+```{r, message=FALSE}
+raw_eset <- oligo::rma(raw_data, target = "core", normalize = FALSE)
+row_medians_assayData <- 
+    Biobase::rowMedians(as.matrix(Biobase::exprs(raw_eset)))
+
+RLE_data <- sweep(Biobase::exprs(raw_eset), 1, row_medians_assayData)
+RLE_data <- as.data.frame(RLE_data)
+RLE_data_gathered <- tidyr::gather(RLE_data, Sample, log2_expression_deviation)
+
+ggplot2::ggplot(RLE_data_gathered, aes(Sample, log2_expression_deviation)) + 
+    geom_boxplot(outlier.shape = NA) + 
+    ylim(c(-2, 2)) + 
+    theme(axis.text.x = element_text(colour = "aquamarine4", 
+                                     angle = 60, size = 6.5, hjust = 1 ,
+                                     face = "bold")) + 
+    scale_x_discrete(labels=targets$ID)
+```
+
+Apply the full RMA algorithm to our data in order to background-correct, normalize and summarize
+
+```{r}
+eset <- oligo::rma(raw_data, target = "core")
+dims <- list(c(1,2), c(1,3), c(2,3), c(3,4))
+p <- vector("list", length(dims))
+
+for(i in 1:length(dims)){
+    tmp <- plotMDS(exp_raw <- log2(Biobase::exprs(eset)), top=1000, 
+                   gene.selection="common", plot = FALSE,
+                   dim.plot = dims[[i]])
+    
+    dat <- data.frame(x = tmp$x, y = tmp$y, group = targets$Stage)
+    p[[i]] <- ggplot(dat, aes(x = x, y = y, colour = group)) +
+        geom_point() +
+        labs(colour = "Stage", x = glue("PC {tmp$dim.plot[1]}"),
+             y = glue("PC {tmp$dim.plot[2]}"))
+    
+}
+
+(p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = "collect")
+```
+
+We now filter out all transcripts that do not have intensities greater than the threshold in at least as many arrays as the smallest experimental group which we define as `min(no_of_samples)`.
+
+```{r}
+medians <- rowMedians(Biobase::exprs(eset))
+
+hist_res <- hist(medians, 100, col = "cornsilk1", freq = FALSE, 
+            main = "Histogram of the median intensities", 
+            border = "antiquewhite4",
+            xlab = "Median intensities")
+```
+
+```{r}
+man_threshold <- 4.5
+
+hist_res <- hist(medians, 100, col = "cornsilk", freq = FALSE, 
+            main = "Histogram of the median intensities",
+            border = "antiquewhite4",
+            xlab = "Median intensities")
+abline(v = man_threshold, col = "coral4", lwd = 2)
+```
+
+```{r}
+no_of_samples <- table(targets$Stage)
+idx_man_threshold <- apply(Biobase::exprs(eset), 1, function(x){
+    sum(x > man_threshold) >= min(no_of_samples)})
+table(idx_man_threshold)
+```
+
+```{r}
+eset_filt <- subset(eset, idx_man_threshold)
+```
+
+Many transcript-cluster identifiers will map to multiple Entrez IDs, i.e.  they can’t be unambigously assigned.
+We will filter them out.
+
+```{r}
+anno <- AnnotationDbi::select(hugene10sttranscriptcluster.db,
+                                  keys = (featureNames(eset_filt)),
+                                  columns = c("SYMBOL", "GENENAME", "ENTREZID"),
+                                  keytype = "PROBEID")
+
+anno <- subset(anno, !is.na(SYMBOL))
+```
+```{r}
+anno_grouped <- group_by(anno, PROBEID)
+anno_summarized <- 
+  dplyr::summarize(anno_grouped, no_of_matches = n_distinct(ENTREZID))
+
+head(anno_summarized)
+```
+```{r}
+anno_filtered <- filter(anno_summarized, no_of_matches > 1)
+
+head(anno_filtered)
+```
+```{r}
+nrow(anno_filtered)
+```
+```{r}
+ids_to_exlude <- (featureNames(eset_filt) %in% anno_filtered$PROBEID)
+
+table(ids_to_exlude)
+```
+```{r}
+eset_final <- subset(eset_filt, !ids_to_exlude)
+validObject(eset_final)
+```
+```{r}
+fData(eset_final)$PROBEID <- rownames(fData(eset_final))
+fData(eset_final) <- dplyr::left_join(fData(eset_final), anno)
+rownames(fData(eset_final)) <- fData(eset_final)$PROBEID 
+validObject(eset_final)
+```
+
+Filter out probes that don't have ENTREZIDs.
+
+```{r}
+keep <- !is.na(fData(eset_final)$ENTREZID)
+eset_final <- eset_final[keep,]
+validObject(eset_final)
+```
+
+# Differential expression analysis
+
+The background corrected and RMA normalised data...
+
+```{r, fig.width=9,fig.height=6}
+Stage <- factor(targets$Stage)
+design <- model.matrix(~0+Stage)
+
+fit <- lmFit(eset_final, design)
+cont.matrix <- makeContrasts(S1vS2=StageS1-StageS2,
+                             S2vS3=StageS2-StageS3,
+                             levels=design)
+fit2 <- contrasts.fit(fit, cont.matrix)
+fit2 <- eBayes(fit2, robust=TRUE, trend=TRUE)
+pval <- 0.01
+fitSum <- summary(decideTests(fit2, p.value = pval))
+fitSum
+```
+
+```{r}
+fitSum <- summary(decideTests(fit2, p.value = pval))
+dat <- reshape2::melt(fitSum[rownames(fitSum) != "NotSig", ])
+colnames(dat) <- c("dir", "comp", "value") 
+
+p <- ggplot(dat, aes(x = comp, y = value, fill = dir)) +
+    geom_bar(stat = "identity", position = "dodge") +
+    labs(x = "Comparison", y = "No. DE Genes (FDR < 0.05)", fill = "Direction") +
+    scale_fill_brewer(palette = "Set1", direction = -1)
+p
+```
+
+Save figure for use in manuscript.
+
+```{r}
+fig <- here("output/figures/SFig-4D.rds")
+saveRDS(p, fig, compress = FALSE)
+```
+
+# Gene set testing
+
+Testing for enrichment of GO categories and KEGG pathways amongst statistically significant differentially expressed genes.
+
+Save results as RDS objects for use as "truth" sets in methylation analyses.
+
+```{r, message=FALSE}
+go <- NULL
+kegg <- NULL
+
+for(i in 1:ncol(cont.matrix)){
+    top <- topTable(fit2, coef = i, p.value = pval, number = Inf)
+    tmp <- goana(top$ENTREZID, universe = fData(eset_final)$ENTREZID)
+    tmp <- topGO(tmp, number = Inf)
+    tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+    tmp <- rownames_to_column(tmp, var = "ID")
+    tmp$contrast <- colnames(cont.matrix)[i] 
+    go <- bind_rows(go, tmp)
+        
+    tmp <- kegga(top$ENTREZID, universe = fData(eset_final)$ENTREZID, 
+                 species = "Hs", species.KEGG = "hsa")
+    tmp <- topKEGG(tmp, number = Inf)
+    tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
+    tmp <- rownames_to_column(tmp, var = "PID")
+    tmp$contrast <- colnames(cont.matrix)[i] 
+    kegg <- bind_rows(kegg, tmp)
+}
+
+outDir <- here::here("data/cache-rnaseq")
+if (!dir.exists(outDir)) dir.create(outDir)
+
+saveRDS(go, here(glue("data/cache-rnaseq/RNAseq-GSE45460-GO.rds")))
+saveRDS(kegg, here(glue("data/cache-rnaseq/RNAseq-GSE45460-KEGG.rds")))
+```
+
+Test whether the BROAD sets are enriched for the differentially expressed genes using the `gsaseq` function that can be found in `code/utility.R`
+
+```{r}
+data(PathwayList)
+keep <- sapply(PathwayList, function(x) any(x %in% fData(eset_final)$SYMBOL))
+entrez <- suppressMessages(lapply(PathwayList[keep], function(x){
+    tmp <- unname(fData(eset_final)$ENTREZID[fData(eset_final)$SYMBOL %in% x])
+    tmp[!is.na(tmp)]
+}))
+
+gsa <- NULL
+for(i in 1:ncol(cont.matrix)){
+    top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
+    
+    tmp <- gsaseq(top$ENTREZID, universe = fData(eset_final)$ENTREZID, 
+                  collection = entrez, gene.length = NULL)
+    tmp <- rownames_to_column(data.frame(tmp), var = "ID")
+    tmp$contrast <- colnames(cont.matrix)[i] 
+    gsa <- bind_rows(gsa, tmp)
+    
+}
+
+saveRDS(gsa, here("data/cache-rnaseq/RNAseq-GSE45460-BROAD-GSA.rds"))
+```
+
