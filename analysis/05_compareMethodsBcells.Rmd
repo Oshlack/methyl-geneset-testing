@@ -271,7 +271,7 @@ dat %>% filter(set == "GO") %>%
     mutate(method = unname(dict[method])) %>% 
     inner_join(medCpgEgGo, by = c("ID" = "GO")) -> sub
 
-bins <- rbin_quantiles(sub, ID, med, bins = 12)
+bins <- rbin_quantiles(sub, ID, med, bins = 11)
 sub$bin <- as.factor(findInterval(sub$med, bins$upper_cut))
 
 binLabs <- paste0("<", bins$upper_cut)
@@ -298,7 +298,7 @@ p
 We also examine results when top ranked 100 GO terms from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
 ```{r}
-rnaseqGO <- readRDS(here("data/cache-rnaseq/RNAseq-SRP217468-GO.rds"))
+rnaseqGO <- readRDS(here("data/cache-rnaseq/RNAseq-GSE45460-GO.rds"))
 rnaseqGO %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topGOSets
@@ -372,8 +372,8 @@ dat %>% filter(set == "GO") %>%
 
 ```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
 p <- vector("list", length(unique(sub$contrast)))
-truthPal <- scales::hue_pal()(4)
-names(truthPal) <- c("Both", "ISP", "Neither", "RNAseq")
+truthPal <- scales::hue_pal()(4)[3:4]
+names(truthPal) <- c("None", "RNAseq")
 
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
@@ -385,16 +385,9 @@ for(i in 1:length(p)){
     setLabs <- substr(tmp$TERM, 1, 40)
     names(setLabs) <- tmp$idx
     
-    tmp %>% mutate(rna = ID %in% topGOSets$ID[topGOSets$contrast %in% cont],
-                   isp = ID %in% immuneGO$GOID,
-                   both = rna + isp,
-                   col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
-                                       ifelse(both == 1 & isp == 1, 
-                                              "ISP", "Neither")))) %>%
-        mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
-                                       "Neither"))) -> tmp
+      tmp %>% mutate(rna = ID %in% topGOSets$ID[topGOSets$contrast %in% cont],
+                   col = ifelse(rna == 1, "RNAseq","None")) %>%
+        mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
         geom_point(aes(size = n), alpha = 0.7) +
@@ -486,8 +479,8 @@ Now test KEGG pathways with at least 5 genes and 5000 at most.
 
 Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as "truth".
 
-```{r, fig.height=7, fig.width=9}
-rnaseqKEGG <- readRDS(here("data/cache-rnaseq/RNAseq-SRP217468-KEGG.rds"))
+```{r}
+rnaseqKEGG <- readRDS(here("data/cache-rnaseq/RNAseq-GSE45460-KEGG.rds"))
 rnaseqKEGG %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topKEGG
@@ -554,16 +547,9 @@ for(i in 1:length(p)){
     setLabs <- substr(tmp$Description, 1, 40)
     names(setLabs) <- tmp$idx
     
-    tmp %>% mutate(rna = ID %in% topKEGG$PID[topKEGG$contrast %in% cont],
-                   isp = ID %in% immuneKEGG$PID,
-                   both = rna + isp,
-                   col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
-                                       ifelse(both == 1 & isp == 1, 
-                                              "ISP", "Neither")))) %>%
-        mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
-                                       "Neither"))) -> tmp
+      tmp %>% mutate(rna = ID %in% topKEGG$PID[topKEGG$contrast %in% cont],
+                   col = ifelse(rna == 1, "RNAseq","None")) %>%
+        mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
         geom_point(aes(size = n), alpha = 0.7) +
@@ -651,7 +637,7 @@ p
 As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. Using the top 100 ranked gene sets as identified by Belinda's `gsaseq` analysis of the corresponding RNAseq data as "truth".
 
 ```{r}
-rnaseqBROAD <- readRDS(here("data/cache-rnaseq/RNAseq-SRP217468-BROAD-GSA.rds"))
+rnaseqBROAD <- readRDS(here("data/cache-rnaseq/RNAseq-GSE45460-BROAD-GSA.rds"))
 rnaseqBROAD %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topBROAD
@@ -728,7 +714,7 @@ for(i in 1:length(p)){
     setLabs <- substr(tmp$ID, 1, 30)
     names(setLabs) <- tmp$idx
     
-    tmp %>% mutate(rna = ID %in% topBROAD$ID[topGOSets$contrast %in% cont],
+    tmp %>% mutate(rna = ID %in% topBROAD$ID[topBROAD$contrast %in% cont],
                    col = ifelse(rna == 1, "RNAseq", "None")) %>%
         mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
     
@@ -737,7 +723,7 @@ for(i in 1:length(p)){
         scale_size(limits = c(min(sub$n), max(sub$n))) +
         facet_wrap(vars(method), ncol = 2, scales = "free") +
         scale_y_discrete(labels = setLabs) +
-        scale_color_manual(values = scales::hue_pal()(4)[3:4]) +
+        scale_color_manual(values = truthPal) +
         labs(y = "", size = "No. genes", colour = "In truth set") +
         theme(axis.text.y = element_text(size = 6),
               axis.text.x = element_text(size = 6),
