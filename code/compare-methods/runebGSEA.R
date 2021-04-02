@@ -18,7 +18,7 @@ obj$minsize -> minsize
 minfi::ilogit2(obj$mVals) -> bVals
 obj$targets -> targets
 
-if(nrow(mVals) > 500000) arrayType <- "EPIC" else arrayType <- "450k"
+if(nrow(bVals) > 500000) arrayType <- "EPIC" else arrayType <- "450k"
 
 if(set == "KEGG"){
     collection <- missMethyl:::.getKEGG()$idList
