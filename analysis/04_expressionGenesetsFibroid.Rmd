@@ -45,6 +45,7 @@ Load sample information and file names.
 ```{r}
 targets <- read_delim(here("data/datasets/SRP217468/SraRunTable.txt"), 
                       delim = "\t")
+targets$tissue[targets$tissue == "Myometrium"] <- "Normal"
 targets
 ```
 
@@ -206,8 +207,8 @@ colnames(design) <- c(levels(factor(targets$tissue)),
                       levels(factor(targets$isolate))[-1])
 v <- voom(y, design, plot = TRUE)
 fit <- lmFit(v, design)
-cont <- makeContrasts(MyometriumVCervix=Myometrium-Cervix,
-                             MyometriumVFibroid=Myometrium-Fibroid,
+cont <- makeContrasts(NormalVCervix=Normal-Cervix,
+                             NormalVFibroid=Normal-Fibroid,
                              CervixVFibroid=Cervix-Fibroid,
                              levels=design)
 fit <- lmFit(v, design)

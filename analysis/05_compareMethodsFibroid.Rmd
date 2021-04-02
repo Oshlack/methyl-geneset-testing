@@ -213,7 +213,7 @@ Firstly, the results of the statistical analysis of the three blood cell compari
 minsize <- 5
 maxsize <- 5000
 
-outDir <- here::here("data/cache-intermediates/FIBROIDS")
+outDir <- here::here("data/cache-intermediates")
 if (!dir.exists(outDir)) dir.create(outDir)
 
 outFile <- here("data/cache-intermediates/fibroids.contrasts.rds")
@@ -239,7 +239,7 @@ The code used to run all the gene set testing analyses using the different metho
 The results of all the gene set testing analyses, using all the different methods, for the different types of gene sets, are loaded into a `list` of `data.frames`. All of the `data.frames` in the `list` are then concatenated into a `tibble` for downstream analysis and plotting.
 
 ```{r}
-inFiles <- list.files(here("output/compare-methods/FIBROIDS"), pattern = "rds", 
+inFiles <- list.files(here("output/compare-methods/FIBROID"), pattern = "rds", 
                       full.names = TRUE)
 
 res <- lapply(inFiles, function(file){
@@ -330,11 +330,9 @@ for(i in 1:length(unique(dat$contrast))){
     scale_color_manual(values = methodCols)
 }
 
-(p[[1]] + ggtitle(sort(unique(dat$contrast))[1]) | 
-  p[[2]] + ggtitle(sort(unique(dat$contrast))[2])) + 
-    plot_layout(guides = "collect") & 
-    theme(legend.position = "bottom")
-  
+p[[1]] + ggtitle(sort(unique(dat$contrast))[1]) 
+p[[2]] + ggtitle(sort(unique(dat$contrast))[2])
+p[[3]] + ggtitle(sort(unique(dat$contrast))[3]) 
 ```
 
 Save figure for use in manuscript.
@@ -372,8 +370,8 @@ dat %>% filter(set == "GO") %>%
 
 ```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
 p <- vector("list", length(unique(sub$contrast)))
-truthPal <- scales::hue_pal()(4)
-names(truthPal) <- c("Both", "ISP", "Neither", "RNAseq")
+truthPal <- scales::hue_pal()(4)[3:4]
+names(truthPal) <- c("None", "RNAseq")
 
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
@@ -386,15 +384,8 @@ for(i in 1:length(p)){
     names(setLabs) <- tmp$idx
     
     tmp %>% mutate(rna = ID %in% topGOSets$ID[topGOSets$contrast %in% cont],
-                   isp = ID %in% immuneGO$GOID,
-                   both = rna + isp,
-                   col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
-                                       ifelse(both == 1 & isp == 1, 
-                                              "ISP", "Neither")))) %>%
-        mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
-                                       "Neither"))) -> tmp
+                   col = ifelse(rna == 1, "RNAseq","None")) %>%
+        mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
         geom_point(aes(size = n), alpha = 0.7) +
@@ -415,7 +406,7 @@ for(i in 1:length(p)){
 
 shift_legend(p[[1]], plot = TRUE, pos = "left")
 shift_legend(p[[2]], plot = TRUE, pos = "left")
-
+shift_legend(p[[3]], plot = TRUE, pos = "left")
 ```
 
 Save figure for use in manuscript.
@@ -514,13 +505,13 @@ p
 
 Save figure for use in manuscript.
 
-```{r}
-fig <- here("output/figures/SFig-7A.rds")
-saveRDS(p1, fig, compress = FALSE)
+<!-- ```{r} -->
+<!-- fig <- here("output/figures/SFig-7A.rds") -->
+<!-- saveRDS(p1, fig, compress = FALSE) -->
 
-fig <- here("output/figures/SFig-7B.rds")
-saveRDS(p2, fig, compress = FALSE)
-```
+<!-- fig <- here("output/figures/SFig-7B.rds") -->
+<!-- saveRDS(p2, fig, compress = FALSE) -->
+<!-- ``` -->
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
@@ -554,16 +545,9 @@ for(i in 1:length(p)){
     setLabs <- substr(tmp$Description, 1, 40)
     names(setLabs) <- tmp$idx
     
-    tmp %>% mutate(rna = ID %in% topKEGG$PID[topKEGG$contrast %in% cont],
-                   isp = ID %in% immuneKEGG$PID,
-                   both = rna + isp,
-                   col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
-                                       ifelse(both == 1 & isp == 1, 
-                                              "ISP", "Neither")))) %>%
-        mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
-                                       "Neither"))) -> tmp
+     tmp %>% mutate(rna = ID %in% topKEGG$PID[topKEGG$contrast %in% cont],
+                   col = ifelse(rna == 1, "RNAseq","None")) %>%
+        mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
         geom_point(aes(size = n), alpha = 0.7) +
@@ -584,6 +568,7 @@ for(i in 1:length(p)){
 
 shift_legend(p[[1]], plot = TRUE, pos = "left")
 shift_legend(p[[2]], plot = TRUE, pos = "left")
+shift_legend(p[[3]], plot = TRUE, pos = "left")
 ```
 
 Save figure for use in manuscript.
@@ -682,6 +667,7 @@ for(i in 1:length(unique(dat$contrast))){
 
 p[[1]]
 p[[2]]
+p[[3]]
 ```
 
 Save figure for use in manuscript.
@@ -728,7 +714,7 @@ for(i in 1:length(p)){
     setLabs <- substr(tmp$ID, 1, 30)
     names(setLabs) <- tmp$idx
     
-    tmp %>% mutate(rna = ID %in% topBROAD$ID[topGOSets$contrast %in% cont],
+    tmp %>% mutate(rna = ID %in% topBROAD$ID[topBROAD$contrast %in% cont],
                    col = ifelse(rna == 1, "RNAseq", "None")) %>%
         mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
     
@@ -737,7 +723,7 @@ for(i in 1:length(p)){
         scale_size(limits = c(min(sub$n), max(sub$n))) +
         facet_wrap(vars(method), ncol = 2, scales = "free") +
         scale_y_discrete(labels = setLabs) +
-        scale_color_manual(values = scales::hue_pal()(4)[3:4]) +
+        scale_color_manual(values = truthPal) +
         labs(y = "", size = "No. genes", colour = "In truth set") +
         theme(axis.text.y = element_text(size = 6),
               axis.text.x = element_text(size = 6),
@@ -751,6 +737,7 @@ for(i in 1:length(p)){
 
 shift_legend(p[[1]], plot = TRUE, pos = "left")
 shift_legend(p[[2]], plot = TRUE, pos = "left")
+shift_legend(p[[3]], plot = TRUE, pos = "left")
 ```
 
 Save figure for use in manuscript.
