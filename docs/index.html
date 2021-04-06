@@ -333,16 +333,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree58c95d6825d9f7381119d3ed6edcaa38097e71detargetblank58c95d6a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/58c95d6825d9f7381119d3ed6edcaa38097e71de" target="_blank">58c95d6</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree98431578adb30dcaa808cddbfe752948d7eb5385targetblank9843157a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/98431578adb30dcaa808cddbfe752948d7eb5385" target="_blank">9843157</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree58c95d6825d9f7381119d3ed6edcaa38097e71detargetblank58c95d6a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree98431578adb30dcaa808cddbfe752948d7eb5385targetblank9843157a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/58c95d6825d9f7381119d3ed6edcaa38097e71de" target="_blank">58c95d6</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/98431578adb30dcaa808cddbfe752948d7eb5385" target="_blank">9843157</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -352,6 +352,7 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
+    Ignored:    analysis/figure/
     Ignored:    analysis/figures.nb.html
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
@@ -403,6 +404,7 @@ Ignored files:
     Ignored:    output/test/
 
 Unstaged changes:
+    Modified:   analysis/04_expressionGenesetsBcells.Rmd
     Modified:   analysis/05_compareMethods.Rmd
 
 </code></pre>
@@ -442,6 +444,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/98431578adb30dcaa808cddbfe752948d7eb5385/analysis/index.Rmd" target="_blank">9843157</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-06
+</td>
+<td>
+wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/07_regionAnalysisBcells.Rmd&quot;,
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/17cc1c91ddc1dcb9963ff89eb6b69915c4624d60/docs/index.html" target="_blank">17cc1c9</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1451,10 +1487,13 @@ Start workflowr project.
 <li><p><a href="05_compareMethods.html">Compare performance of different methods</a> Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
 <li><p><a href="05_compareMethodsCellLines.html">Compare performance of different methods</a> Analyse an EPIC array breast cancer cell line data using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
 <li><p><a href="05_compareMethodsFibroid.html">Compare performance of different methods</a> Analyse an EPIC array normal and fibroid uterine tissue dataset using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
-<li><p><a href="05_compareMethodsFibroid.html">Compare performance of different methods</a> Analyse a 450k array dataset of B-cell development data using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
+<li><p><a href="05_compareMethodsBcells.html">Compare performance of different methods</a> Analyse a 450k array dataset of B-cell development data using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
 </ol></li>
 <li><p><a href="06_runTimeComparison.html">Compare run-time of different methods</a> Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare the run-time of the different methods.</p></li>
-<li><p><a href="07_regionAnalysis.html">Evaluate GOregion</a> Evalulate GOregion, our extension of gometh for geneset testing of differentially methylated regions (DMRs) identified by DMR finding software.</p></li>
+<li><ol style="list-style-type: lower-alpha">
+<li><p><a href="07_regionAnalysis.html">Evaluate GOregion (Sorted blood cell data)</a> Evalulate GOregion, our extension of gometh for geneset testing of differentially methylated regions (DMRs) identified by DMR finding software.</p></li>
+<li><p><a href="07_regionAnalysisBcells.html">Evaluate GOregion (B-cell development data)</a> Evalulate GOregion, our extension of gometh for geneset testing of differentially methylated regions (DMRs) identified by DMR finding software.</p></li>
+</ol></li>
 <li><p><a href="methylGSAParamSweep.html">Effect of gene set size parameters on methylGSA</a> Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare the run-time of the different methods.</p></li>
 </ol>
 </div>
