@@ -63,6 +63,10 @@ Analysis
     c) [Generate a uterine fibroid RNAseq "truth" set](04_expressionGenesetsCellLines.html)
     Analyse an RNAseq normal and fibroid uterine tissue dataset and identify the top ranked 
     gene sets for each tissue comparison.
+    
+    d) [Generate a B-cell development gene exression "truth" set](04_expressionGenesetsBcells.html)
+    Analyse Affymetrix gene expression microarray data of B-cell development and identify the top ranked 
+    gene sets for each stage comparison.
          
 5.
     a) [Compare performance of different methods](05_compareMethods.html)
@@ -77,6 +81,11 @@ Analysis
     
     c) [Compare performance of different methods](05_compareMethodsFibroid.html)
     Analyse an EPIC array normal and fibroid uterine tissue dataset using various gene set 
+    testing methods. Compare how well the different methods perform using several 
+    metrics.
+    
+    d) [Compare performance of different methods](05_compareMethodsFibroid.html)
+    Analyse a 450k array dataset of B-cell development data using various gene set 
     testing methods. Compare how well the different methods perform using several 
     metrics.
          
