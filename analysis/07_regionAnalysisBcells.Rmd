@@ -344,13 +344,13 @@ dat %>% dplyr::filter(contrast == "S2vS3") %>%
     arrange(method, P.DE) %>%
     group_by(method) %>%
     dplyr::filter(!(GO %in% topGOSets$ID[topGOSets$contrast %in% "S2vS3"])) %>%
-    inner_join(terms, by = c("GO" = "GOID"))
+    inner_join(terms, by = c("GO" = "GOID")) %>% data.frame
 ```
 
 Top 100 "truth" terms for Stage 2 versus Stage 3 - these look very broad.
 
 ```{r}
-topGOSets[topGOSets$contrast == "S2vS3",]
+topGOSets[topGOSets$contrast == "S2vS3",] %>% data.frame
 ```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
