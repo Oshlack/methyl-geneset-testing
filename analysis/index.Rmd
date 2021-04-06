@@ -84,7 +84,7 @@ Analysis
     testing methods. Compare how well the different methods perform using several 
     metrics.
     
-    d) [Compare performance of different methods](05_compareMethodsFibroid.html)
+    d) [Compare performance of different methods](05_compareMethodsBcells.html)
     Analyse a 450k array dataset of B-cell development data using various gene set 
     testing methods. Compare how well the different methods perform using several 
     metrics.
@@ -93,9 +93,14 @@ Analysis
    Analyse an EPIC array sorted blood cell dataset using various gene set 
    testing methods. Compare the run-time of the different methods.
       
-7. [Evaluate GOregion](07_regionAnalysis.html)
-   Evalulate GOregion, our extension of gometh for geneset testing of 
-   differentially methylated regions (DMRs) identified by DMR finding software.
+7. 
+    a) [Evaluate GOregion (Sorted blood cell data)](07_regionAnalysis.html)
+    Evalulate GOregion, our extension of gometh for geneset testing of 
+    differentially methylated regions (DMRs) identified by DMR finding software.
+
+    b) [Evaluate GOregion (B-cell development data)](07_regionAnalysisBcells.html)
+    Evalulate GOregion, our extension of gometh for geneset testing of 
+    differentially methylated regions (DMRs) identified by DMR finding software.
 
 8. [Effect of gene set size parameters on methylGSA](methylGSAParamSweep.html)
    Analyse an EPIC array sorted blood cell dataset using various gene set 
