@@ -745,19 +745,6 @@ p[[2]]
 p[[3]]
 ```
 
-Save figure for use in manuscript.
-
-```{r}
-fig <- here("output/figures/SFig-8A.rds")
-saveRDS(p[[1]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-9A.rds")
-saveRDS(p[[2]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-10A.rds")
-saveRDS(p[[3]], fig, compress = FALSE)
-```
-
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
 ```{r, fig.height=8, fig.width=9}
@@ -778,6 +765,9 @@ dat %>% filter(set == "BROAD") %>%
 ```
 
 ```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
+truthPal <- scales::hue_pal()(4)[3:4]
+names(truthPal) <- c("None", "RNAseq")
+
 p <- vector("list", length(unique(sub$contrast)))
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
@@ -798,7 +788,7 @@ for(i in 1:length(p)){
         scale_size(limits = c(min(sub$n), max(sub$n))) +
         facet_wrap(vars(method), ncol = 2, scales = "free") +
         scale_y_discrete(labels = setLabs) +
-        scale_color_manual(values = scales::hue_pal()(4)[3:4]) +
+        scale_color_manual(values = truthPal) +
         labs(y = "", size = "No. genes", colour = "In truth set") +
         theme(axis.text.y = element_text(size = 6),
               axis.text.x = element_text(size = 6),
@@ -813,25 +803,6 @@ for(i in 1:length(p)){
 shift_legend(p[[1]], plot = TRUE, pos = "left")
 shift_legend(p[[2]], plot = TRUE, pos = "left")
 shift_legend(p[[3]], plot = TRUE, pos = "left")
-```
-
-Save figure for use in manuscript.
-
-```{r}
-fig <- here("output/figures/SFig-8B.rds")
-saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-9B.rds")
-saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-10B.rds")
-saveRDS(shift_legend(p[[3]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
 ```
 
 P-value histograms for the different methods for all contrasts on BROAD gene sets.

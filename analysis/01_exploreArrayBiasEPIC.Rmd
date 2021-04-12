@@ -189,7 +189,10 @@ p <- ggplot(sigDat, aes(x=noCpgs, y=pSig, fill=method)) +
     geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
     labs(y="Prop. GO cat. with p-value < 0.05", x="No. randomly sampled CpGs",
          fill="Method") +
-    scale_fill_manual(values = methodCols)
+    scale_fill_manual(values = methodCols)  +
+    facet_grid(cols = vars(noCpgs), scales = "free_x") + 
+    theme(strip.background = element_blank(), 
+          strip.text = element_blank())
 p
 ```
 
@@ -242,21 +245,31 @@ goFreq %>% group_by(GO) %>%
     dplyr::select(med) %>%
     summarise(med = median(med)) -> medPerGO
 
-p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) + 
-    geom_violin(size = 0.3) + 
-    stat_summary(geom="point", size = 0.5, color="white", 
+dat_text <- data.frame(
+  label = c(rep("",4),
+            "Med. Med. # Genes", 
+            glue("per GO Cat. = {round(medPerGO$med, 2)}")),
+  method = "GOmeth",
+  noCpgs = unique(medAvgDat$noCpgs),
+  x = unique(medAvgDat$noCpgs),
+  y = rep(medPerGO$med + 1, 6)
+)
+
+p <- ggplot(medAvgDat, aes(x=noCpgs, y=medAvgFreq, fill=method)) +
+    geom_violin(size = 0.3, scale = "area") +
+    stat_summary(geom="point", size = 0.5, color="white",
                  position = position_dodge(0.9),
                  show.legend = FALSE, fun = median) +
-    labs(y="Median avg. no. CpGs/gene/GO cat.", 
+    labs(y="Median avg. no. CpGs/gene/GO cat.",
          x="No. randomly sampled CpGs",
          fill="Method")  +
     scale_fill_manual(values = methodCols) +
     geom_hline(yintercept = medPerGO$med, linetype="dashed", color = "red") +
-    annotate("text", x = 6.5, 
-             label=glue("Med. Med. No. Genes/GO Cat. = {round(medPerGO$med, 2)}"), 
-             y = medPerGO$med + 2, 
-             colour="red", 
-             size = 2.5, hjust="right")
+    geom_text(data = dat_text, colour="red", size = 2.5, hjust="left", 
+              mapping = aes(x = -Inf, y = y, label = label)) +
+    facet_grid(cols = vars(noCpgs), scales = "free_x") +
+    theme(strip.background = element_blank(),
+          strip.text = element_blank())
 p
 ```
 

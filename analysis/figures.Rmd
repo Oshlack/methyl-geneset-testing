@@ -244,11 +244,15 @@ a <- readRDS(here("output/figures/SFig-4A.rds"))
 b <- readRDS(here("output/figures/SFig-4B.rds"))
 c <- readRDS(here("output/figures/SFig-4C.rds"))
 d <- readRDS(here("output/figures/SFig-4D.rds"))
+e <- readRDS(here("output/figures/SFig-4E.rds"))
+f <- readRDS(here("output/figures/SFig-4F.rds"))
+g <- readRDS(here("output/figures/SFig-4G.rds"))
 
 layout <- "
-AABB
-AABB
-CCDD
+AAABBB
+AAABBB
+CCCDDD
+EEFFGG
 "
 
 cairo_pdf(here("output/figures/SFig-04.pdf"), width = 9)

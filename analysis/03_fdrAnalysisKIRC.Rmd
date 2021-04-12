@@ -163,23 +163,26 @@ The plots below shows that mRRA (ORA) does not control the FDR very well as the 
 
 ```{r, fig.width=9}  
 dat %>% 
-  #left_join(rownames_to_column(noGenes), by = c("ID" = "rowname")) %>%
-  #filter(noGenes >= 1) %>%
-  mutate(method = unname(dict[method])) %>%
-  group_by(simNo, sampleNo, method) %>% 
-  summarise(psig = sum(pvalue < 0.05)/length(pvalue)) %>%
-  mutate(sampleOrd = as.integer(sampleNo)) -> sigDat
+    #left_join(rownames_to_column(noGenes), by = c("ID" = "rowname")) %>%
+    #filter(noGenes >= 1) %>%
+    mutate(method = unname(dict[method])) %>%
+    group_by(simNo, sampleNo, method) %>% 
+    summarise(psig = sum(pvalue < 0.05)/length(pvalue)) %>%
+    mutate(sampleOrd = as.integer(sampleNo)) -> sigDat
 
 p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig, 
                         fill = method)) +
-  geom_violin(scale = "width", width = 0.8, size = 0.3) + 
-  stat_summary(geom = "point", size = 0.5, color = "white",
-               position = position_dodge(0.8),
-               show.legend = FALSE, fun = median) +
-  geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
-  labs(y="Prop. gene sets with p-value < 0.05", x="No. samples per group",
-       fill="Method") +
-  scale_fill_manual(values = methodCols)
+    geom_violin(scale = "width", width = 0.8, size = 0.3) + 
+    stat_summary(geom = "point", size = 0.5, color = "white",
+                 position = position_dodge(0.8),
+                 show.legend = FALSE, fun = median) +
+    geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
+    labs(y="Prop. gene sets with p-value < 0.05", x="No. samples per group",
+         fill="Method") +
+    scale_fill_manual(values = methodCols) +
+    facet_grid(cols = vars(sampleOrd), scales = "free_x") + 
+    theme(strip.background = element_blank(), 
+          strip.text = element_blank())
 p
 ```
 

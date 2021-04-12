@@ -142,7 +142,6 @@ design <- model.matrix(~0+Stage)
 
 fit <- lmFit(mVals, design)
 cont.matrix <- makeContrasts(S1vS2=StageS1-StageS2,
-                             S2vS3=StageS2-StageS3,
                              levels=design)
 fit2 <- contrasts.fit(fit, cont.matrix)
 fit2 <- eBayes(fit2, robust=TRUE, trend=TRUE)
@@ -178,12 +177,15 @@ saveRDS(p, fig, compress = FALSE)
 Examine only the independent contrasts.
 
 ```{r}
-dat <- reshape2::melt(fitSum[rownames(fitSum) != "NotSig", ])
-colnames(dat) <- c("dir","comp","num")
+fitSum %>% 
+    data.frame %>%
+    rename_with(.fn = ~ c("Direction", "Comparison", "Value")) %>%
+    filter(Direction != "NotSig") -> dat
 
-p <- ggplot(dat, aes(x = comp, y = num, fill = dir)) +
+p <- ggplot(dat, aes(x = Comparison, y = Value, fill = Direction)) +
     geom_bar(stat = "identity", position = "dodge") +
-    labs(x = "Comparison", y = "No. DM CpGs (FDR < 0.05)", fill = "Direction") +
+    labs(x = "Comparison", y = glue("No. DE CpGs (FDR < {pval})"), 
+         fill = "Direction") +
     scale_fill_brewer(palette = "Set1", direction = -1)
 p
 ```
@@ -265,9 +267,9 @@ cpgEgGo %>%
 ```
 In order to examine whether the probe-number bias influenced the significantly enriched GO categories for the five different methods, we split the GO categories into bins based on the median number of CpGs per gene per GO category. We then calculated the proportion of significantly enriched GO categories in each bin for each of the three comparisons. As GOmeth explicitly corrects for this bias it showed very little trend. However mRRA (ORA) tended to have more significant GO categories when the genes had larger numbers of CpGs. The hypergeometric test and mRRA (GSEA) tended to have more significant GO categories with average numbers of CpGs associated per gene ranging from 27 - 44. The mGLM method appears to control for the probe-number bias of the array fairly well.
 
-```{r, fig.width=7}
+```{r}
 dat %>% filter(set == "GO") %>%
-    filter(sub %in% c("n","c1")) %>% 
+    filter(sub %in% c("n","p1")) %>% 
     mutate(method = unname(dict[method])) %>% 
     inner_join(medCpgEgGo, by = c("ID" = "GO")) -> sub
 
@@ -313,7 +315,7 @@ for(i in 1:length(unique(dat$contrast))){
     cont <- sort(unique(dat$contrast))[i]
     
     dat %>% filter(set == "GO") %>%
-        filter(sub %in% c("n","c1")) %>%
+        filter(sub %in% c("n","p1")) %>%
         filter(contrast == cont) %>%
         mutate(method = unname(dict[method])) %>% 
         arrange(method, pvalue) %>%
@@ -324,7 +326,7 @@ for(i in 1:length(unique(dat$contrast))){
         mutate(truth = "ISP Terms") -> immuneSum
     
     dat %>% filter(set == "GO") %>%
-        filter(sub %in% c("n","c1")) %>%
+        filter(sub %in% c("n","p1")) %>%
         filter(contrast == cont) %>%
         mutate(method = unname(dict[method])) %>% 
         arrange(method, pvalue) %>%
@@ -348,11 +350,17 @@ for(i in 1:length(unique(dat$contrast))){
 }
 
 p[[1]] + ggtitle(sort(unique(dat$contrast))[1]) 
-p[[2]] + ggtitle(sort(unique(dat$contrast))[2])
   
 ```
 
 Save figure for use in manuscript.
+
+```{r}
+fig <- here("output/figures/SFig-8C.rds")
+saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
+                     pos = "left"), 
+        fig, compress = FALSE)
+```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
 
@@ -363,7 +371,7 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList,
                              var = "ID")
 
 dat %>% filter(set == "GO") %>%
-    filter(sub %in% c("n","c1")) %>% 
+    filter(sub %in% c("n","p1")) %>% 
     mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
@@ -418,33 +426,27 @@ for(i in 1:length(p)){
 }
 
 shift_legend(p[[1]], plot = TRUE, pos = "left")
-shift_legend(p[[2]], plot = TRUE, pos = "left")
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-4D.rds")
+fig <- here("output/figures/SFig-8D.rds")
 saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-5B.rds")
-saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
                      pos = "left"), 
         fig, compress = FALSE)
 ```
 
 P-value histograms for the different methods for all contrasts on GO categories.
 
-```{r, fig.height=8, fig.width=7}
+```{r, fig.height=7, fig.width=6}
 dat %>% filter(set == "GO") %>%
-    filter(sub %in% c("n","c1")) %>%
+    filter(sub %in% c("n","p1")) %>%
     mutate(method = unname(dict[method])) -> subDat 
     
 ggplot(subDat, aes(pvalue, fill = method)) +
     geom_histogram(binwidth = 0.025) +
-    facet_grid(cols = vars(contrast), rows = vars(method)) +
+    facet_wrap(vars(method), ncol = 2, nrow = 4) +
     theme(legend.position = "bottom") +
     labs(x = "P-value", y = "Frequency", fill = "Method") +
     scale_fill_manual(values = methodCols)
@@ -454,7 +456,7 @@ ggplot(subDat, aes(pvalue, fill = method)) +
 
 As the results of GOmeth depend on the list of significant CpGs provided as input to the function, we explored the effect of selecting "significant" CpGs in different ways on the gene set testing performance of GOmeth.
 
-```{r, fig.width=7, fig.height=8}
+```{r}
 dat %>% filter(set == "GO") %>%
     filter(grepl("mmethyl", method)) %>%
     mutate(method = unname(dict[method])) %>%
@@ -469,14 +471,14 @@ dat %>% filter(set == "GO") %>%
 
 p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     geom_line() +
-    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = "free") +
+    facet_wrap(vars(method), ncol=2, nrow = 3, scales = "free") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Sig. select", x = "Rank", y = "Cumulative no. immune sets") +
     theme(legend.position = "bottom")
 p
 ```
 
-```{r, fig.width=7, fig.height=8}
+```{r}
 dat %>% filter(set == "GO") %>%
     filter(grepl("mmethyl", method)) %>%
     mutate(method = unname(dict[method])) %>%
@@ -492,7 +494,7 @@ dat %>% filter(set == "GO") %>%
 
 p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     geom_line() +
-    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = "free") +
+    facet_wrap(vars(method), ncol=2, nrow = 3, scales = "free") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Sig. select", x = "Rank", 
          y = glue("Cumulative no. RNAseq sets")) +
@@ -506,69 +508,65 @@ Now test KEGG pathways with at least 5 genes and 5000 at most.
 
 Again, as we are comparing immune cells we expect pathways from the following categories to be highly ranked: Immune system, Immune disease, Signal transduction, Signaling molecules and interaction; [https://www.genome.jp/kegg/pathway.html](https://www.genome.jp/kegg/pathway.html). 
 
+Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as "truth".
+
 ```{r}
 immuneKEGG <- read.csv(here("data/genesets/kegg-immune-related-pathways.csv"), 
                             stringsAsFactors = FALSE, header = FALSE, 
                             col.names = c("ID","pathway"))
 immuneKEGG$PID <- paste0("path:hsa0",immuneKEGG$ID)
 
-dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) %>% 
-    mutate(method = unname(dict[method])) %>%
-    arrange(contrast, method, pvalue) %>%
-    group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% immuneKEGG$PID)) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> sub
-
-p1 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
-    geom_line() +
-    facet_wrap(vars(contrast), ncol=3) +
-    geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
-    theme(legend.position = "bottom") +
-    scale_color_manual(values = methodCols)
-```
-
-Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as "truth".
-
-```{r, fig.height=7, fig.width=9}
 rnaseqKEGG <- readRDS(here("data/cache-rnaseq/RNAseq-GSE45460-KEGG.rds"))
 rnaseqKEGG %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topKEGG
 
-dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) %>%
-    mutate(method = unname(dict[method])) %>%
-    arrange(contrast, method, pvalue) %>%
-    group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% contrast])) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> sub
-
-p2 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+for(i in 1:length(unique(dat$contrast))){
+    cont <- sort(unique(dat$contrast))[i]
+    
+    dat %>% filter(set == "KEGG") %>%
+        filter(sub %in% c("n","p1")) %>%
+        filter(contrast == cont) %>%
+        mutate(method = unname(dict[method])) %>% 
+        arrange(method, pvalue) %>%
+        group_by(method) %>%
+        mutate(rank = 1:n()) %>%
+        filter(rank <= 100) %>%
+        mutate(csum = cumsum(ID %in% immuneKEGG$PID)) %>%
+        mutate(truth = "ISP Terms") -> immuneSum
+    
+    dat %>% filter(set == "KEGG") %>%
+        filter(sub %in% c("n","p1")) %>%
+        filter(contrast == cont) %>%
+        mutate(method = unname(dict[method])) %>% 
+        arrange(method, pvalue) %>%
+        group_by(method) %>%
+        mutate(rank = 1:n()) %>%
+        filter(rank <= 100) %>%
+        mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% 
+                                                         contrast])) %>%
+        mutate(truth = "RNAseq Terms") -> rnaseqSum
+    
+    truthSum <- bind_rows(immuneSum, rnaseqSum)
+    
+    p[[i]] <- ggplot(truthSum, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
-    facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
+    facet_wrap(vars(truth), ncol = 2) +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
-    theme(legend.position = "bottom") + 
+    labs(colour = "Method", x = "Rank", 
+         y = "Cumulative no. sets in truth") +
+    theme(legend.position = "bottom") +
     scale_color_manual(values = methodCols)
+}
 
-p3 <- p1 / p2 + 
-    plot_layout(guides = "collect") & 
-    theme(legend.position = "bottom")
-p3
+p[[1]] + ggtitle(sort(unique(dat$contrast))[1]) 
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-7A.rds")
-saveRDS(p1, fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-7B.rds")
-saveRDS(p2, fig, compress = FALSE)
+fig <- here("output/figures/SFig-9A.rds")
+saveRDS(p3, fig, compress = FALSE)
 ```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
@@ -580,7 +578,7 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getKEGG()$idLis
                              var = "ID")
 
 dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) %>% 
+    filter(sub %in% c("n","p1")) %>% 
     mutate(method = unname(dict[method])) %>%
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
@@ -632,33 +630,27 @@ for(i in 1:length(p)){
 }
 
 shift_legend(p[[1]], plot = TRUE, pos = "left")
-shift_legend(p[[2]], plot = TRUE, pos = "left")
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-7C.rds")
+fig <- here("output/figures/SFig-9B.rds")
 saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-7D.rds")
-saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
                      pos = "left"), 
         fig, compress = FALSE)
 ```
 
 P-value histograms for the different methods for all contrasts on KEGG pathways.
 
-```{r, fig.height=8, fig.width=7}
+```{r, fig.height=7, fig.width=6}
 dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) %>%
+    filter(sub %in% c("n","p1")) %>%
     mutate(method = unname(dict[method])) -> subDat 
     
 ggplot(subDat, aes(pvalue, fill = method)) +
     geom_histogram(binwidth = 0.025) +
-    facet_grid(cols = vars(contrast), rows = vars(method)) +
+    facet_wrap(vars(method), ncol = 2, nrow = 4) +
     theme(legend.position = "bottom") +
     labs(x = "P-value", y = "Frequency", fill = "Method") +
     scale_fill_manual(values = methodCols)
@@ -668,7 +660,7 @@ ggplot(subDat, aes(pvalue, fill = method)) +
 
 As the results of GOmeth depend on the list of significant CpGs provided as input to the function, we explored the effect of selecting "significant" CpGs in different ways on the gene set testing performance of GOmeth.
 
-```{r, fig.width=7, fig.height=8}
+```{r}
 dat %>% filter(set == "KEGG") %>%
     filter(grepl("mmethyl", method)) %>% 
     mutate(method = unname(dict[method])) %>%
@@ -683,14 +675,14 @@ dat %>% filter(set == "KEGG") %>%
 
 p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     geom_line() +
-    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = "free") +
+    facet_wrap(vars(method), ncol=2, nrow = 3, scales = "free") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Sig. select", x = "Rank", y = "Cumulative no. immune sets") +
     theme(legend.position = "bottom")
 p
 ```
 
-```{r, fig.width=7, fig.height=8}
+```{r}
 dat %>% filter(set == "KEGG") %>%
     filter(grepl("mmethyl", method)) %>% 
     mutate(method = unname(dict[method])) %>%
@@ -705,7 +697,7 @@ dat %>% filter(set == "KEGG") %>%
 
 p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     geom_line() +
-    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = "free") +
+    facet_wrap(vars(method), ncol=2, nrow = 3, scales = "free") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Sig. select", x = "Rank", 
          y = glue("Cumulative no. RNAseq sets")) +
@@ -730,7 +722,7 @@ for(i in 1:length(unique(dat$contrast))){
     cont <- sort(unique(dat$contrast))[i]
     
     dat %>% filter(set == "BROAD") %>%
-        filter(sub %in% c("n","c1")) %>%
+        filter(sub %in% c("n","p1")) %>%
         filter(contrast == cont) %>%
         mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
@@ -749,17 +741,6 @@ for(i in 1:length(unique(dat$contrast))){
 }
 
 p[[1]]
-p[[2]]
-```
-
-Save figure for use in manuscript.
-
-```{r}
-fig <- here("output/figures/SFig-8A.rds")
-saveRDS(p[[1]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-9A.rds")
-saveRDS(p[[2]], fig, compress = FALSE)
 ```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
@@ -771,7 +752,7 @@ nGenes <- rownames_to_column(data.frame(n = sapply(PathwayList,
                              var = "ID")
 
 dat %>% filter(set == "BROAD") %>%
-    filter(sub %in% c("n","c1")) %>% 
+    filter(sub %in% c("n","p1")) %>% 
     mutate(method = unname(dict[method])) %>% 
     arrange(contrast, method, pvalue) %>%
     group_by(contrast, method) %>%
@@ -818,33 +799,18 @@ for(i in 1:length(p)){
 }
 
 shift_legend(p[[1]], plot = TRUE, pos = "left")
-shift_legend(p[[2]], plot = TRUE, pos = "left")
-```
-
-Save figure for use in manuscript.
-
-```{r}
-fig <- here("output/figures/SFig-8B.rds")
-saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-9B.rds")
-saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
 ```
 
 P-value histograms for the different methods for all contrasts on BROAD gene sets.
 
-```{r, fig.height=10, fig.width=7}
+```{r, fig.height=7, fig.width=6}
 dat %>% filter(set == "BROAD") %>%
-    filter(sub %in% c("n","c1")) %>%
+    filter(sub %in% c("n","p1")) %>%
     mutate(method = unname(dict[method])) -> subDat 
     
 ggplot(subDat, aes(pvalue, fill = method)) +
     geom_histogram(binwidth = 0.025) +
-    facet_grid(cols = vars(contrast), rows = vars(method)) +
+    facet_wrap(vars(method), ncol = 2, nrow = 4) +
     theme(legend.position = "bottom") +
     labs(x = "P-value", y = "Frequency", fill = "Method") +
     scale_fill_manual(values = methodCols)
@@ -854,7 +820,7 @@ ggplot(subDat, aes(pvalue, fill = method)) +
 
 As the results of GOmeth depend on the list of significant CpGs provided as input to the function, we explored the effect of selecting "significant" CpGs in different ways on the gene set testing performance of GOmeth.
 
-```{r, fig.width=7, fig.height=8}
+```{r}
 dat %>% filter(set == "BROAD") %>%
     filter(grepl("mmethyl", method)) %>% 
     mutate(method = unname(dict[method])) %>%
@@ -869,31 +835,10 @@ dat %>% filter(set == "BROAD") %>%
 
 p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     geom_line() +
-    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = "free") +
+    facet_wrap(vars(method), ncol=2, nrow = 3, scales = "free") +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Sig. select", x = "Rank", y = "Cumulative no. immune sets") +
+    labs(colour = "Sig. select", x = "Rank", y = "Cumulative no. RNAseq sets") +
     theme(legend.position = "bottom")
 p
 ```
 
-```{r, fig.width=7, fig.height=8}
-dat %>% filter(set == "BROAD") %>%
-    filter(grepl("mmethyl", method)) %>% 
-    mutate(method = unname(dict[method])) %>%
-    arrange(contrast, method, pvalue) %>%
-    group_by(contrast, method, sub) %>%
-    mutate(csum = cumsum(ID %in% topBROAD$ID)) %>% 
-    mutate(rank = 1:n()) %>%
-    mutate(cut = ifelse(sub == "c1", "Top 5000", 
-                        ifelse(sub == "c2", "Top 10000",
-                               ifelse(sub == "p1", "FDR < 0.01", "FDR < 0.05")))) %>%
-    filter(rank <= 100) -> sub
-
-p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
-    geom_line() +
-    facet_wrap(vars(contrast, method), ncol=2, nrow = 3, scales = "free") +
-    geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Sig. select", x = "Rank", y = "Cumulative no. immune sets") +
-    theme(legend.position = "bottom")
-p
-```

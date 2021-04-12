@@ -177,11 +177,14 @@ Examine the structure of data after removal of outlier samples.
 
 ```{r}
 mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE)
-dat <- tibble(x = mds$x, y = mds$y)
+dat <- tibble(x = mds$x, y = mds$y, gender = meta$gender)
+dat$age <- meta$years_to_birth
 
-p1 <- ggplot(dat, aes(x = x, y = y)) +
-  geom_point(size = 2) +
-  labs(x = "Principal Component 1", y = "Principal Component 2")
+p1 <- ggplot(dat, aes(x = x, y = y, colour = age)) +
+  geom_point() +
+  labs(x = "Principal Component 1", y = "Principal Component 3", 
+       colour = "Age") +
+  viridis::scale_color_viridis(direction = -1)
 
 mds <- plotMDS(betasFlt, gene.selection = "common", plot = FALSE, 
                dim.plot = c(1,3))
@@ -199,6 +202,13 @@ p3 <- ggplot(dat, aes(x = beta, group = ID)) +
     labs(x = "Beta value", y = "Density")
 
 (p1 + p2) / p3 
+```
+
+Save figure for use in manuscript.
+
+```{r}
+fig <- here("output/figures/SFig-3C.rds")
+saveRDS(p1 + theme(legend.position = "bottom"), fig, compress = FALSE)
 ```
 
 Save the filtered TCGA BRCA data for use in subsequent FDR analysis.
@@ -247,10 +257,19 @@ p <- ggplot(sigDat, aes(x = reorder(sampleNo, sampleOrd), y = psig,
     geom_hline(yintercept=0.05, linetype="dashed", color = "red") +
     labs(y="Prop. gene sets with p-value < 0.05", x="No. samples per group",
          fill="Method") +
-    scale_fill_manual(values = methodCols)
+    scale_fill_manual(values = methodCols) +
+    facet_grid(cols = vars(sampleOrd), scales = "free_x") +
+    theme(strip.background = element_blank(),
+          strip.text = element_blank())
 p
 ```
 
+Save figure for use in manuscript.
+
+```{r}
+fig <- here("output/figures/SFig-3D.rds")
+saveRDS(p, fig, compress = FALSE)
+```
 
 
 

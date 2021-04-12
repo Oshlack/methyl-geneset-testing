@@ -54,9 +54,25 @@ for(i in 1:length(dims)){
 ```
 
 ```{r}
-oligo::boxplot(raw_data, target = "core", xaxt = "none",
-               main = "Boxplot of log2-intensitites for the raw data")
-axis(1, at = 1:nrow(targets), labels = targets$ID, las = 2)
+log2(exprs(raw_data)) %>% 
+    as_tibble %>%
+    rename_with(.fn = ~ targets$ID) %>%
+    pivot_longer(everything(), names_to = "ID", 
+                 values_to = "intensity") -> dat
+dat$Stage <- rep(targets$Stage, nrow(raw_data))
+
+p <- ggplot(dat, aes(x = ID, y = intensity, fill = Stage)) +
+    geom_boxplot(outlier.shape = NA) + 
+    theme(axis.text.x = element_text(angle = 60, size = 6.5, hjust = 1)) +
+    labs(x = "Sample", y = "Log2 Intensity")
+p
+```
+
+Save figure for use in manuscript.
+
+```{r}
+fig <- here("output/figures/SFig-4E.rds")
+saveRDS(p, fig, compress = FALSE)
 ```
 
 ```{r, message=FALSE}
@@ -98,6 +114,12 @@ for(i in 1:length(dims)){
 }
 
 (p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = "collect")
+```
+Save figure for use in manuscript.
+
+```{r}
+fig <- here("output/figures/SFig-4F.rds")
+saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
 We now filter out all transcripts that do not have intensities greater than the threshold in at least as many arrays as the smallest experimental group which we define as `min(no_of_samples)`.
@@ -192,23 +214,25 @@ design <- model.matrix(~0+Stage)
 
 fit <- lmFit(eset_final, design)
 cont.matrix <- makeContrasts(S1vS2=StageS1-StageS2,
-                             S2vS3=StageS2-StageS3,
                              levels=design)
 fit2 <- contrasts.fit(fit, cont.matrix)
 fit2 <- eBayes(fit2, robust=TRUE, trend=TRUE)
-pval <- 0.01
-fitSum <- summary(decideTests(fit2, p.value = pval))
+tfit <- treat(fit2, lfc = 0.5)
+pval <- 0.05
+fitSum <- summary(decideTests(tfit, p.value = pval))
 fitSum
 ```
 
 ```{r}
-fitSum <- summary(decideTests(fit2, p.value = pval))
-dat <- reshape2::melt(fitSum[rownames(fitSum) != "NotSig", ])
-colnames(dat) <- c("dir", "comp", "value") 
+fitSum %>% 
+    data.frame %>%
+    rename_with(.fn = ~ c("Direction", "Comparison", "Value")) %>%
+    filter(Direction != "NotSig") -> dat
 
-p <- ggplot(dat, aes(x = comp, y = value, fill = dir)) +
+p <- ggplot(dat, aes(x = Comparison, y = Value, fill = Direction)) +
     geom_bar(stat = "identity", position = "dodge") +
-    labs(x = "Comparison", y = "No. DE Genes (FDR < 0.05)", fill = "Direction") +
+    labs(x = "Comparison", y = glue("No. DE Genes (FDR < {pval})"), 
+         fill = "Direction") +
     scale_fill_brewer(palette = "Set1", direction = -1)
 p
 ```
@@ -216,7 +240,7 @@ p
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-4D.rds")
+fig <- here("output/figures/SFig-4G.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
 
@@ -231,7 +255,8 @@ go <- NULL
 kegg <- NULL
 
 for(i in 1:ncol(cont.matrix)){
-    top <- topTable(fit2, coef = i, p.value = pval, number = Inf)
+    #top <- topTable(fit2, coef = i, p.value = pval, number = Inf)
+    top <- topTreat(tfit, coef = i, p.value = pval, number = Inf)
     tmp <- goana(top$ENTREZID, universe = fData(eset_final)$ENTREZID)
     tmp <- topGO(tmp, number = Inf)
     tmp$FDR <- p.adjust(tmp$P.DE, method = "BH")
@@ -267,8 +292,8 @@ entrez <- suppressMessages(lapply(PathwayList[keep], function(x){
 
 gsa <- NULL
 for(i in 1:ncol(cont.matrix)){
-    top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
-    
+    #top <- topTable(fit2, coef = i, p.value = 0.05, number = Inf)
+    top <- topTreat(tfit, coef = i, p.value = pval, number = Inf)
     tmp <- gsaseq(top$ENTREZID, universe = fData(eset_final)$ENTREZID, 
                   collection = entrez, gene.length = NULL)
     tmp <- rownames_to_column(data.frame(tmp), var = "ID")
