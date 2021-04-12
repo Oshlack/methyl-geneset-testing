@@ -219,12 +219,15 @@ dev.off()
 a <- readRDS(here("output/figures/SFig-3A.rds"))
 b <- readRDS(here("output/figures/SFig-3B.rds"))
 c <- readRDS(here("output/figures/SFig-3C.rds"))
+d <- readRDS(here("output/figures/SFig-3D.rds"))
+e <- readRDS(here("output/figures/SFig-3E.rds"))
 
 layout <- "
 AAABBB
-CCCCCC
-CCCCCC
-CCCCCC
+CCCDDD
+EEEEEE
+EEEEEE
+EEEEEE
 "
 cairo_pdf(here("output/figures/SFig-03.pdf"), width = 9, height = 9)
 a + theme(legend.position = "none", 
