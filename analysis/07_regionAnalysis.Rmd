@@ -245,10 +245,10 @@ Save figure for use in manuscript.
 fig <- here("output/figures/Fig-5A.rds")
 saveRDS(p[[3]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-11A.rds")
+fig <- here("output/figures/SFig-10A.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-12A.rds")
+fig <- here("output/figures/SFig-11A.rds")
 saveRDS(p[[2]], fig, compress = FALSE)
 ```
 
@@ -296,7 +296,7 @@ for(i in 1:length(p)){
         facet_wrap(vars(truth)) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", 
-         y = glue("Cumulative no. RNAseq sets")) +
+         y = glue("Cumulative no. truth sets")) +
     theme(legend.position = "bottom") +
     scale_color_manual(values = methodCols) +
         ggtitle(cont)
@@ -313,10 +313,10 @@ Save figure for use in manuscript.
 fig <- here("output/figures/Fig-5C.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-11B.rds")
+fig <- here("output/figures/SFig-10B.rds")
 saveRDS(p[[2]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-12B.rds")
+fig <- here("output/figures/SFig-11B.rds")
 saveRDS(p[[3]], fig, compress = FALSE)
 ```
 
@@ -390,10 +390,10 @@ Save figure for use in manuscript.
 fig <- here("output/figures/Fig-5D.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-11C.rds")
+fig <- here("output/figures/SFig-10C.rds")
 saveRDS(p[[2]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-12C.rds")
+fig <- here("output/figures/SFig-11C.rds")
 saveRDS(p[[3]], fig, compress = FALSE)
 ```
 
@@ -446,10 +446,10 @@ p3
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-13A.rds")
+fig <- here("output/figures/SFig-12A.rds")
 saveRDS(p1, fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-13B.rds")
+fig <- here("output/figures/SFig-12B.rds")
 saveRDS(p2, fig, compress = FALSE)
 ```
 
@@ -520,17 +520,17 @@ shift_legend(p[[3]], plot = TRUE, pos = "left")
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-13C.rds")
+fig <- here("output/figures/SFig-12C.rds")
 saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
                      pos = "left"), 
         fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-13D.rds")
+fig <- here("output/figures/SFig-12D.rds")
 saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
                      pos = "left"), 
         fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-13E.rds")
+fig <- here("output/figures/SFig-12E.rds")
 saveRDS(shift_legend(p[[3]] + theme(plot.title = element_blank()),
                      pos = "left"), 
         fig, compress = FALSE)
@@ -637,10 +637,10 @@ Save figure for use in manuscript.
 fig <- here("output/figures/Fig-5F.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-11E.rds")
+fig <- here("output/figures/SFig-10E.rds")
 saveRDS(p[[2]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-12E.rds")
+fig <- here("output/figures/SFig-11E.rds")
 saveRDS(p[[3]], fig, compress = FALSE)
 ```
 
@@ -728,10 +728,10 @@ Save figure for use in manuscript.
 fig <- here("output/figures/Fig-5E.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-11D.rds")
+fig <- here("output/figures/SFig-10D.rds")
 saveRDS(p[[2]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-12D.rds")
+fig <- here("output/figures/SFig-11D.rds")
 saveRDS(p[[3]], fig, compress = FALSE)
 ```
 
@@ -809,10 +809,10 @@ Save figure for use in manuscript.
 fig <- here("output/figures/Fig-5G.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-11F.rds")
+fig <- here("output/figures/SFig-10F.rds")
 saveRDS(p[[2]], fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-12F.rds")
+fig <- here("output/figures/SFig-11F.rds")
 saveRDS(p[[3]], fig, compress = FALSE)
 ```
 
@@ -889,9 +889,9 @@ p2
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-14A.rds")
+fig <- here("output/figures/SFig-13A.rds")
 saveRDS(p1, fig, compress = FALSE)
 
-fig <- here("output/figures/SFig-14B.rds")
+fig <- here("output/figures/SFig-13B.rds")
 saveRDS(p2, fig, compress = FALSE)
 ```

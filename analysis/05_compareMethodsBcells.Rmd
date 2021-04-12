@@ -123,8 +123,8 @@ Save figure for use in manuscript.
 outDir <- here::here("output/figures")
 if (!dir.exists(outDir)) dir.create(outDir)
 
-fig <- here("output/figures/Fig-4A.rds")
-saveRDS(p, fig, compress = FALSE)
+fig <- here("output/figures/SFig-8A.rds")
+saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
 ## Statistical analysis
@@ -167,13 +167,6 @@ p <- ggplot(bDat, aes(x = avgbias, y = propDM)) +
 p
 ```
 
-Save figure for use in manuscript.
-
-```{r}
-fig <- here("output/figures/Fig-1B.rds")
-saveRDS(p, fig, compress = FALSE)
-```
-
 Examine only the independent contrasts.
 
 ```{r}
@@ -193,7 +186,7 @@ p
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-4B.rds")
+fig <- here("output/figures/SFig-8B.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
 
@@ -566,7 +559,7 @@ Save figure for use in manuscript.
 
 ```{r}
 fig <- here("output/figures/SFig-9A.rds")
-saveRDS(p3, fig, compress = FALSE)
+saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.

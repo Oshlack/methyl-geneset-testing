@@ -86,7 +86,6 @@ design <- model.matrix(~0+Stage)
 
 fit <- lmFit(mVals, design)
 cont.matrix <- makeContrasts(S1vS2=StageS1-StageS2,
-                             S2vS3=StageS2-StageS3,
                              levels=design)
 fit2 <- contrasts.fit(fit, cont.matrix)
 fit2 <- eBayes(fit2, robust=TRUE, trend=TRUE)
@@ -125,37 +124,8 @@ if(!file.exists(outFile)){
   dmrList <- readRDS(outFile)
   
 }
-```
 
-```{r}
-dat <- rownames_to_column(melt(sapply(dmrList, length)), var = "contrast")
-dat$filtering = "before"
-
-meanDiff <- 0
-noCpgs <- 2
-
-for(i in 1:length(dmrList)){
-    keep <- (abs(dmrList[[i]]$meandiff) > meanDiff & dmrList[[i]]$no.cpgs >=noCpgs)
-    dat <- bind_rows(dat, data.frame(contrast = names(dmrList)[i],
-                                value = length(dmrList[[i]][keep, ]),
-                                filtering = "after", 
-                                stringsAsFactors = FALSE))
-}
-
-p <- ggplot(dat, aes(x = contrast, y = value, fill = filtering)) +
-    geom_bar(stat = "identity", position = "dodge") +
-    labs(x = "Contrast", y = "No. DMRs", fill = "Filtering")
-p
-```
-
-Save figure for use in manuscript.
-
-```{r}
-outDir <- here::here("output/figures")
-if (!dir.exists(outDir)) dir.create(outDir)
-
-fig <- here("output/figures/Fig-5B.rds")
-saveRDS(p, fig, compress = FALSE)
+length(dmrList[[1]])
 ```
 
 ## GO analysis of DMRs
@@ -172,9 +142,7 @@ dmrGo <- NULL
 if(!file.exists(outFile)){
     for(i in 1:length(dmrList)){
         
-        keep <- (abs(dmrList[[i]]$meandiff) > meanDiff & dmrList[[i]]$no.cpgs >= noCpgs)
-        
-        overlaps <- findOverlaps(hg19Genes, dmrList[[i]][keep, ], 
+        overlaps <- findOverlaps(hg19Genes, dmrList[[i]], 
                                  minoverlap = 1)
         sigGenes <- hg19Genes$gene_id[from(overlaps)]
         tmp <- topGO(goana(sigGenes, universe = hg19Genes$gene_id), 
@@ -184,7 +152,7 @@ if(!file.exists(outFile)){
         tmp$contrast <- colnames(cont.matrix)[i]
         dmrGo <- bind_rows(dmrGo, tmp)
   
-        tmp <- topGSA(goregion(dmrList[[i]][keep, ], anno = anno, 
+        tmp <- topGSA(goregion(dmrList[[i]], anno = anno, 
                                prior.prob = FALSE, array.type = "450k"), 
                       number = Inf)
         tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
@@ -192,7 +160,7 @@ if(!file.exists(outFile)){
         tmp$contrast <- colnames(cont.matrix)[i]
         dmrGo <- bind_rows(dmrGo, tmp)
         
-        tmp <- topGSA(goregion(dmrList[[i]][keep, ], anno = anno, 
+        tmp <- topGSA(goregion(dmrList[[i]], anno = anno, 
                                array.type = "450k", plot.bias = FALSE), 
                       number = Inf)
         tmp <- rownames_to_column(tmp, var = "GO")[, c("GO", "P.DE")]
@@ -234,8 +202,7 @@ cpgs <- GRanges(seqnames = anno$chr,
                 name = anno$Name)
 
 for(i in 1:length(dmrList)){
-    keep <- (abs(dmrList[[i]]$meandiff) > meanDiff & dmrList[[i]]$no.cpgs >=noCpgs)
-    overlaps <- findOverlaps(cpgs, dmrList[[i]][keep, ])
+    overlaps <- findOverlaps(cpgs, dmrList[[i]])
     dmrCpgs <- cpgs$name[from(overlaps)]
     bDat[[i]] <- getBiasDat(dmrCpgs, array.type = "450k",
                             anno = anno)
@@ -257,19 +224,14 @@ p[[i]] <- ggplot(bDat[[i]], aes(x = avgbias, y = propDM)) +
           axis.line = element_line(colour = "black"))
 }
 
-(p[[1]] + labs(title = names(dmrList)[1]) | 
-        p[[2]] + labs(title = names(dmrList)[2]))
+p[[1]] + labs(title = names(dmrList)[1])
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-
-fig <- here("output/figures/SFig-11A.rds")
+fig <- here("output/figures/SFig-14A.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-12A.rds")
-saveRDS(p[[2]], fig, compress = FALSE)
 ```
 
 ### Compare GOregion with other approaches
@@ -323,17 +285,13 @@ for(i in 1:length(p)){
 }
 
 p[[1]]
-p[[2]]
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-5C.rds")
+fig <- here("output/figures/SFig-14B.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-11B.rds")
-saveRDS(p[[2]], fig, compress = FALSE)
 ```
 
 Terms NOT in top 100 "truth" GO categories for Stage 2 versus Stage 3.
@@ -412,74 +370,65 @@ for(i in 1:length(p)){
 }
 
 shift_legend(p[[1]], plot = TRUE, pos = "left")
-shift_legend(p[[2]], plot = TRUE, pos = "left")
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-5D.rds")
+fig <- here("output/figures/SFig-14C.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-11C.rds")
-saveRDS(p[[2]], fig, compress = FALSE)
-
 ```
 
 ### Compare GOregion with probe-wise analysis
 
 ```{r}
-dmrGo %>% dplyr::filter(method %in% c("goregion-gometh", "gometh-probe-top", 
+p <- vector("list", length(unique(dat$contrast)))
+
+for(i in 1:length(p)){
+    cont <- sort(unique(dat$contrast))[i]
+    
+    dmrGo %>% dplyr::filter(method %in% c("goregion-gometh", "gometh-probe-top", 
                          "gometh-probe-fdr")) %>%
     mutate(method = unname((dict[method]))) %>% 
     arrange(contrast, method, P.DE) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
     mutate(rank = 1:n()) %>%
-    dplyr::filter(rank <= 100) -> sub
-
-p1 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
-    geom_line() +
-    facet_wrap(vars(contrast), ncol=3) +
-    geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
-    theme(legend.position = "bottom") +
-    scale_color_manual(values = methodCols)
-```
-
-```{r, fig.height=7, fig.width=9}
-dmrGo %>% dplyr::filter(method %in% c("goregion-gometh", "gometh-probe-top", 
+    dplyr::filter(rank <= 100) %>%
+        mutate(truth = "ISP Terms") -> immuneSum
+    
+    dmrGo %>% dplyr::filter(method %in% c("goregion-gometh", "gometh-probe-top", 
                          "gometh-probe-fdr")) %>%
     mutate(method = unname((dict[method]))) %>% 
     arrange(contrast, method, P.DE) %>%
     group_by(contrast, method) %>%
     mutate(csum = cumsum(GO %in% topGOSets$ID[topGOSets$contrast %in% 
-                                                  contrast])) %>%
+                                                  cont])) %>%
     mutate(rank = 1:n()) %>%
-    dplyr::filter(rank <= 100) -> sub
-
-p2 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+    dplyr::filter(rank <= 100) %>%
+        mutate(truth = "RNAseq Terms") -> rnaseqSum
+    
+    truthSum <- bind_rows(immuneSum, rnaseqSum)
+    
+    p[[i]] <- ggplot(truthSum, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
-    facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
+        facet_wrap(vars(truth)) +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
-    theme(legend.position = "bottom") + 
+    labs(colour = "Parameters", x = "Rank", 
+         y = glue("Cumulative no. truth sets")) +
+    theme(legend.position = "right") +
+        ggtitle(cont) +
     scale_color_manual(values = methodCols)
+}
 
-p3 <- p1 / p2 + 
-    plot_layout(guides = "collect") & 
-    theme(legend.position = "bottom")
-p3
+p[[1]]
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-13A.rds")
-saveRDS(p1, fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-13B.rds")
-saveRDS(p2, fig, compress = FALSE)
+fig <- here("output/figures/SFig-15A.rds")
+saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
 Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
@@ -542,21 +491,13 @@ for(i in 1:length(p)){
 }
 
 shift_legend(p[[1]], plot = TRUE, pos = "left")
-shift_legend(p[[2]], plot = TRUE, pos = "left")
 ``` 
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-13C.rds")
-saveRDS(shift_legend(p[[1]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-13D.rds")
-saveRDS(shift_legend(p[[2]] + theme(plot.title = element_blank()),
-                     pos = "left"), 
-        fig, compress = FALSE)
+fig <- here("output/figures/SFig-15B.rds")
+saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
 ## Compare characteristics of region-wise and probe-wise results
@@ -570,9 +511,8 @@ cpgs <- GRanges(seqnames = anno$chr,
 dat <- NULL
 
 for(i in 1:ncol(cont.matrix)){
-    keep <- (abs(dmrList[[i]]$meandiff) > meanDiff & dmrList[[i]]$no.cpgs >= noCpgs)
     
-    overlaps <- findOverlaps(cpgs, dmrList[[i]][keep,])
+    overlaps <- findOverlaps(cpgs, dmrList[[i]])
     tmp <- data.frame(cpgs = cpgs$name[from(overlaps)],
                       method = "DMRcate", 
                       contrast = colnames(cont.matrix)[i],
@@ -649,21 +589,17 @@ for(i in 1:length(p)){
         scale_x_discrete(limits = c("FDR < 0.05", "DMRcate", "Top 5000"))
 }
 
-p[[1]] + ggtitle(sort(unique(sub$contrast))[1]) | 
-    p[[2]] + ggtitle(sort(unique(sub$contrast))[2])
+p[[1]] + ggtitle(sort(unique(sub$contrast))[1])
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-5F.rds")
+fig <- here("output/figures/SFig-14E.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-11E.rds")
-saveRDS(p[[2]], fig, compress = FALSE)
 ```
 
-```{r, fig.height=7, fig.width=6}
+```{r}
 dat %>% group_by(contrast, method) %>%
     left_join(flatAnn, by = c("cpgs" = "cpg")) %>% 
     group_by(contrast, method) %>%
@@ -737,17 +673,13 @@ for(i in 1:length(p)){
 }
 
 d[[1]] 
-d[[2]]
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-5E.rds")
+fig <- here("output/figures/SFig-14D.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-11D.rds")
-saveRDS(p[[2]], fig, compress = FALSE)
 ```
 
 ### Gene overlap between region-wise and probe-wise approaches
@@ -814,17 +746,13 @@ for(i in 1:length(p)){
 }
 
 d[[1]]
-d[[2]]
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/Fig-5G.rds")
+fig <- here("output/figures/SFig-14F.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-11F.rds")
-saveRDS(p[[2]], fig, compress = FALSE)
 ```
 
 ## Effect of DMR cut offs i.e. num probes in region and absolute delta beta
@@ -865,44 +793,44 @@ if(!file.exists(outFile)){
 Examine effect of changing DMR parameter cut offs on gene set rankings of GO categories in "immune system process".
 
 ```{r, fig.width=9}
-dmrParams %>% arrange(contrast, params, P.DE) %>%
+p <- vector("list", length(unique(dat$contrast)))
+
+for(i in 1:length(p)){
+    cont <- sort(unique(dat$contrast))[i]
+    
+    dmrParams %>% arrange(contrast, params, P.DE) %>%
     group_by(contrast, params) %>%
-    mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
+        mutate(csum = cumsum(GO %in% immuneGO$GOID)) %>%
     mutate(rank = 1:n()) %>%
-    dplyr::filter(rank <= 100) -> dat
-
-p1 <- ggplot(dat, aes(x = rank, y = csum, colour = params)) +
-    geom_line() +
-    facet_wrap(vars(contrast), ncol=3) +
-    geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Parameters", x = "Rank", y = "Cumulative no. immune sets")
-p1
-```
-
-Examine effect of changing DMR parameter cut offs on gene set rankings on GO categories derived from RNAseq analysis.  
-
-```{r, fig.width=9}
-dmrParams %>% arrange(contrast, params, P.DE) %>%
+    dplyr::filter(rank <= 100) %>%
+        mutate(truth = "ISP Terms") -> immuneSum
+    
+    dmrParams %>% arrange(contrast, params, P.DE) %>%
     group_by(contrast, params) %>%
-    mutate(csum = cumsum(GO %in% topGOSets$ID[topGOSets$contrast %in% contrast])) %>%
+        mutate(csum = cumsum(GO %in% topGOSets$ID[topGOSets$contrast %in% 
+                                                      cont]))  %>%
     mutate(rank = 1:n()) %>%
-    dplyr::filter(rank <= 100) -> sub
-
-p2 <- ggplot(sub, aes(x = rank, y = csum, colour = params)) +
+    dplyr::filter(rank <= 100) %>%
+        mutate(truth = "RNAseq Terms") -> rnaseqSum
+    
+    truthSum <- bind_rows(immuneSum, rnaseqSum)
+    
+    p[[i]] <- ggplot(truthSum, aes(x = rank, y = csum, colour = params)) +
     geom_line() +
-    facet_wrap(vars(contrast), ncol=3) +
+        facet_wrap(vars(truth)) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Parameters", x = "Rank", 
-         y = glue("Cumulative no. RNAseq sets"))
-p2
+         y = glue("Cumulative no. truth sets")) +
+    theme(legend.position = "right") +
+        ggtitle(cont)
+}
+
+p[[1]]
 ```
 
 Save figure for use in manuscript.
 
 ```{r}
-fig <- here("output/figures/SFig-14A.rds")
-saveRDS(p1, fig, compress = FALSE)
-
-fig <- here("output/figures/SFig-14B.rds")
-saveRDS(p2, fig, compress = FALSE)
+fig <- here("output/figures/SFig-15C.rds")
+saveRDS(p[[1]], fig, compress = FALSE)
 ```
