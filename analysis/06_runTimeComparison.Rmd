@@ -25,6 +25,7 @@ library(tictoc)
 library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 library(EnsDb.Hsapiens.v75)
 library(ChAMP)
+library(ebGSEA)
 library(methylGSA)
 library(gt)
 source(here("code/utility.R"))
@@ -51,7 +52,7 @@ outDir <- here::here("data/cache-runtime")
 if (!dir.exists(outDir)) dir.create(outDir)
 
 inFile <- here("data/cache-runtime/run-time-results.rds")
-
+bVals <- ilogit2(mVals)
 if(!file.exists(inFile)){
     
     data("PathwayList")
@@ -132,7 +133,7 @@ if(!file.exists(inFile)){
                         data.m = bVals[, samps],
                         array = "EPIC",
                         ncores = 1)
-        ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = collection,
+        ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
                                     ncores = 1, minN = minsize, adjPVth = 1)$`Rank(P)`)
         
         toc(log = TRUE, quiet = TRUE)
@@ -168,6 +169,100 @@ p1
 ```
 
 ```{r}
+inFile <- here("data/cache-runtime/run-time-mcores-ebgsea.rds")
+
+if(!file.exists(inFile)){
+    
+    data("PathwayList")
+    keep <- sapply(PathwayList, function(x) any(x %in% transIDs$symbol))
+    symbol <- suppressMessages(lapply(PathwayList[keep], function(x){
+        tmp <- unlist(transIDs$symbol[transIDs$symbol %in% x], use.names = FALSE)
+        tmp[!is.na(tmp)]
+    }))
+    
+    load(here("data/cache-intermediates/input.RData"))
+    anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
+    multi <- NULL
+    
+    for(i in 1:ncol(tfit$contrasts)){
+        
+        tic("ebgsea.3")
+        groups <- names(tfit$contrasts[,i])[tfit$contrasts[,i] != 0]
+        samps <- as.logical(unname(rowSums(tfit$design[,groups])))
+        pheno <- unname(tfit$design[samps, groups][,1])
+        
+        gtRanks <- doGT(pheno.v = pheno,
+                        data.m = bVals[, samps],
+                        array = "EPIC",
+                        ncores = 1)
+        ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
+                                    ncores = 3, minN = minsize, adjPVth = 1)$`Rank(P)`)
+        toc(log = TRUE, quiet = TRUE)
+        tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+        log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi <- bind_rows(multi, log)
+        
+        tic("ebgsea.6")
+        groups <- names(tfit$contrasts[,i])[tfit$contrasts[,i] != 0]
+        samps <- as.logical(unname(rowSums(tfit$design[,groups])))
+        pheno <- unname(tfit$design[samps, groups][,1])
+        
+        gtRanks <- doGT(pheno.v = pheno,
+                        data.m = bVals[, samps],
+                        array = "EPIC",
+                        ncores = 1)
+        ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
+                                    ncores = 6, minN = minsize, adjPVth = 1)$`Rank(P)`)
+        toc(log = TRUE, quiet = TRUE)
+        tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+        log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi <- bind_rows(multi, log)
+        
+        tic("ebgsea.9")
+        groups <- names(tfit$contrasts[,i])[tfit$contrasts[,i] != 0]
+        samps <- as.logical(unname(rowSums(tfit$design[,groups])))
+        pheno <- unname(tfit$design[samps, groups][,1])
+        
+        gtRanks <- doGT(pheno.v = pheno,
+                        data.m = bVals[, samps],
+                        array = "EPIC",
+                        ncores = 9)
+        ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
+                                    ncores = 9, minN = minsize, adjPVth = 1)$`Rank(P)`)
+        toc(log = TRUE, quiet = TRUE)
+        tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
+        log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
+                          contrast = colnames(tfit$contrasts)[i])
+        tic.clearlog()
+        multi <- bind_rows(multi, log)
+        
+    }
+    saveRDS(multi, file = inFile)
+    
+} else {
+    multi <- readRDS(inFile)
+    
+}
+```
+
+Plot run-time results.
+
+```{r}
+multi %>% mutate(time = as.integer(time)) %>%
+    mutate(cores = limma::strsplit2(method, ".", fixed=TRUE)[,2]) -> dat
+
+p2 <- ggplot(dat, aes(x = cores, y = time/60, fill = contrast)) + 
+    geom_bar(position = "dodge", stat = "identity") +
+    labs(x = "No. cores", y = "Run time (minutes)", fill = "Contrast") +
+    ggtitle("Using multiple cores for ebGSEA") 
+p2
+```
+
+```{r}
 inFile <- here("data/cache-runtime/run-time-mcores.rds")
 
 if(!file.exists(inFile)){
@@ -179,7 +274,7 @@ if(!file.exists(inFile)){
         tmp[!is.na(tmp)]
     }))
     
-    load(here("data/input.RData"))
+    load(here("data/cache-intermediates/input.RData"))
     anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
     multi <- NULL
     
@@ -235,20 +330,18 @@ Plot run-time results.
 multi %>% mutate(time = as.integer(time)) %>%
     mutate(cores = limma::strsplit2(method, ".", fixed=TRUE)[,3]) -> dat
 
-p2 <- ggplot(dat, aes(x = cores, y = time/60, fill = contrast)) + 
+p3 <- ggplot(dat, aes(x = cores, y = time/60, fill = contrast)) + 
     geom_bar(position = "dodge", stat = "identity") +
     labs(x = "No. cores", y = "Run time (minutes)", fill = "Contrast") +
     ggtitle("Using multiple cores for mGLM") 
-p2
+p3
 ```
 
 Combining single core and multi-core plots.
 
 ```{r}
-layout <- c(area(t = 0, l = 1, b = 5, r = 4),
-            area(t = 2, l = 3, b = 3, r = 4))
-p1 + p2 + theme(text = element_text(size = 8), legend.position = "none") + 
-    plot_layout(design = layout, guides = "collect")
+p1 / (p2 | p3) + plot_layout(guides = "collect") &
+  theme(text = element_text(size = 8))
 ```
 
 # Run-time summary table
