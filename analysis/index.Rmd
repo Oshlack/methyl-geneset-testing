@@ -43,11 +43,11 @@ Analysis
    Explore the various array biases on the 450k array that affect gene set testing.
 
 3. 
-    a) [Compare FDR of different methods (KIRC)](03_fdrAnalysisKIRC.html)
+    a) [Compare FDR of different methods (KIRC data)](03_fdrAnalysisKIRC.html)
     Analyse the normal samples from a 450k array KIRC TCGA dataset using 
     various gene set testing methods to estimate their false discovery rate control.
 
-    b) [Compare FDR of different methods (BRCA)](03_fdrAnalysisBRCA.html)
+    b) [Compare FDR of different methods (BRCA data)](03_fdrAnalysisBRCA.html)
     Analyse the normal samples from a 450k array BRCA TCGA dataset using 
     various gene set testing methods to estimate their false discovery rate control.
          
@@ -56,35 +56,17 @@ Analysis
     Analyse an RNAseq sorted blood cell dataset and identify the top ranked 
     gene sets for each cell type comparison.
     
-    b) [Generate a breast cancer cell line RNAseq "truth" set](04_expressionGenesetsFibroid.html)
-    Analyse an RNAseq breast cancer cell line data and identify the top ranked 
-    gene sets for each comparison.
-    
-    c) [Generate a uterine fibroid RNAseq "truth" set](04_expressionGenesetsCellLines.html)
-    Analyse an RNAseq normal and fibroid uterine tissue dataset and identify the top ranked 
-    gene sets for each tissue comparison.
-    
-    d) [Generate a B-cell development gene exression "truth" set](04_expressionGenesetsBcells.html)
+    b) [Generate a B-cell development gene exression "truth" set](04_expressionGenesetsBcells.html)
     Analyse Affymetrix gene expression microarray data of B-cell development and identify the top ranked 
     gene sets for each stage comparison.
          
 5.
-    a) [Compare performance of different methods](05_compareMethods.html)
+    a) [Compare performance of different methods (EPIC data)](05_compareMethods.html)
     Analyse an EPIC array sorted blood cell dataset using various gene set 
     testing methods. Compare how well the different methods perform using several 
     metrics.
          
-    b) [Compare performance of different methods](05_compareMethodsCellLines.html)
-    Analyse an EPIC array breast cancer cell line data using various gene set 
-    testing methods. Compare how well the different methods perform using several 
-    metrics.
-    
-    c) [Compare performance of different methods](05_compareMethodsFibroid.html)
-    Analyse an EPIC array normal and fibroid uterine tissue dataset using various gene set 
-    testing methods. Compare how well the different methods perform using several 
-    metrics.
-    
-    d) [Compare performance of different methods](05_compareMethodsBcells.html)
+    b) [Compare performance of different methods (450K data)](05_compareMethodsBcells.html)
     Analyse a 450k array dataset of B-cell development data using various gene set 
     testing methods. Compare how well the different methods perform using several 
     metrics.
@@ -94,11 +76,11 @@ Analysis
    testing methods. Compare the run-time of the different methods.
       
 7. 
-    a) [Evaluate GOregion (Sorted blood cell data)](07_regionAnalysis.html)
+    a) [Evaluate GOregion (EPIC data)](07_regionAnalysis.html)
     Evalulate GOregion, our extension of gometh for geneset testing of 
     differentially methylated regions (DMRs) identified by DMR finding software.
 
-    b) [Evaluate GOregion (B-cell development data)](07_regionAnalysisBcells.html)
+    b) [Evaluate GOregion (450K data)](07_regionAnalysisBcells.html)
     Evalulate GOregion, our extension of gometh for geneset testing of 
     differentially methylated regions (DMRs) identified by DMR finding software.
 
