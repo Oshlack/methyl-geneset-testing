@@ -52,7 +52,7 @@ outDir <- here::here("data/cache-runtime")
 if (!dir.exists(outDir)) dir.create(outDir)
 
 inFile <- here("data/cache-runtime/run-time-results.rds")
-bVals <- ilogit2(mVals)
+
 if(!file.exists(inFile)){
     
     data("PathwayList")
@@ -67,6 +67,7 @@ if(!file.exists(inFile)){
     }))
     
     load(here("data/cache-intermediates/input.RData"))
+    bVals <- ilogit2(mVals)
     anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
     timing <- NULL
     
@@ -181,6 +182,7 @@ if(!file.exists(inFile)){
     }))
     
     load(here("data/cache-intermediates/input.RData"))
+    bVals <- ilogit2(mVals)
     anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
     multi <- NULL
     
@@ -275,6 +277,7 @@ if(!file.exists(inFile)){
     }))
     
     load(here("data/cache-intermediates/input.RData"))
+    bVals <- ilogit2(mVals)
     anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
     multi <- NULL
     

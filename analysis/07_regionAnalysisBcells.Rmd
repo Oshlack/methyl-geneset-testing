@@ -269,7 +269,7 @@ for(i in 1:length(p)){
         group_by(method) %>%
         mutate(csum = cumsum(GO %in% topGOSets$ID[topGOSets$contrast %in% 
                                                       contrast])) %>%
-        mutate(truth = "RNAseq Terms") -> rnaseqSum
+        mutate(truth = "Array Terms") -> rnaseqSum
     
     truthSum <- bind_rows(immuneSum, rnaseqSum)
     
@@ -278,7 +278,7 @@ for(i in 1:length(p)){
         facet_wrap(vars(truth)) +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Method", x = "Rank", 
-         y = glue("Cumulative no. RNAseq sets")) +
+         y = glue("Cumulative no. Array sets")) +
     theme(legend.position = "bottom") +
     scale_color_manual(values = methodCols) +
         ggtitle(cont)
@@ -329,7 +329,7 @@ dat %>% arrange(contrast, method, P.DE) %>%
 ```{r}
 p <- vector("list", length(unique(sub$contrast)))
 truthPal <- scales::hue_pal()(4)
-names(truthPal) <- c("Both", "ISP", "Neither", "RNAseq")
+names(truthPal) <- c("Both", "ISP", "Neither", "Array")
 
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
@@ -345,11 +345,11 @@ for(i in 1:length(p)){
                    isp = GO %in% immuneGO$GOID,
                    both = rna + isp,
                    col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
+                                ifelse(both == 1 & rna == 1, "Array",
                                        ifelse(both == 1 & isp == 1, 
                                               "ISP", "Neither")))) %>%
         mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
+                            levels = c("Both", "ISP", "Array", 
                                        "Neither"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
@@ -406,7 +406,7 @@ for(i in 1:length(p)){
                                                   cont])) %>%
     mutate(rank = 1:n()) %>%
     dplyr::filter(rank <= 100) %>%
-        mutate(truth = "RNAseq Terms") -> rnaseqSum
+        mutate(truth = "Array Terms") -> rnaseqSum
     
     truthSum <- bind_rows(immuneSum, rnaseqSum)
     
@@ -467,11 +467,11 @@ for(i in 1:length(p)){
                    isp = GO %in% immuneGO$GOID,
                    both = rna + isp,
                    col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
+                                ifelse(both == 1 & rna == 1, "Array",
                                        ifelse(both == 1 & isp == 1, 
                                               "ISP", "Neither")))) %>%
         mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
+                            levels = c("Both", "ISP", "Array", 
                                        "Neither"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
@@ -811,7 +811,7 @@ for(i in 1:length(p)){
                                                       cont]))  %>%
     mutate(rank = 1:n()) %>%
     dplyr::filter(rank <= 100) %>%
-        mutate(truth = "RNAseq Terms") -> rnaseqSum
+        mutate(truth = "Array Terms") -> rnaseqSum
     
     truthSum <- bind_rows(immuneSum, rnaseqSum)
     

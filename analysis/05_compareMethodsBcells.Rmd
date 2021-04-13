@@ -328,7 +328,7 @@ for(i in 1:length(unique(dat$contrast))){
         filter(rank <= 100) %>%
         mutate(csum = cumsum(ID %in% topGOSets$ID[topGOSets$contrast %in% 
                                                          contrast])) %>%
-        mutate(truth = "RNAseq Terms") -> rnaseqSum
+        mutate(truth = "Array Terms") -> rnaseqSum
     
     truthSum <- bind_rows(immuneSum, rnaseqSum)
     
@@ -378,7 +378,7 @@ dat %>% filter(set == "GO") %>%
 ```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
 p <- vector("list", length(unique(sub$contrast)))
 truthPal <- scales::hue_pal()(4)
-names(truthPal) <- c("Both", "ISP", "Neither", "RNAseq")
+names(truthPal) <- c("Both", "ISP", "Neither", "Array")
 
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
@@ -394,11 +394,11 @@ for(i in 1:length(p)){
                    isp = ID %in% immuneGO$GOID,
                    both = rna + isp,
                    col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
+                                ifelse(both == 1 & rna == 1, "Array",
                                        ifelse(both == 1 & isp == 1, 
                                               "ISP", "Neither")))) %>%
         mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
+                            levels = c("Both", "ISP", "Array", 
                                        "Neither"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
@@ -490,7 +490,7 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     facet_wrap(vars(method), ncol=2, nrow = 3, scales = "free") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Sig. select", x = "Rank", 
-         y = glue("Cumulative no. RNAseq sets")) +
+         y = glue("Cumulative no. Array sets")) +
     theme(legend.position = "bottom")
 p
 ```
@@ -538,7 +538,7 @@ for(i in 1:length(unique(dat$contrast))){
         filter(rank <= 100) %>%
         mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% 
                                                          contrast])) %>%
-        mutate(truth = "RNAseq Terms") -> rnaseqSum
+        mutate(truth = "Array Terms") -> rnaseqSum
     
     truthSum <- bind_rows(immuneSum, rnaseqSum)
     
@@ -598,11 +598,11 @@ for(i in 1:length(p)){
                    isp = ID %in% immuneKEGG$PID,
                    both = rna + isp,
                    col = ifelse(both == 2, "Both", 
-                                ifelse(both == 1 & rna == 1, "RNAseq",
+                                ifelse(both == 1 & rna == 1, "Array",
                                        ifelse(both == 1 & isp == 1, 
                                               "ISP", "Neither")))) %>%
         mutate(col = factor(col, 
-                            levels = c("Both", "ISP", "RNAseq", 
+                            levels = c("Both", "ISP", "Array", 
                                        "Neither"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
@@ -693,7 +693,7 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     facet_wrap(vars(method), ncol=2, nrow = 3, scales = "free") +
     geom_vline(xintercept = 10, linetype = "dotted") +
     labs(colour = "Sig. select", x = "Rank", 
-         y = glue("Cumulative no. RNAseq sets")) +
+         y = glue("Cumulative no. Array sets")) +
     theme(legend.position = "bottom")
 p
 ```
@@ -701,7 +701,7 @@ p
 
 ### BROAD gene sets
 
-As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. Using the top 100 ranked gene sets as identified by Belinda's `gsaseq` analysis of the corresponding RNAseq data as "truth".
+As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. Using the top 100 ranked gene sets as identified by Belinda's `gsaseq` analysis of the corresponding Array data as "truth".
 
 ```{r}
 rnaseqBROAD <- readRDS(here("data/cache-rnaseq/RNAseq-GSE45460-BROAD-GSA.rds"))
@@ -727,7 +727,7 @@ for(i in 1:length(unique(dat$contrast))){
     p[[i]] <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
+    labs(colour = "Method", x = "Rank", y = "Cumulative no. Array sets") +
     theme(legend.position = "bottom") +
     scale_color_manual(values = methodCols) +
         ggtitle(cont)
@@ -757,7 +757,7 @@ dat %>% filter(set == "BROAD") %>%
 
 ```{r, fig.height=7, fig.width=8, message=FALSE, warning=FALSE}
 truthPal <- scales::hue_pal()(4)[3:4]
-names(truthPal) <- c("None", "RNAseq")
+names(truthPal) <- c("None", "Array")
 
 p <- vector("list", length(unique(sub$contrast)))
 for(i in 1:length(p)){
@@ -771,8 +771,8 @@ for(i in 1:length(p)){
     names(setLabs) <- tmp$idx
     
     tmp %>% mutate(rna = ID %in% topBROAD$ID[topGOSets$contrast %in% cont],
-                   col = ifelse(rna == 1, "RNAseq", "None")) %>%
-        mutate(col = factor(col, levels = c("RNAseq", "None"))) -> tmp
+                   col = ifelse(rna == 1, "Array", "None")) %>%
+        mutate(col = factor(col, levels = c("Array", "None"))) -> tmp
     
     p[[i]] <- ggplot(tmp, aes(x = -log10(FDR), y = idx, colour = col)) +
         geom_point(aes(size = n), alpha = 0.7) +
@@ -830,7 +830,7 @@ p <- ggplot(sub, aes(x = rank, y = csum, colour = cut)) +
     geom_line() +
     facet_wrap(vars(method), ncol=2, nrow = 3, scales = "free") +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Sig. select", x = "Rank", y = "Cumulative no. RNAseq sets") +
+    labs(colour = "Sig. select", x = "Rank", y = "Cumulative no. Array sets") +
     theme(legend.position = "bottom")
 p
 ```
