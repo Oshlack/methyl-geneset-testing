@@ -19,21 +19,22 @@ The code in this document produces all of the panel figures in our manuscript
 and saves them as PDF files in the `output/figures` directory.
 
 # Figures
+
 ## Figure 1
 
 ```{r}
-f1a <- readRDS(here("output/figures/Fig-1A.rds"))
-f1b <- readRDS(here("output/figures/Fig-1B.rds"))
-f1c <- readRDS(here("output/figures/Fig-1C.rds"))
-f1d <- readRDS(here("output/figures/Fig-1D.rds"))
+a <- readRDS(here("output/figures/Fig-1A.rds"))
+b <- readRDS(here("output/figures/Fig-1B.rds"))
+c <- readRDS(here("output/figures/Fig-1C.rds"))
+d <- readRDS(here("output/figures/Fig-1D.rds"))
 
 layout <- "
 AAAABB
 CCDDDD
 "
 cairo_pdf(here("output/figures/Fig-1.pdf"), width = 9)
-f1a + f1b+ f1c + theme(legend.position = "bottom") + 
-    wrap_elements(panel = f1d, clip = FALSE) + 
+a + b+ c + theme(legend.position = "bottom") + 
+    wrap_elements(panel = d, clip = FALSE) + 
     plot_layout(design = layout) + 
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
@@ -43,25 +44,28 @@ dev.off()
 ## Figure 3
 
 ```{r}
-f3a <- readRDS(here("output/figures/Fig-3A.rds"))
-f3b <- readRDS(here("output/figures/Fig-3B.rds"))
-f3c <- readRDS(here("output/figures/Fig-3C.rds"))
-f3d <- readRDS(here("output/figures/Fig-3D.rds"))
+a <- readRDS(here("output/figures/Fig-3A.rds"))
+b <- readRDS(here("output/figures/Fig-3B.rds"))
+c <- readRDS(here("output/figures/Fig-3C.rds"))
+d <- readRDS(here("output/figures/Fig-3D.rds"))
 
 layout <- "
 AABBBB
 CCDDDD
 "
+
+b$layers[[4]]$aes_params$size <- 2.1
+
 cairo_pdf(here("output/figures/Fig-3.pdf"), width = 9)
-f3a + theme(legend.position = "none") + 
-    f3b + theme(legend.position = "top",
-                legend.key.size = unit(1, "lines")) +
-    f3c + theme(legend.position = "bottom",
-                legend.key.size = unit(1, "lines")) + 
-    f3d + theme(legend.position = "bottom",
-                legend.text = element_text(size = 8), 
-                legend.key.size = unit(1, "lines"),
-                axis.title.y = element_text(size = 9.5)) +
+a + theme(legend.position = "none") + 
+    b + theme(legend.position = "top",
+              legend.key.size = unit(1, "lines")) +
+    c + theme(legend.position = "bottom",
+              legend.key.size = unit(1, "lines")) + 
+    d + theme(legend.position = "bottom",
+              legend.text = element_text(size = 8), 
+              legend.key.size = unit(1, "lines"),
+              axis.title.y = element_text(size = 9.5)) +
     plot_layout(design = layout) + 
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
@@ -71,16 +75,18 @@ dev.off()
 ## Figure 4
 
 ```{r}
-f4a <- readRDS(here("output/figures/Fig-4A.rds"))
-f4b <- readRDS(here("output/figures/Fig-4B.rds"))
-f4c <- readRDS(here("output/figures/Fig-4C.rds"))
-f4d <- readRDS(here("output/figures/Fig-4D.rds"))
-    
+a <- readRDS(here("output/figures/Fig-4A.rds"))
+b <- readRDS(here("output/figures/Fig-4B.rds"))
+c <- readRDS(here("output/figures/Fig-4C.rds"))
+d <- readRDS(here("output/figures/Fig-4D.rds"))
+
 layout <- "
 AACCCC
 AACCCC
 BBCCCC
 BBCCCC
+DDDDDD
+DDDDDD
 DDDDDD
 DDDDDD
 DDDDDD
@@ -92,23 +98,23 @@ DDDDDD
 DDDDDD
 DDDDDD
 "        
-cairo_pdf(here("output/figures/Fig-4.pdf"), width = 8, height = 9)
-f4a + theme(legend.position = "bottom", 
-            legend.key.size = unit(0.75, "lines"),
-            legend.text = element_text(size = 7),
-            legend.title = element_text(size = 8),
-            legend.box.just = 0,
-            axis.title = element_text(size = 8),
-            plot.margin = margin(0,0,0,0)) +
-    f4b + theme(legend.position = "bottom", 
-            legend.key.size = unit(0.75, "lines"),
-            legend.text = element_text(size = 7),
-            legend.title = element_text(size = 8),
-            legend.box.just = 0,
-            axis.title.y = element_text(size = 7),
-            axis.text = element_text(size = 7),
-            plot.margin = margin(0,0,0,0)) +
-    f4c + guides(colour = guide_legend(ncol = 3)) +
+cairo_pdf(here("output/figures/Fig-4.pdf"), width = 8, height = 12)
+a + theme(legend.position = "bottom", 
+          legend.key.size = unit(0.75, "lines"),
+          legend.text = element_text(size = 7),
+          legend.title = element_text(size = 8),
+          legend.box.just = 0,
+          axis.title = element_text(size = 8),
+          plot.margin = margin(0,0,0,0)) +
+    b + theme(legend.position = "bottom", 
+              legend.key.size = unit(0.75, "lines"),
+              legend.text = element_text(size = 7),
+              legend.title = element_text(size = 8),
+              legend.box.just = 0,
+              axis.title.y = element_text(size = 7),
+              axis.text = element_text(size = 7),
+              plot.margin = margin(0,0,0,0)) +
+    c + guides(colour = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
           legend.key.size = unit(1, "lines"),
           legend.text = element_text(size = 8),
@@ -116,7 +122,7 @@ f4a + theme(legend.position = "bottom",
           plot.title = element_blank(),
           axis.title = element_text(size = 9)) +
     labs(y = "Prop. top 100 terms in truth set") +
-    wrap_elements(f4d) +
+    wrap_elements(d) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
@@ -154,13 +160,13 @@ EEEFFGGG
 
 cairo_pdf(here("output/figures/Fig-5.pdf"), width = 9, height = 10)
 a + theme(legend.position = "bottom", 
-            legend.key.size = unit(0.75, "lines"),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            axis.title = element_text(size = 9),
-            axis.text = element_text(size = 8),
-            text = element_text(family = "arial")) +
+          legend.key.size = unit(0.75, "lines"),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 9),
+          legend.box.just = 0,
+          axis.title = element_text(size = 9),
+          axis.text = element_text(size = 8),
+          text = element_text(family = "arial")) +
     b + guides(fill = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
           legend.key.size = unit(1, "lines"),
@@ -168,22 +174,22 @@ a + theme(legend.position = "bottom",
           legend.title = element_text(size = 9),
           plot.title = element_blank(),
           axis.title = element_text(size = 8),
-            text = element_text(family = "arial")) +
+          text = element_text(family = "arial")) +
     c + theme(legend.position = "bottom", 
-            legend.key.size = unit(1, "lines"),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            plot.title = element_blank(),
-            axis.title = element_text(size = 8),
-            text = element_text(family = "arial")) +
+              legend.key.size = unit(1, "lines"),
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9),
+              legend.box.just = 0,
+              plot.title = element_blank(),
+              axis.title = element_text(size = 8),
+              text = element_text(family = "arial")) +
     wrap_elements(d + theme(plot.title = element_blank(),
-                              legend.box = "horizontal",
-                              legend.text = element_text(size = 7),
-                              legend.key.size = unit(1, "lines"),
-                              legend.title = element_text(size = 8),
-                              axis.text.y = element_text(size = 7),
-            text = element_text(family = "arial"))) +
+                            legend.box = "horizontal",
+                            legend.text = element_text(size = 7),
+                            legend.key.size = unit(1, "lines"),
+                            legend.title = element_text(size = 8),
+                            axis.text.y = element_text(size = 7),
+                            text = element_text(family = "arial"))) +
     wrap_elements(panel = e, clip = FALSE) +
     wrap_elements(panel = f + theme(axis.title = element_text(size = 9)), 
                   clip = FALSE) +
@@ -223,19 +229,33 @@ d <- readRDS(here("output/figures/SFig-3D.rds"))
 e <- readRDS(here("output/figures/SFig-3E.rds"))
 
 layout <- "
-AAABBB
-CCCDDD
+AABBBB
+CCDDDD
 EEEEEE
 EEEEEE
 EEEEEE
 "
-cairo_pdf(here("output/figures/SFig-03.pdf"), width = 9, height = 9)
+
+d$layers[[2]]$aes_params$size <- 0.2
+a$layers[[1]]$aes_params$size <- 0.25
+
+cairo_pdf(here("output/figures/SFig-03.pdf"), width = 8, height = 12)
 a + theme(legend.position = "none", 
-          axis.title.y = element_text(size = 9)) + 
-    b + theme(axis.title.y = element_text(size = 9),
-              legend.position = "top") + 
-    c + theme(legend.position = "right") +
-    d + theme(legend.position = "right") +
+          axis.title = element_text(size = 9)) + 
+    b + theme(axis.title.x = element_text(size = 9),
+              axis.title.y = element_text(size = 8),
+              legend.position = "top",
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9)) + 
+    c + theme(axis.title = element_text(size = 9),
+              legend.position = "bottom",
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9)) +
+    d + theme(axis.title.x = element_text(size = 9),
+              axis.title.y = element_text(size = 8),
+              legend.position = "bottom",
+              legend.text = element_text(size = 7),
+              legend.title = element_text(size = 9, angle = 90)) +
     e +
     plot_layout(design = layout) + 
     plot_annotation(tag_levels = 'A') &
@@ -261,18 +281,32 @@ EEEEEE
 FFFGGG
 "
 
-cairo_pdf(here("output/figures/SFig-04.pdf"), width = 9)
-a + theme(legend.position = "right", 
+cairo_pdf(here("output/figures/SFig-04.pdf"), width = 8, height = 10)
+a + scale_y_continuous(labels = scales::scientific) +
+    theme(legend.position = "right", 
           legend.box = "vertical",
-          legend.text = element_text(size = 7)) +
-    b + 
-    c + theme(legend.text = element_text(size = 8)) +
+          legend.text = element_text(size = 7),
+          legend.title = element_text(size = 8),
+          axis.title = element_text(size = 9),
+          axis.text.x = element_text(size = 5)) +
+    b + theme(legend.box = "vertical",
+              legend.text = element_text(size = 7),
+              legend.title = element_text(size = 8),
+              axis.title = element_text(size = 9),
+              axis.text.x = element_text(size = 5)) +
+    c + theme(legend.text = element_text(size = 7),
+              legend.title = element_text(size = 8)) +
     d + theme(legend.text = element_text(size = 8),
+              legend.title = element_text(size = 8),
               axis.title = element_text(size = 8),
+              axis.text = element_text(size = 7),
               legend.position = "bottom") +
-    e +
+    e + theme(legend.position = "bottom") +
     f +
-    g +
+    g + theme(legend.text = element_text(size = 8),
+              legend.title = element_text(size = 8),
+              axis.title = element_text(size = 8),
+              legend.position = "right") +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
@@ -292,9 +326,9 @@ BBBB
 "        
 cairo_pdf(here("output/figures/SFig-05.pdf"), width = 8, height = 9)
 wrap_elements(a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.position = "right") +
-    labs(y = "Prop. top 100 terms in truth set")) +
+                        axis.title = element_text(size = 9),
+                        legend.position = "right") +
+                  labs(y = "Prop. top 100 terms in truth set")) +
     wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
@@ -316,9 +350,9 @@ BBBB
 "        
 cairo_pdf(here("output/figures/SFig-06.pdf"), width = 8, height = 9)
 wrap_elements(a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.position = "right") +
-    labs(y = "Prop. top 100 terms in truth set")) +
+                        axis.title = element_text(size = 9),
+                        legend.position = "right") +
+                  labs(y = "Prop. top 100 terms in truth set")) +
     wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
@@ -336,6 +370,8 @@ e <- readRDS(here("output/figures/SFig-7E.rds"))
 
 layout <- "
 AAAA
+AAAA
+BBBB
 BBBB
 CCCC
 CCCC
@@ -350,11 +386,13 @@ EEEE
 EEEE
 EEEE
 "        
-cairo_pdf(here("output/figures/SFig-07.pdf"), width = 8, height = 17)
-a + theme(legend.position = "none", 
-          axis.title.y = element_text(size = 8)) +
-    b + theme(legend.position = "right", 
-          axis.title.y = element_text(size = 8)) +
+cairo_pdf(here("output/figures/SFig-07.pdf"), width = 8, height = 22)
+wrap_elements((a + plot_layout(guides = "collect") & 
+                   theme(legend.box = "vertical", 
+                         legend.position = "right"))) +
+    wrap_elements((b + plot_layout(guides = "collect") & 
+                       theme(legend.box = "vertical",
+                             legend.position = "right"))) +
     c + 
     d +
     e +
@@ -371,7 +409,7 @@ f8a <- readRDS(here("output/figures/SFig-8A.rds"))
 f8b <- readRDS(here("output/figures/SFig-8B.rds"))
 f8c <- readRDS(here("output/figures/SFig-8C.rds"))
 f8d <- readRDS(here("output/figures/SFig-8D.rds"))
-    
+
 layout <- "
 AACCCC
 AACCCC
@@ -388,7 +426,7 @@ DDDDDD
 DDDDDD
 DDDDDD
 "        
-cairo_pdf(here("output/figures/SFig-8.pdf"), width = 8, height = 9)
+cairo_pdf(here("output/figures/SFig-08.pdf"), width = 8, height = 12)
 f8a + theme(legend.position = "bottom", 
             legend.key.size = unit(0.75, "lines"),
             legend.text = element_text(size = 7),
@@ -397,13 +435,13 @@ f8a + theme(legend.position = "bottom",
             axis.title = element_text(size = 8),
             plot.margin = margin(0,0,0,0)) +
     f8b + theme(legend.position = "bottom", 
-            legend.key.size = unit(0.75, "lines"),
-            legend.text = element_text(size = 7),
-            legend.title = element_text(size = 8),
-            legend.box.just = 0,
-            axis.title.y = element_text(size = 7),
-            axis.text = element_text(size = 7),
-            plot.margin = margin(0,0,0,0)) +
+                legend.key.size = unit(0.75, "lines"),
+                legend.text = element_text(size = 7),
+                legend.title = element_text(size = 8),
+                legend.box.just = 0,
+                axis.title.y = element_text(size = 7),
+                axis.text = element_text(size = 7),
+                plot.margin = margin(0,0,0,0)) +
     f8c + guides(colour = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
           legend.key.size = unit(1, "lines"),
@@ -426,16 +464,16 @@ a <- readRDS(here("output/figures/SFig-9A.rds"))
 b <- readRDS(here("output/figures/SFig-9B.rds"))
 
 layout <- "
-AAA#
+AAAA
 BBBB
 BBBB
 BBBB
 "        
 cairo_pdf(here("output/figures/SFig-09.pdf"), width = 8, height = 9)
 wrap_elements(a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.position = "right") +
-    labs(y = "Prop. top 100 terms in truth set")) +
+                        axis.title = element_text(size = 9),
+                        legend.position = "right") +
+                  labs(y = "Prop. top 100 terms in truth set")) +
     wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
@@ -459,7 +497,8 @@ CCCCCCCC
 CCCCCCCC
 DDDEEFFF
 DDDEEFFF
-"        
+"    
+
 cairo_pdf(here("output/figures/SFig-10.pdf"), width = 8, height = 9)
 a + guides(fill = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
@@ -470,21 +509,21 @@ a + guides(fill = guide_legend(ncol = 3)) +
           axis.title = element_text(size = 8)) +
     labs(y = "Prop. top 100 terms in truth set") +
     b + theme(legend.position = "bottom", 
-            legend.key.size = unit(1, "lines"),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            plot.title = element_blank(),
-            axis.title = element_text(size = 8)) +
+              legend.key.size = unit(1, "lines"),
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9),
+              legend.box.just = 0,
+              plot.title = element_blank(),
+              axis.title = element_text(size = 8)) +
     wrap_elements(c + theme(plot.title = element_blank(),
-                              legend.box = "horizontal",
-                              legend.text = element_text(size = 7),
-                              legend.key.size = unit(1, "lines"),
-                              legend.title = element_text(size = 8),
-                              axis.text.y = element_text(size = 7))) +
+                            legend.box = "horizontal",
+                            legend.text = element_text(size = 7),
+                            legend.key.size = unit(1, "lines"),
+                            legend.title = element_text(size = 8),
+                            axis.text.y = element_text(size = 7))) +
     wrap_elements(panel = d, clip = FALSE) +
-    wrap_elements(panel = e + theme(axis.title = element_text(size = 9)), 
-                                    clip = FALSE) +
+    wrap_elements(panel = e + theme(axis.title = element_text(size = 8)), 
+                  clip = FALSE) +
     wrap_elements(panel = f, clip = FALSE) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
@@ -519,21 +558,21 @@ a + guides(fill = guide_legend(ncol = 3)) +
           axis.title = element_text(size = 8)) +
     labs(y = "Prop. top 100 terms in truth set") +
     b + theme(legend.position = "bottom", 
-            legend.key.size = unit(1, "lines"),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            plot.title = element_blank(),
-            axis.title = element_text(size = 8)) +
-   wrap_elements(c + theme(plot.title = element_blank(),
-                              legend.box = "horizontal",
-                              legend.text = element_text(size = 7),
-                              legend.key.size = unit(1, "lines"),
-                              legend.title = element_text(size = 8),
-                              axis.text.y = element_text(size = 7))) +
+              legend.key.size = unit(1, "lines"),
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9),
+              legend.box.just = 0,
+              plot.title = element_blank(),
+              axis.title = element_text(size = 8)) +
+    wrap_elements(c + theme(plot.title = element_blank(),
+                            legend.box = "horizontal",
+                            legend.text = element_text(size = 7),
+                            legend.key.size = unit(1, "lines"),
+                            legend.title = element_text(size = 8),
+                            axis.text.y = element_text(size = 7))) +
     wrap_elements(panel = d, clip = FALSE) +
-    wrap_elements(panel = e + theme(axis.title = element_text(size = 9)), 
-                                    clip = FALSE) +
+    wrap_elements(panel = e + theme(axis.title = element_text(size = 8)), 
+                  clip = FALSE) +
     wrap_elements(panel = f, clip = FALSE) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
@@ -567,10 +606,10 @@ EEEE
 EEEE
 "        
 cairo_pdf(here("output/figures/SFig-12.pdf"), width = 8, height = 17)
-a + theme(legend.position = "none", 
+a + theme(legend.position = "right", 
           axis.title.y = element_text(size = 8)) +
-    b + theme(legend.position = "right", 
-          axis.title.y = element_text(size = 8)) +
+    b + theme(legend.position = "none", 
+              axis.title.y = element_text(size = 8)) +
     c + 
     d +
     e +
@@ -610,22 +649,21 @@ f <- readRDS(here("output/figures/SFig-14F.rds"))
 
 layout <- "
 AAABBBBB
-AAABBBBB
 CCCCCCCC
 CCCCCCCC
 DDDEEFFF
 DDDEEFFF
-"     
+"    
 
-cairo_pdf(here("output/figures/SFig-14.pdf"), width = 9, height = 10)
+cairo_pdf(here("output/figures/SFig-14.pdf"), width = 8, height = 9)
 a + theme(legend.position = "bottom", 
-            legend.key.size = unit(0.75, "lines"),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            axis.title = element_text(size = 9),
-            axis.text = element_text(size = 8),
-            text = element_text(family = "arial")) +
+          legend.key.size = unit(0.75, "lines"),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 9),
+          legend.box.just = 0,
+          axis.title = element_text(size = 9),
+          axis.text = element_text(size = 8),
+          text = element_text(family = "arial")) +
     b + guides(fill = guide_legend(ncol = 3)) +
     theme(legend.position = "bottom",
           legend.key.size = unit(1, "lines"),
@@ -633,23 +671,26 @@ a + theme(legend.position = "bottom",
           legend.title = element_text(size = 9),
           plot.title = element_blank(),
           axis.title = element_text(size = 8),
-            text = element_text(family = "arial")) +
-    c + theme(legend.position = "bottom", 
-            legend.key.size = unit(1, "lines"),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            plot.title = element_blank(),
-            axis.title = element_text(size = 8),
-            text = element_text(family = "arial")) +
+          text = element_text(family = "arial")) +
+    wrap_elements(c + theme(legend.position = "bottom", 
+                            legend.key.size = unit(1, "lines"),
+                            legend.text = element_text(size = 8),
+                            legend.title = element_text(size = 9),
+                            legend.box.just = 0,
+                            legend.box = "horizontal",
+                            plot.title = element_blank(),
+                            axis.title = element_text(size = 8),
+                            text = element_text(family = "arial"))) +
     wrap_elements(d + theme(plot.title = element_blank(),
-                              legend.box = "horizontal",
-                              legend.text = element_text(size = 7),
-                              legend.key.size = unit(1, "lines"),
-                              legend.title = element_text(size = 8),
-                              axis.text.y = element_text(size = 7),
-            text = element_text(family = "arial"))) +
-    wrap_elements(panel = e, clip = FALSE) +
+                            legend.box = "horizontal",
+                            legend.text = element_text(size = 7),
+                            legend.key.size = unit(1, "lines"),
+                            legend.title = element_text(size = 8),
+                            axis.text.y = element_text(size = 7),
+                            text = element_text(family = "arial"))) +
+    wrap_elements(panel = e + theme(axis.text = element_text(size = 7),
+                                    axis.title = element_text(size = 8)), 
+                  clip = FALSE) +
     wrap_elements(panel = f + theme(axis.title = element_text(size = 9)), 
                   clip = FALSE) +
     plot_layout(design = layout) +
@@ -671,9 +712,13 @@ BBBB
 BBBB
 CCCC
 "        
-cairo_pdf(here("output/figures/SFig-15.pdf"), width = 9)
-a + b + c +
-    plot_layout(design = layout, guides = "collect") +
+cairo_pdf(here("output/figures/SFig-15.pdf"), width = 8, height = 10)
+wrap_elements(a + theme(legend.position = "right",
+                        title = element_blank())) + 
+    wrap_elements(shift_legend(b + theme(
+        title = element_blank()))) + 
+    wrap_elements(c + theme(title = element_blank())) +
+    plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
 dev.off()

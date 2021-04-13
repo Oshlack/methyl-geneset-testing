@@ -282,7 +282,7 @@ for(i in 1:length(unique(dat$contrast))){
     cont <- sort(unique(dat$contrast))[i]
     
     dat %>% filter(set == "GO") %>%
-        filter(sub %in% c("n","c1")) %>%
+        filter(if(cont == "CD4vCD8") sub %in% c("n","p1") else sub %in% c("n","c1")) %>%
         filter(contrast == cont) %>%
         mutate(method = unname(dict[method])) %>% 
         arrange(method, pvalue) %>%
@@ -343,10 +343,9 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList,
                              var = "ID")
 
 dat %>% filter(set == "GO") %>%
-    filter(sub %in% c("n","c1")) %>% 
-    mutate(method = unname(dict[method])) %>% 
-    arrange(contrast, method, pvalue) %>%
-    group_by(contrast, method) %>%
+    mutate(method = unname(dict[method])) %>%
+    arrange(contrast, method, sub, pvalue) %>%
+    group_by(contrast, method, sub) %>%
     mutate(FDR = p.adjust(pvalue, method = "BH")) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 10) %>% 
@@ -362,6 +361,7 @@ names(truthPal) <- c("Both", "ISP", "Neither", "RNAseq")
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
     sub %>% filter(contrast == cont) %>%
+        filter(if(cont == "CD4vCD8") sub %in% c("n","p1") else sub %in% c("n","c1")) %>%
         arrange(method, -rank) %>%
         ungroup() %>%
         mutate(idx = as.factor(1:n())) -> tmp
@@ -392,7 +392,7 @@ for(i in 1:length(p)){
               legend.box = "horizontal",
               legend.margin = margin(0, 0, 0, 0, unit = "lines"),
               panel.spacing.x = unit(1, "lines")) +
-        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-80))) +
+        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-130))) +
         geom_vline(xintercept = -log10(0.05), linetype = "dashed") +
         ggtitle(cont)
 }
@@ -498,53 +498,71 @@ immuneKEGG <- read.csv(here("data/genesets/kegg-immune-related-pathways.csv"),
                             col.names = c("ID","pathway"))
 immuneKEGG$PID <- paste0("path:hsa0",immuneKEGG$ID)
 
-dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) %>% 
-    mutate(method = unname(dict[method])) %>%
-    arrange(contrast, method, pvalue) %>%
-    group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% immuneKEGG$PID)) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> sub
-
-p1 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
-    geom_line() +
-    facet_wrap(vars(contrast), ncol=3) +
-    geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. immune sets") +
-    theme(legend.position = "bottom") +
-    scale_color_manual(values = methodCols)
-```
-
-Examine results when top ranked 100 KEGG pathways from RNA-seq analysis of the same cell type comparisons is used as "truth".
-
-```{r, fig.height=7, fig.width=9}
 rnaseqKEGG <- readRDS(here("data/cache-rnaseq/RNAseq-KEGG.rds"))
 rnaseqKEGG %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topKEGG
 
-dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) %>%
-    mutate(method = unname(dict[method])) %>%
-    arrange(contrast, method, pvalue) %>%
-    group_by(contrast, method) %>%
-    mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% contrast])) %>%
-    mutate(rank = 1:n()) %>%
-    filter(rank <= 100) -> sub
+p1 <- vector("list", length(unique(dat$contrast)))
 
-p2 <- ggplot(sub, aes(x = rank, y = csum, colour = method)) +
+for(i in 1:length(unique(dat$contrast))){
+    cont <- sort(unique(dat$contrast))[i]
+    
+    dat %>% filter(set == "KEGG") %>%
+        filter(if(cont == "CD4vCD8") sub %in% c("n","p1") else sub %in% c("n","c1")) %>%
+        filter(contrast == cont) %>%
+        mutate(method = unname(dict[method])) %>% 
+        arrange(method, pvalue) %>%
+        group_by(method) %>%
+        mutate(rank = 1:n()) %>%
+        filter(rank <= 100) %>%
+        mutate(csum = cumsum(ID %in% immuneKEGG$PID)) %>%
+        mutate(truth = "ISP Terms") -> immuneSum
+    
+    p1[[i]] <- ggplot(immuneSum, aes(x = rank, y = csum, colour = method)) +
     geom_line() +
-    facet_wrap(vars(contrast), ncol=3, scales = "free_y") +
+    facet_wrap(vars(contrast), nrow = 1, ncol = 1) +
     geom_vline(xintercept = 10, linetype = "dotted") +
-    labs(colour = "Method", x = "Rank", y = "Cumulative no. RNAseq sets") +
-    theme(legend.position = "bottom") + 
-    scale_color_manual(values = methodCols)
+    labs(colour = "Method", x = "Rank", 
+         y = "Cumulative no. immune sets") +
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols) 
+}
 
-p3 <- p1 / p2 + 
-    plot_layout(guides = "collect") & 
-    theme(legend.position = "bottom")
-p3
+p2 <- vector("list", length(unique(dat$contrast)))
+
+for(i in 1:length(unique(dat$contrast))){
+    cont <- sort(unique(dat$contrast))[i]
+    
+    dat %>% filter(set == "KEGG") %>%
+        filter(if(cont == "CD4vCD8") sub %in% c("n","p1") else sub %in% c("n","c1")) %>%
+        filter(contrast == cont) %>%
+        mutate(method = unname(dict[method])) %>% 
+        arrange(method, pvalue) %>%
+        group_by(method) %>%
+        mutate(rank = 1:n()) %>%
+        filter(rank <= 100) %>%
+        mutate(csum = cumsum(ID %in% topKEGG$PID[topKEGG$contrast %in% 
+                                                         cont])) %>%
+        mutate(truth = "RNAseq Terms") -> rnaseqSum
+    
+    p2[[i]] <- ggplot(rnaseqSum, aes(x = rank, y = csum, colour = method)) +
+    geom_line() +
+    facet_wrap(vars(contrast), nrow = 1, ncol = 1) +
+    geom_vline(xintercept = 10, linetype = "dotted") +
+    labs(colour = "Method", x = "Rank", 
+         y = "Cumulative no. RNAseq sets") +
+    theme(legend.position = "bottom") +
+    scale_color_manual(values = methodCols) 
+}
+
+p1 <- (p1[[1]] | p1[[2]] + theme(axis.title.y = element_blank()) | 
+        p1[[3]] + theme(axis.title.y = element_blank())) 
+p2 <- (p2[[1]] | p2[[2]] + theme(axis.title.y = element_blank()) | 
+        p2[[3]] + theme(axis.title.y = element_blank()))
+
+(p1 / p2) + plot_layout(guides = "collect") &
+    theme(legend.position = "right")
 ```
 
 Save figure for use in manuscript.
@@ -566,10 +584,10 @@ nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getKEGG()$idLis
                              var = "ID")
 
 dat %>% filter(set == "KEGG") %>%
-    filter(sub %in% c("n","c1")) %>% 
+   # filter(sub %in% c("n","c1")) %>% 
     mutate(method = unname(dict[method])) %>%
-    arrange(contrast, method, pvalue) %>%
-    group_by(contrast, method) %>%
+    arrange(contrast, method, sub, pvalue) %>%
+    group_by(contrast, method, sub) %>%
     mutate(FDR = p.adjust(pvalue, method = "BH")) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 10) %>% 
@@ -582,6 +600,7 @@ p <- vector("list", length(unique(sub$contrast)))
 for(i in 1:length(p)){
     cont <- sort(unique(sub$contrast))[i]
     sub %>% filter(contrast == cont) %>%
+        filter(if(cont == "CD4vCD8") sub %in% c("n","p1") else sub %in% c("n","c1")) %>%
         arrange(method, -rank) %>%
         ungroup() %>%
         mutate(idx = as.factor(1:n())) -> tmp
