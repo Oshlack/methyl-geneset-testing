@@ -19,6 +19,15 @@
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
 <script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
@@ -36,12 +45,16 @@ div.section {
 }
 </style>
 
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -54,32 +67,7 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
 
 
 
@@ -89,10 +77,6 @@ h6 {
   max-width: 940px;
   margin-left: auto;
   margin-right: auto;
-}
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 img {
   max-width:100%;
@@ -109,40 +93,13 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -170,7 +127,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -182,7 +139,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -193,10 +150,23 @@ $(document).ready(function () {
   var menuAnchor = $('a[href="' + href + '"]');
 
   // mark it active
-  menuAnchor.parent().addClass('active');
+  menuAnchor.tab('show');
 
   // if it's got a parent navbar menu mark it active as well
   menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -208,7 +178,6 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
@@ -334,13 +303,13 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
-<div class="col-xs-12 col-sm-4 col-md-3">
+<div class="row">
+<div class="col-sm-12 col-md-4 col-lg-3">
 <div id="TOC" class="tocify">
 </div>
 </div>
 
-<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+<div class="toc-content col-sm-12 col-md-8 col-lg-9">
 
 
 
@@ -370,7 +339,7 @@ div.tocify {
       <ul class="nav navbar-nav navbar-right">
         <li>
   <a href="https://github.com/Oshlack/methyl-geneset-testing">
-    <span class="fa fa-github"></span>
+    <span class="fas fa-github"></span>
      
     Source code
   </a>
@@ -380,7 +349,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -409,7 +378,7 @@ div.tocify {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2020-08-21
+<strong>Last updated:</strong> 2021-04-13
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -500,16 +469,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtreee3b14f49ab36cc724f62903501563603902b2154targetblanke3b14f4a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/e3b14f49ab36cc724f62903501563603902b2154" target="_blank">e3b14f4</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree62fdddc3d48739e5e8f80a02b8ecef78a9b0c456targetblank62fdddca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/62fdddc3d48739e5e8f80a02b8ecef78a9b0c456" target="_blank">62fdddc</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsgithubcomOshlackmethylgenesettestingtreee3b14f49ab36cc724f62903501563603902b2154targetblanke3b14f4a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree62fdddc3d48739e5e8f80a02b8ecef78a9b0c456targetblank62fdddca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://github.com/Oshlack/methyl-geneset-testing/tree/e3b14f49ab36cc724f62903501563603902b2154" target="_blank">e3b14f4</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/62fdddc3d48739e5e8f80a02b8ecef78a9b0c456" target="_blank">62fdddc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -520,6 +489,8 @@ Ignored files:
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
     Ignored:    analysis/figures.nb.html
+    Ignored:    code/.DS_Store
+    Ignored:    code/.Rhistory
     Ignored:    code/.job/
     Ignored:    code/old/
     Ignored:    data/.DS_Store
@@ -528,46 +499,47 @@ Ignored files:
     Ignored:    data/cache-region/
     Ignored:    data/cache-rnaseq/
     Ignored:    data/cache-runtime/
+    Ignored:    data/datasets/.DS_Store
     Ignored:    data/datasets/GSE110554-data.RData
-    Ignored:    data/datasets/SRP125125/SRR6298258/
-    Ignored:    data/datasets/SRP125125/SRR6298271/
-    Ignored:    data/datasets/SRP125125/SRR6298273/
-    Ignored:    data/datasets/SRP125125/SRR6298278/
-    Ignored:    data/datasets/SRP125125/SRR6298281/
-    Ignored:    data/datasets/SRP125125/SRR6298284/
-    Ignored:    data/datasets/SRP125125/SRR6298286/
-    Ignored:    data/datasets/SRP125125/SRR6298299/
-    Ignored:    data/datasets/SRP125125/SRR6298302/
-    Ignored:    data/datasets/SRP125125/SRR6298307/
-    Ignored:    data/datasets/SRP125125/SRR6298310/
-    Ignored:    data/datasets/SRP125125/SRR6298313/
-    Ignored:    data/datasets/SRP125125/SRR6298315/
-    Ignored:    data/datasets/SRP125125/SRR6298328/
-    Ignored:    data/datasets/SRP125125/SRR6298331/
-    Ignored:    data/datasets/SRP125125/SRR6298336/
-    Ignored:    data/datasets/SRP125125/SRR6298339/
-    Ignored:    data/datasets/SRP125125/SRR6298342/
-    Ignored:    data/datasets/SRP125125/SRR6298344/
-    Ignored:    data/datasets/SRP125125/SRR6298365/
-    Ignored:    data/datasets/SRP125125/SRR6298370/
-    Ignored:    data/datasets/SRP125125/SRR6298373/
-    Ignored:    data/datasets/SRP125125/SRR6298376/
+    Ignored:    data/datasets/GSE120854/
+    Ignored:    data/datasets/GSE120854_RAW.tar
+    Ignored:    data/datasets/GSE135446-data.RData
+    Ignored:    data/datasets/GSE135446/
+    Ignored:    data/datasets/GSE135446_RAW.tar
+    Ignored:    data/datasets/GSE45459-data.RData
+    Ignored:    data/datasets/GSE45459_Matrix_signal_intensities.txt
+    Ignored:    data/datasets/GSE45460/
+    Ignored:    data/datasets/GSE45460_RAW.tar
+    Ignored:    data/datasets/GSE95460_RAW.tar
+    Ignored:    data/datasets/GSE95460_RAW/
+    Ignored:    data/datasets/GSE95462-data.RData
+    Ignored:    data/datasets/GSE95462/
+    Ignored:    data/datasets/GSE95462_RAW/
+    Ignored:    data/datasets/SRP100803/
+    Ignored:    data/datasets/SRP125125/.DS_Store
+    Ignored:    data/datasets/SRP125125/SRR6298*/
     Ignored:    data/datasets/SRP125125/SRR_Acc_List.txt
     Ignored:    data/datasets/SRP125125/SRR_Acc_List_Full.txt
     Ignored:    data/datasets/SRP125125/SraRunTable.txt
     Ignored:    data/datasets/SRP125125/multiqc_data/
     Ignored:    data/datasets/SRP125125/multiqc_report.html
     Ignored:    data/datasets/SRP125125/quants/
+    Ignored:    data/datasets/SRP166862/
+    Ignored:    data/datasets/SRP217468/
+    Ignored:    data/datasets/TCGA.BRCA.rds
     Ignored:    data/datasets/TCGA.KIRC.rds
-    Ignored:    data/genesets/BROAD-sets.rds
     Ignored:    data/misc/
     Ignored:    output/.DS_Store
     Ignored:    output/FDR-analysis/
-    Ignored:    output/cache-rnaseq/
     Ignored:    output/compare-methods/
     Ignored:    output/figures/
     Ignored:    output/methylgsa-params/
+    Ignored:    output/outputs.tar.gz
     Ignored:    output/random-cpg-sims/
+    Ignored:    output/test/
+
+Untracked files:
+    Untracked:  analysis/old/
 
 </code></pre>
 <p>
@@ -611,7 +583,109 @@ Message
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/e3b14f49ab36cc724f62903501563603902b2154/analysis/figures.Rmd" target="_blank">e3b14f4</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/910609abacfeb1a4dfcac5904fec1c697296406f/analysis/figures.Rmd" target="_blank">910609a</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-13
+</td>
+<td>
+Fixed supp fig 3
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/4b03471698ec850481d13ffece8808563ce0ffd3/analysis/figures.Rmd" target="_blank">4b03471</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-13
+</td>
+<td>
+Updated code for generating figures
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/697c330d49fecd97bf7eac78a043d1254980aebe/analysis/figures.Rmd" target="_blank">697c330</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-12
+</td>
+<td>
+Updated figure numbering and labels
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/a64bf72693d6c3d0f2b541d53a0ae2d7179446a1/analysis/figures.Rmd" target="_blank">a64bf72</a>
+</td>
+<td>
+Jovana Maksimovic
+</td>
+<td>
+2021-04-12
+</td>
+<td>
+Added panels to supp fig 3
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/5e34ed3827d56f4008443428008772d5c9e96bc4/analysis/figures.Rmd" target="_blank">5e34ed3</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-12
+</td>
+<td>
+Figure updates
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/bbf77e1472fab3a70c0e9bb772d27f3ab024920a/docs/figures.html" target="_blank">bbf77e1</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2020-08-21
+</td>
+<td>
+Build site.
+</td>
+</tr>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/e3b14f49ab36cc724f62903501563603902b2154/analysis/figures.Rmd" target="_blank">e3b14f4</a>
 </td>
 <td>
 JovMaksimovic
@@ -628,7 +702,7 @@ wflow_publish(c(&quot;analysis/01_exploreArrayBiasEPIC.Rmd&quot;, &quot;analysis
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/figures.html" target="_blank">e66c39a</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/e66c39ab282fc1b404f5dd82c8c9ec1ff71eee81/docs/figures.html" target="_blank">e66c39a</a>
 </td>
 <td>
 JovMaksimovic
@@ -645,7 +719,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/ad9e7be3060369217fecb4b7fd98df9570a7b22a/analysis/figures.Rmd" target="_blank">ad9e7be</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/ad9e7be3060369217fecb4b7fd98df9570a7b22a/analysis/figures.Rmd" target="_blank">ad9e7be</a>
 </td>
 <td>
 JovMaksimovic
@@ -662,7 +736,7 @@ wflow_publish(c(&quot;analysis/figures.Rmd&quot;, &quot;analysis/gettingStarted.
 html
 </td>
 <td>
-<a href="https://rawcdn.githack.com/Oshlack/methyl-geneset-testing/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/figures.html" target="_blank">555069b</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/555069b9dae4b12c11c1f78b902882688bc37a7b/docs/figures.html" target="_blank">555069b</a>
 </td>
 <td>
 JovMaksimovic
@@ -679,7 +753,7 @@ Build site.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/91699a8d1b57e40650c7101a0b7db675e67658a1/analysis/figures.Rmd" target="_blank">91699a8</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/91699a8d1b57e40650c7101a0b7db675e67658a1/analysis/figures.Rmd" target="_blank">91699a8</a>
 </td>
 <td>
 JovMaksimovic
@@ -696,7 +770,7 @@ wflow_publish(&quot;analysis/_site.yml&quot;, republish = TRUE, all = TRUE)
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/2be615382e8f3f6f8ec37496c0f05fceb3c5a413/analysis/figures.Rmd" target="_blank">2be6153</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/2be615382e8f3f6f8ec37496c0f05fceb3c5a413/analysis/figures.Rmd" target="_blank">2be6153</a>
 </td>
 <td>
 JovMaksimovic
@@ -713,7 +787,7 @@ Updated code for generating manuscript figures.
 Rmd
 </td>
 <td>
-<a href="https://github.com/Oshlack/methyl-geneset-testing/blob/cfcac1bc62f63ba6d1f941c6888b04e61d7f9140/analysis/figures.Rmd" target="_blank">cfcac1b</a>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/cfcac1bc62f63ba6d1f941c6888b04e61d7f9140/analysis/figures.Rmd" target="_blank">cfcac1b</a>
 </td>
 <td>
 Jovana Maksimovic
@@ -738,12 +812,12 @@ Updated paper figures.
 library(ggplot2)
 library(limma)
 library(tidyverse)</code></pre>
-<pre><code>── Attaching packages ─────────────────────────────────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
-<pre><code>✓ tibble  3.0.3     ✓ dplyr   1.0.0
-✓ tidyr   1.1.0     ✓ stringr 1.4.0
-✓ readr   1.3.1     ✓ forcats 0.5.0
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>✓ tibble  3.1.0     ✓ dplyr   1.0.5
+✓ tidyr   1.1.3     ✓ stringr 1.4.0
+✓ readr   1.4.0     ✓ forcats 0.5.1
 ✓ purrr   0.3.4     </code></pre>
-<pre><code>── Conflicts ────────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+<pre><code>── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
 x dplyr::filter() masks stats::filter()
 x dplyr::lag()    masks stats::lag()</code></pre>
 <pre class="r"><code>library(ggplotify)
@@ -755,18 +829,18 @@ options(scipen=10000)</code></pre>
 <h1>Figures</h1>
 <div id="figure-1" class="section level2">
 <h2>Figure 1</h2>
-<pre class="r"><code>f1a &lt;- readRDS(here(&quot;output/figures/Fig-1A.rds&quot;))
-f1b &lt;- readRDS(here(&quot;output/figures/Fig-1B.rds&quot;))
-f1c &lt;- readRDS(here(&quot;output/figures/Fig-1C.rds&quot;))
-f1d &lt;- readRDS(here(&quot;output/figures/Fig-1D.rds&quot;))
+<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/Fig-1A.rds&quot;))
+b &lt;- readRDS(here(&quot;output/figures/Fig-1B.rds&quot;))
+c &lt;- readRDS(here(&quot;output/figures/Fig-1C.rds&quot;))
+d &lt;- readRDS(here(&quot;output/figures/Fig-1D.rds&quot;))
 
 layout &lt;- &quot;
 AAAABB
 CCDDDD
 &quot;
 cairo_pdf(here(&quot;output/figures/Fig-1.pdf&quot;), width = 9)
-f1a + f1b+ f1c + theme(legend.position = &quot;bottom&quot;) + 
-    wrap_elements(panel = f1d, clip = FALSE) + 
+a + b+ c + theme(legend.position = &quot;bottom&quot;) + 
+    wrap_elements(panel = d, clip = FALSE) + 
     plot_layout(design = layout) + 
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
     theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))</code></pre>
@@ -777,25 +851,28 @@ f1a + f1b+ f1c + theme(legend.position = &quot;bottom&quot;) +
 </div>
 <div id="figure-3" class="section level2">
 <h2>Figure 3</h2>
-<pre class="r"><code>f3a &lt;- readRDS(here(&quot;output/figures/Fig-3A.rds&quot;))
-f3b &lt;- readRDS(here(&quot;output/figures/Fig-3B.rds&quot;))
-f3c &lt;- readRDS(here(&quot;output/figures/Fig-3C.rds&quot;))
-f3d &lt;- readRDS(here(&quot;output/figures/Fig-3D.rds&quot;))
+<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/Fig-3A.rds&quot;))
+b &lt;- readRDS(here(&quot;output/figures/Fig-3B.rds&quot;))
+c &lt;- readRDS(here(&quot;output/figures/Fig-3C.rds&quot;))
+d &lt;- readRDS(here(&quot;output/figures/Fig-3D.rds&quot;))
 
 layout &lt;- &quot;
 AABBBB
 CCDDDD
 &quot;
+
+b$layers[[4]]$aes_params$size &lt;- 2.1
+
 cairo_pdf(here(&quot;output/figures/Fig-3.pdf&quot;), width = 9)
-f3a + theme(legend.position = &quot;none&quot;) + 
-    f3b + theme(legend.position = &quot;top&quot;,
-                legend.key.size = unit(1, &quot;lines&quot;)) +
-    f3c + theme(legend.position = &quot;bottom&quot;,
-                legend.key.size = unit(1, &quot;lines&quot;)) + 
-    f3d + theme(legend.position = &quot;bottom&quot;,
-                legend.text = element_text(size = 8), 
-                legend.key.size = unit(1, &quot;lines&quot;),
-                axis.title.y = element_text(size = 9.5)) +
+a + theme(legend.position = &quot;none&quot;) + 
+    b + theme(legend.position = &quot;top&quot;,
+              legend.key.size = unit(1, &quot;lines&quot;)) +
+    c + theme(legend.position = &quot;bottom&quot;,
+              legend.key.size = unit(1, &quot;lines&quot;)) + 
+    d + theme(legend.position = &quot;bottom&quot;,
+              legend.text = element_text(size = 8), 
+              legend.key.size = unit(1, &quot;lines&quot;),
+              axis.title.y = element_text(size = 9.5)) +
     plot_layout(design = layout) + 
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
     theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))
@@ -805,16 +882,18 @@ dev.off()</code></pre>
 </div>
 <div id="figure-4" class="section level2">
 <h2>Figure 4</h2>
-<pre class="r"><code>f4a &lt;- readRDS(here(&quot;output/figures/Fig-4A.rds&quot;))
-f4b &lt;- readRDS(here(&quot;output/figures/Fig-4B.rds&quot;))
-f4c &lt;- readRDS(here(&quot;output/figures/Fig-4C.rds&quot;))
-f4d &lt;- readRDS(here(&quot;output/figures/Fig-4D.rds&quot;))
-    
+<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/Fig-4A.rds&quot;))
+b &lt;- readRDS(here(&quot;output/figures/Fig-4B.rds&quot;))
+c &lt;- readRDS(here(&quot;output/figures/Fig-4C.rds&quot;))
+d &lt;- readRDS(here(&quot;output/figures/Fig-4D.rds&quot;))
+
 layout &lt;- &quot;
 AACCCC
 AACCCC
 BBCCCC
 BBCCCC
+DDDDDD
+DDDDDD
 DDDDDD
 DDDDDD
 DDDDDD
@@ -826,23 +905,23 @@ DDDDDD
 DDDDDD
 DDDDDD
 &quot;        
-cairo_pdf(here(&quot;output/figures/Fig-4.pdf&quot;), width = 8, height = 9)
-f4a + theme(legend.position = &quot;bottom&quot;, 
-            legend.key.size = unit(0.75, &quot;lines&quot;),
-            legend.text = element_text(size = 7),
-            legend.title = element_text(size = 8),
-            legend.box.just = 0,
-            axis.title = element_text(size = 8),
-            plot.margin = margin(0,0,0,0)) +
-    f4b + theme(legend.position = &quot;bottom&quot;, 
-            legend.key.size = unit(0.75, &quot;lines&quot;),
-            legend.text = element_text(size = 7),
-            legend.title = element_text(size = 8),
-            legend.box.just = 0,
-            axis.title.y = element_text(size = 7),
-            axis.text = element_text(size = 7),
-            plot.margin = margin(0,0,0,0)) +
-    f4c + guides(colour = guide_legend(ncol = 3)) +
+cairo_pdf(here(&quot;output/figures/Fig-4.pdf&quot;), width = 8, height = 12)
+a + theme(legend.position = &quot;bottom&quot;, 
+          legend.key.size = unit(0.75, &quot;lines&quot;),
+          legend.text = element_text(size = 7),
+          legend.title = element_text(size = 8),
+          legend.box.just = 0,
+          axis.title = element_text(size = 8),
+          plot.margin = margin(0,0,0,0)) +
+    b + theme(legend.position = &quot;bottom&quot;, 
+              legend.key.size = unit(0.75, &quot;lines&quot;),
+              legend.text = element_text(size = 7),
+              legend.title = element_text(size = 8),
+              legend.box.just = 0,
+              axis.title.y = element_text(size = 7),
+              axis.text = element_text(size = 7),
+              plot.margin = margin(0,0,0,0)) +
+    c + guides(colour = guide_legend(ncol = 3)) +
     theme(legend.position = &quot;bottom&quot;,
           legend.key.size = unit(1, &quot;lines&quot;),
           legend.text = element_text(size = 8),
@@ -850,7 +929,7 @@ f4a + theme(legend.position = &quot;bottom&quot;,
           plot.title = element_blank(),
           axis.title = element_text(size = 9)) +
     labs(y = &quot;Prop. top 100 terms in truth set&quot;) +
-    wrap_elements(f4d) +
+    wrap_elements(d) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
     theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))
@@ -889,13 +968,13 @@ EEEFFGGG
 
 cairo_pdf(here(&quot;output/figures/Fig-5.pdf&quot;), width = 9, height = 10)
 a + theme(legend.position = &quot;bottom&quot;, 
-            legend.key.size = unit(0.75, &quot;lines&quot;),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            axis.title = element_text(size = 9),
-            axis.text = element_text(size = 8),
-            text = element_text(family = &quot;arial&quot;)) +
+          legend.key.size = unit(0.75, &quot;lines&quot;),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 9),
+          legend.box.just = 0,
+          axis.title = element_text(size = 9),
+          axis.text = element_text(size = 8),
+          text = element_text(family = &quot;arial&quot;)) +
     b + guides(fill = guide_legend(ncol = 3)) +
     theme(legend.position = &quot;bottom&quot;,
           legend.key.size = unit(1, &quot;lines&quot;),
@@ -903,22 +982,22 @@ a + theme(legend.position = &quot;bottom&quot;,
           legend.title = element_text(size = 9),
           plot.title = element_blank(),
           axis.title = element_text(size = 8),
-            text = element_text(family = &quot;arial&quot;)) +
+          text = element_text(family = &quot;arial&quot;)) +
     c + theme(legend.position = &quot;bottom&quot;, 
-            legend.key.size = unit(1, &quot;lines&quot;),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            plot.title = element_blank(),
-            axis.title = element_text(size = 8),
-            text = element_text(family = &quot;arial&quot;)) +
+              legend.key.size = unit(1, &quot;lines&quot;),
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9),
+              legend.box.just = 0,
+              plot.title = element_blank(),
+              axis.title = element_text(size = 8),
+              text = element_text(family = &quot;arial&quot;)) +
     wrap_elements(d + theme(plot.title = element_blank(),
-                              legend.box = &quot;horizontal&quot;,
-                              legend.text = element_text(size = 7),
-                              legend.key.size = unit(1, &quot;lines&quot;),
-                              legend.title = element_text(size = 8),
-                              axis.text.y = element_text(size = 7),
-            text = element_text(family = &quot;arial&quot;))) +
+                            legend.box = &quot;horizontal&quot;,
+                            legend.text = element_text(size = 7),
+                            legend.key.size = unit(1, &quot;lines&quot;),
+                            legend.title = element_text(size = 8),
+                            axis.text.y = element_text(size = 7),
+                            text = element_text(family = &quot;arial&quot;))) +
     wrap_elements(panel = e, clip = FALSE) +
     wrap_elements(panel = f + theme(axis.title = element_text(size = 9)), 
                   clip = FALSE) +
@@ -957,18 +1036,38 @@ dev.off()</code></pre>
 <pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/SFig-3A.rds&quot;))
 b &lt;- readRDS(here(&quot;output/figures/SFig-3B.rds&quot;))
 c &lt;- readRDS(here(&quot;output/figures/SFig-3C.rds&quot;))
+d &lt;- readRDS(here(&quot;output/figures/SFig-3D.rds&quot;))
+e &lt;- readRDS(here(&quot;output/figures/SFig-3E.rds&quot;))
 
 layout &lt;- &quot;
-AAABBB
-CCCCCC
-CCCCCC
-CCCCCC
+AABBBB
+CCDDDD
+EEEEEE
+EEEEEE
+EEEEEE
 &quot;
-cairo_pdf(here(&quot;output/figures/SFig-03.pdf&quot;), width = 9, height = 9)
+
+d$layers[[2]]$aes_params$size &lt;- 0.2
+a$layers[[1]]$aes_params$size &lt;- 0.25
+
+cairo_pdf(here(&quot;output/figures/SFig-03.pdf&quot;), width = 8, height = 12)
 a + theme(legend.position = &quot;none&quot;, 
-          axis.title.y = element_text(size = 9)) + 
-    b + theme(axis.title.y = element_text(size = 9)) + 
-    wrap_elements(c) +
+          axis.title = element_text(size = 9)) + 
+    b + theme(axis.title.x = element_text(size = 9),
+              axis.title.y = element_text(size = 8),
+              legend.position = &quot;top&quot;,
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9)) + 
+    c + theme(axis.title = element_text(size = 9),
+              legend.position = &quot;bottom&quot;,
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9)) +
+    d + theme(axis.title.x = element_text(size = 9),
+              axis.title.y = element_text(size = 8),
+              legend.position = &quot;bottom&quot;,
+              legend.text = element_text(size = 7),
+              legend.title = element_text(size = 9, angle = 90)) +
+    wrap_elements(e) +
     plot_layout(design = layout) + 
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
     theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))
@@ -982,22 +1081,43 @@ dev.off()</code></pre>
 b &lt;- readRDS(here(&quot;output/figures/SFig-4B.rds&quot;))
 c &lt;- readRDS(here(&quot;output/figures/SFig-4C.rds&quot;))
 d &lt;- readRDS(here(&quot;output/figures/SFig-4D.rds&quot;))
+e &lt;- readRDS(here(&quot;output/figures/SFig-4E.rds&quot;))
+f &lt;- readRDS(here(&quot;output/figures/SFig-4F.rds&quot;))
+g &lt;- readRDS(here(&quot;output/figures/SFig-4G.rds&quot;))
 
 layout &lt;- &quot;
-AABB
-AABB
-CCDD
+AAABBB
+CCCDDD
+EEEEEE
+FFFGGG
 &quot;
 
-cairo_pdf(here(&quot;output/figures/SFig-04.pdf&quot;), width = 9)
-a + theme(legend.position = &quot;right&quot;, 
+cairo_pdf(here(&quot;output/figures/SFig-04.pdf&quot;), width = 8, height = 10)
+a + scale_y_continuous(labels = scales::scientific) +
+    theme(legend.position = &quot;right&quot;, 
           legend.box = &quot;vertical&quot;,
-          legend.text = element_text(size = 7)) +
-    b + 
-    c + theme(legend.text = element_text(size = 8)) +
+          legend.text = element_text(size = 7),
+          legend.title = element_text(size = 8),
+          axis.title = element_text(size = 9),
+          axis.text.x = element_text(size = 5)) +
+    b + theme(legend.box = &quot;vertical&quot;,
+              legend.text = element_text(size = 7),
+              legend.title = element_text(size = 8),
+              axis.title = element_text(size = 9),
+              axis.text.x = element_text(size = 5)) +
+    c + theme(legend.text = element_text(size = 7),
+              legend.title = element_text(size = 8)) +
     d + theme(legend.text = element_text(size = 8),
+              legend.title = element_text(size = 8),
               axis.title = element_text(size = 8),
+              axis.text = element_text(size = 7),
               legend.position = &quot;bottom&quot;) +
+    e + theme(legend.position = &quot;bottom&quot;) +
+    f +
+    g + theme(legend.text = element_text(size = 8),
+              legend.title = element_text(size = 8),
+              axis.title = element_text(size = 8),
+              legend.position = &quot;right&quot;) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
     theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))
@@ -1018,9 +1138,9 @@ BBBB
 &quot;        
 cairo_pdf(here(&quot;output/figures/SFig-05.pdf&quot;), width = 8, height = 9)
 wrap_elements(a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.position = &quot;right&quot;) +
-    labs(y = &quot;Prop. top 100 terms in truth set&quot;)) +
+                        axis.title = element_text(size = 9),
+                        legend.position = &quot;right&quot;) +
+                  labs(y = &quot;Prop. top 100 terms in truth set&quot;)) +
     wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
@@ -1042,9 +1162,9 @@ BBBB
 &quot;        
 cairo_pdf(here(&quot;output/figures/SFig-06.pdf&quot;), width = 8, height = 9)
 wrap_elements(a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.position = &quot;right&quot;) +
-    labs(y = &quot;Prop. top 100 terms in truth set&quot;)) +
+                        axis.title = element_text(size = 9),
+                        legend.position = &quot;right&quot;) +
+                  labs(y = &quot;Prop. top 100 terms in truth set&quot;)) +
     wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
@@ -1063,6 +1183,8 @@ e &lt;- readRDS(here(&quot;output/figures/SFig-7E.rds&quot;))
 
 layout &lt;- &quot;
 AAAA
+AAAA
+BBBB
 BBBB
 CCCC
 CCCC
@@ -1077,11 +1199,13 @@ EEEE
 EEEE
 EEEE
 &quot;        
-cairo_pdf(here(&quot;output/figures/SFig-07.pdf&quot;), width = 8, height = 17)
-a + theme(legend.position = &quot;none&quot;, 
-          axis.title.y = element_text(size = 8)) +
-    b + theme(legend.position = &quot;right&quot;, 
-          axis.title.y = element_text(size = 8)) +
+cairo_pdf(here(&quot;output/figures/SFig-07.pdf&quot;), width = 8, height = 22)
+wrap_elements((a + plot_layout(guides = &quot;collect&quot;) &amp; 
+                   theme(legend.box = &quot;vertical&quot;, 
+                         legend.position = &quot;right&quot;))) +
+    wrap_elements((b + plot_layout(guides = &quot;collect&quot;) &amp; 
+                       theme(legend.box = &quot;vertical&quot;,
+                             legend.position = &quot;right&quot;))) +
     c + 
     d +
     e +
@@ -1094,21 +1218,52 @@ dev.off()</code></pre>
 </div>
 <div id="supplementary-figure-8" class="section level2">
 <h2>Supplementary Figure 8</h2>
-<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/SFig-8A.rds&quot;))
-b &lt;- readRDS(here(&quot;output/figures/SFig-8B.rds&quot;))
+<pre class="r"><code>f8a &lt;- readRDS(here(&quot;output/figures/SFig-8A.rds&quot;))
+f8b &lt;- readRDS(here(&quot;output/figures/SFig-8B.rds&quot;))
+f8c &lt;- readRDS(here(&quot;output/figures/SFig-8C.rds&quot;))
+f8d &lt;- readRDS(here(&quot;output/figures/SFig-8D.rds&quot;))
 
 layout &lt;- &quot;
-AAA#
-BBBB
-BBBB
-BBBB
-&quot;           
-cairo_pdf(here(&quot;output/figures/SFig-08.pdf&quot;), width = 8, height = 9)
-wrap_elements(a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.position = &quot;right&quot;) +
-    labs(y = &quot;Prop. top 100 terms in truth set&quot;)) +
-    wrap_elements(b) +
+AACCCC
+AACCCC
+BBCCCC
+BBCCCC
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+DDDDDD
+&quot;        
+cairo_pdf(here(&quot;output/figures/SFig-08.pdf&quot;), width = 8, height = 12)
+f8a + theme(legend.position = &quot;bottom&quot;, 
+            legend.key.size = unit(0.75, &quot;lines&quot;),
+            legend.text = element_text(size = 7),
+            legend.title = element_text(size = 8),
+            legend.box.just = 0,
+            axis.title = element_text(size = 8),
+            plot.margin = margin(0,0,0,0)) +
+    f8b + theme(legend.position = &quot;bottom&quot;, 
+                legend.key.size = unit(0.75, &quot;lines&quot;),
+                legend.text = element_text(size = 7),
+                legend.title = element_text(size = 8),
+                legend.box.just = 0,
+                axis.title.y = element_text(size = 7),
+                axis.text = element_text(size = 7),
+                plot.margin = margin(0,0,0,0)) +
+    f8c + guides(colour = guide_legend(ncol = 3)) +
+    theme(legend.position = &quot;bottom&quot;,
+          legend.key.size = unit(1, &quot;lines&quot;),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 9),
+          plot.title = element_blank(),
+          axis.title = element_text(size = 9)) +
+    labs(y = &quot;Prop. top 100 terms in truth set&quot;) +
+    wrap_elements(f8d) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
     theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))
@@ -1122,16 +1277,16 @@ dev.off()</code></pre>
 b &lt;- readRDS(here(&quot;output/figures/SFig-9B.rds&quot;))
 
 layout &lt;- &quot;
-AAA#
+AAAA
 BBBB
 BBBB
 BBBB
 &quot;        
 cairo_pdf(here(&quot;output/figures/SFig-09.pdf&quot;), width = 8, height = 9)
 wrap_elements(a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.position = &quot;right&quot;) +
-    labs(y = &quot;Prop. top 100 terms in truth set&quot;)) +
+                        axis.title = element_text(size = 9),
+                        legend.position = &quot;right&quot;) +
+                  labs(y = &quot;Prop. top 100 terms in truth set&quot;)) +
     wrap_elements(b) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
@@ -1144,23 +1299,50 @@ dev.off()</code></pre>
 <h2>Supplementary Figure 10</h2>
 <pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/SFig-10A.rds&quot;))
 b &lt;- readRDS(here(&quot;output/figures/SFig-10B.rds&quot;))
+c &lt;- readRDS(here(&quot;output/figures/SFig-10C.rds&quot;))
+d &lt;- readRDS(here(&quot;output/figures/SFig-10D.rds&quot;))
+e &lt;- readRDS(here(&quot;output/figures/SFig-10E.rds&quot;))
+f &lt;- readRDS(here(&quot;output/figures/SFig-10F.rds&quot;))
 
 layout &lt;- &quot;
-AAA#
-BBBB
-BBBB
-BBBB
-&quot;        
+AAABBBBB
+CCCCCCCC
+CCCCCCCC
+DDDEEFFF
+DDDEEFFF
+&quot;    
+
 cairo_pdf(here(&quot;output/figures/SFig-10.pdf&quot;), width = 8, height = 9)
-wrap_elements(a + theme(plot.title = element_blank(),
-                          axis.title = element_text(size = 9),
-                          legend.position = &quot;right&quot;) +
-    labs(y = &quot;Prop. top 100 terms in truth set&quot;)) +
-    wrap_elements(b) +
+a + guides(fill = guide_legend(ncol = 3)) +
+    theme(legend.position = &quot;bottom&quot;,
+          legend.key.size = unit(1, &quot;lines&quot;),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 9),
+          plot.title = element_blank(),
+          axis.title = element_text(size = 8)) +
+    labs(y = &quot;Prop. top 100 terms in truth set&quot;) +
+    b + theme(legend.position = &quot;bottom&quot;, 
+              legend.key.size = unit(1, &quot;lines&quot;),
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9),
+              legend.box.just = 0,
+              plot.title = element_blank(),
+              axis.title = element_text(size = 8)) +
+    wrap_elements(c + theme(plot.title = element_blank(),
+                            legend.box = &quot;horizontal&quot;,
+                            legend.text = element_text(size = 7),
+                            legend.key.size = unit(1, &quot;lines&quot;),
+                            legend.title = element_text(size = 8),
+                            axis.text.y = element_text(size = 7))) +
+    wrap_elements(panel = d, clip = FALSE) +
+    wrap_elements(panel = e + theme(axis.title = element_text(size = 8)), 
+                  clip = FALSE) +
+    wrap_elements(panel = f, clip = FALSE) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
-    theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))
-dev.off()</code></pre>
+    theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))</code></pre>
+<pre><code>`geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<pre class="r"><code>dev.off()</code></pre>
 <pre><code>quartz_off_screen 
                 2 </code></pre>
 </div>
@@ -1179,7 +1361,7 @@ CCCCCCCC
 CCCCCCCC
 DDDEEFFF
 DDDEEFFF
-&quot;        
+&quot;          
 cairo_pdf(here(&quot;output/figures/SFig-11.pdf&quot;), width = 8, height = 9)
 a + guides(fill = guide_legend(ncol = 3)) +
     theme(legend.position = &quot;bottom&quot;,
@@ -1190,21 +1372,21 @@ a + guides(fill = guide_legend(ncol = 3)) +
           axis.title = element_text(size = 8)) +
     labs(y = &quot;Prop. top 100 terms in truth set&quot;) +
     b + theme(legend.position = &quot;bottom&quot;, 
-            legend.key.size = unit(1, &quot;lines&quot;),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            plot.title = element_blank(),
-            axis.title = element_text(size = 8)) +
+              legend.key.size = unit(1, &quot;lines&quot;),
+              legend.text = element_text(size = 8),
+              legend.title = element_text(size = 9),
+              legend.box.just = 0,
+              plot.title = element_blank(),
+              axis.title = element_text(size = 8)) +
     wrap_elements(c + theme(plot.title = element_blank(),
-                              legend.box = &quot;horizontal&quot;,
-                              legend.text = element_text(size = 7),
-                              legend.key.size = unit(1, &quot;lines&quot;),
-                              legend.title = element_text(size = 8),
-                              axis.text.y = element_text(size = 7))) +
+                            legend.box = &quot;horizontal&quot;,
+                            legend.text = element_text(size = 7),
+                            legend.key.size = unit(1, &quot;lines&quot;),
+                            legend.title = element_text(size = 8),
+                            axis.text.y = element_text(size = 7))) +
     wrap_elements(panel = d, clip = FALSE) +
-    wrap_elements(panel = e + theme(axis.title = element_text(size = 9)), 
-                                    clip = FALSE) +
+    wrap_elements(panel = e + theme(axis.title = element_text(size = 8)), 
+                  clip = FALSE) +
     wrap_elements(panel = f, clip = FALSE) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
@@ -1221,56 +1403,6 @@ b &lt;- readRDS(here(&quot;output/figures/SFig-12B.rds&quot;))
 c &lt;- readRDS(here(&quot;output/figures/SFig-12C.rds&quot;))
 d &lt;- readRDS(here(&quot;output/figures/SFig-12D.rds&quot;))
 e &lt;- readRDS(here(&quot;output/figures/SFig-12E.rds&quot;))
-f &lt;- readRDS(here(&quot;output/figures/SFig-12F.rds&quot;))
-
-layout &lt;- &quot;
-AAABBBBB
-CCCCCCCC
-CCCCCCCC
-DDDEEFFF
-DDDEEFFF
-&quot;          
-cairo_pdf(here(&quot;output/figures/SFig-12.pdf&quot;), width = 8, height = 9)
-a + guides(fill = guide_legend(ncol = 3)) +
-    theme(legend.position = &quot;bottom&quot;,
-          legend.key.size = unit(1, &quot;lines&quot;),
-          legend.text = element_text(size = 8),
-          legend.title = element_text(size = 9),
-          plot.title = element_blank(),
-          axis.title = element_text(size = 8)) +
-    labs(y = &quot;Prop. top 100 terms in truth set&quot;) +
-    b + theme(legend.position = &quot;bottom&quot;, 
-            legend.key.size = unit(1, &quot;lines&quot;),
-            legend.text = element_text(size = 8),
-            legend.title = element_text(size = 9),
-            legend.box.just = 0,
-            plot.title = element_blank(),
-            axis.title = element_text(size = 8)) +
-   wrap_elements(c + theme(plot.title = element_blank(),
-                              legend.box = &quot;horizontal&quot;,
-                              legend.text = element_text(size = 7),
-                              legend.key.size = unit(1, &quot;lines&quot;),
-                              legend.title = element_text(size = 8),
-                              axis.text.y = element_text(size = 7))) +
-    wrap_elements(panel = d, clip = FALSE) +
-    wrap_elements(panel = e + theme(axis.title = element_text(size = 9)), 
-                                    clip = FALSE) +
-    wrap_elements(panel = f, clip = FALSE) +
-    plot_layout(design = layout) +
-    plot_annotation(tag_levels = &#39;A&#39;) &amp;
-    theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))</code></pre>
-<pre><code>`geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
-<pre class="r"><code>dev.off()</code></pre>
-<pre><code>quartz_off_screen 
-                2 </code></pre>
-</div>
-<div id="supplementary-figure-13" class="section level2">
-<h2>Supplementary Figure 13</h2>
-<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/SFig-13A.rds&quot;))
-b &lt;- readRDS(here(&quot;output/figures/SFig-13B.rds&quot;))
-c &lt;- readRDS(here(&quot;output/figures/SFig-13C.rds&quot;))
-d &lt;- readRDS(here(&quot;output/figures/SFig-13D.rds&quot;))
-e &lt;- readRDS(here(&quot;output/figures/SFig-13E.rds&quot;))
 
 layout &lt;- &quot;
 AAAA
@@ -1288,11 +1420,11 @@ EEEE
 EEEE
 EEEE
 &quot;        
-cairo_pdf(here(&quot;output/figures/SFig-13.pdf&quot;), width = 8, height = 17)
-a + theme(legend.position = &quot;none&quot;, 
+cairo_pdf(here(&quot;output/figures/SFig-12.pdf&quot;), width = 8, height = 17)
+a + theme(legend.position = &quot;right&quot;, 
           axis.title.y = element_text(size = 8)) +
-    b + theme(legend.position = &quot;right&quot;, 
-          axis.title.y = element_text(size = 8)) +
+    b + theme(legend.position = &quot;none&quot;, 
+              axis.title.y = element_text(size = 8)) +
     c + 
     d +
     e +
@@ -1303,18 +1435,106 @@ dev.off()</code></pre>
 <pre><code>quartz_off_screen 
                 2 </code></pre>
 </div>
-<div id="supplementary-figure-14" class="section level2">
-<h2>Supplementary Figure 14</h2>
-<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/SFig-14A.rds&quot;))
-b &lt;- readRDS(here(&quot;output/figures/SFig-14B.rds&quot;))
+<div id="supplementary-figure-13" class="section level2">
+<h2>Supplementary Figure 13</h2>
+<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/SFig-13A.rds&quot;))
+b &lt;- readRDS(here(&quot;output/figures/SFig-13B.rds&quot;))
 
 layout &lt;- &quot;
 AAAA
 BBBB
 &quot;        
-cairo_pdf(here(&quot;output/figures/SFig-14.pdf&quot;), width = 9)
+cairo_pdf(here(&quot;output/figures/SFig-13.pdf&quot;), width = 9)
 a + b +
     plot_layout(design = layout, guides = &quot;collect&quot;) +
+    plot_annotation(tag_levels = &#39;A&#39;) &amp;
+    theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))
+dev.off()</code></pre>
+<pre><code>quartz_off_screen 
+                2 </code></pre>
+</div>
+<div id="supplementary-figure-14" class="section level2">
+<h2>Supplementary Figure 14</h2>
+<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/SFig-14A.rds&quot;))
+b &lt;- readRDS(here(&quot;output/figures/SFig-14B.rds&quot;))
+c &lt;- readRDS(here(&quot;output/figures/SFig-14C.rds&quot;))
+d &lt;- readRDS(here(&quot;output/figures/SFig-14D.rds&quot;))
+e &lt;- readRDS(here(&quot;output/figures/SFig-14E.rds&quot;))
+f &lt;- readRDS(here(&quot;output/figures/SFig-14F.rds&quot;))
+
+layout &lt;- &quot;
+AAABBBBB
+CCCCCCCC
+CCCCCCCC
+DDDEEFFF
+DDDEEFFF
+&quot;    
+
+cairo_pdf(here(&quot;output/figures/SFig-14.pdf&quot;), width = 8, height = 9)
+a + theme(legend.position = &quot;bottom&quot;, 
+          legend.key.size = unit(0.75, &quot;lines&quot;),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 9),
+          legend.box.just = 0,
+          axis.title = element_text(size = 9),
+          axis.text = element_text(size = 8),
+          text = element_text(family = &quot;arial&quot;)) +
+    b + guides(fill = guide_legend(ncol = 3)) +
+    theme(legend.position = &quot;bottom&quot;,
+          legend.key.size = unit(1, &quot;lines&quot;),
+          legend.text = element_text(size = 8),
+          legend.title = element_text(size = 9),
+          plot.title = element_blank(),
+          axis.title = element_text(size = 8),
+          text = element_text(family = &quot;arial&quot;)) +
+    wrap_elements(c + theme(legend.position = &quot;bottom&quot;, 
+                            legend.key.size = unit(1, &quot;lines&quot;),
+                            legend.text = element_text(size = 8),
+                            legend.title = element_text(size = 9),
+                            legend.box.just = 0,
+                            legend.box = &quot;horizontal&quot;,
+                            plot.title = element_blank(),
+                            axis.title = element_text(size = 8),
+                            text = element_text(family = &quot;arial&quot;))) +
+    wrap_elements(d + theme(plot.title = element_blank(),
+                            legend.box = &quot;horizontal&quot;,
+                            legend.text = element_text(size = 7),
+                            legend.key.size = unit(1, &quot;lines&quot;),
+                            legend.title = element_text(size = 8),
+                            axis.text.y = element_text(size = 7),
+                            text = element_text(family = &quot;arial&quot;))) +
+    wrap_elements(panel = e + theme(axis.text = element_text(size = 7),
+                                    axis.title = element_text(size = 8)), 
+                  clip = FALSE) +
+    wrap_elements(panel = f + theme(axis.title = element_text(size = 9)), 
+                  clip = FALSE) +
+    plot_layout(design = layout) +
+    plot_annotation(tag_levels = &#39;A&#39;) &amp;
+    theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))</code></pre>
+<pre><code>`geom_smooth()` using method = &#39;loess&#39; and formula &#39;y ~ x&#39;</code></pre>
+<pre class="r"><code>dev.off()</code></pre>
+<pre><code>quartz_off_screen 
+                2 </code></pre>
+</div>
+<div id="supplementary-figure-15" class="section level2">
+<h2>Supplementary Figure 15</h2>
+<pre class="r"><code>a &lt;- readRDS(here(&quot;output/figures/SFig-15A.rds&quot;))
+b &lt;- readRDS(here(&quot;output/figures/SFig-15B.rds&quot;))
+c &lt;- readRDS(here(&quot;output/figures/SFig-15C.rds&quot;))
+
+layout &lt;- &quot;
+AAAA
+BBBB
+BBBB
+CCCC
+&quot;        
+cairo_pdf(here(&quot;output/figures/SFig-15.pdf&quot;), width = 8, height = 10)
+wrap_elements(a + theme(legend.position = &quot;right&quot;,
+                        title = element_blank())) + 
+    wrap_elements(shift_legend(b + theme(
+        title = element_blank()))) + 
+    wrap_elements(c + theme(title = element_blank())) +
+    plot_layout(design = layout) +
     plot_annotation(tag_levels = &#39;A&#39;) &amp;
     theme(plot.tag = element_text(size = 14, face = &quot;bold&quot;))
 dev.off()</code></pre>
@@ -1328,13 +1548,13 @@ dev.off()</code></pre>
 </p>
 <div id="workflowr-sessioninfo" class="collapse">
 <pre class="r"><code>sessionInfo()</code></pre>
-<pre><code>R version 3.6.3 (2020-02-29)
-Platform: x86_64-apple-darwin15.6.0 (64-bit)
+<pre><code>R version 4.0.3 (2020-10-10)
+Platform: x86_64-apple-darwin17.0 (64-bit)
 Running under: macOS Mojave 10.14.6
 
 Matrix products: default
-BLAS:   /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRblas.0.dylib
-LAPACK: /Library/Frameworks/R.framework/Versions/3.6/Resources/lib/libRlapack.dylib
+BLAS:   /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRblas.dylib
+LAPACK: /Library/Frameworks/R.framework/Versions/4.0/Resources/lib/libRlapack.dylib
 
 locale:
 [1] en_AU.UTF-8/en_AU.UTF-8/en_AU.UTF-8/C/en_AU.UTF-8/en_AU.UTF-8
@@ -1343,37 +1563,39 @@ attached base packages:
 [1] stats     graphics  grDevices utils     datasets  methods   base     
 
 other attached packages:
- [1] UpSetR_1.4.0    ggplotify_0.0.5 forcats_0.5.0   stringr_1.4.0  
- [5] dplyr_1.0.0     purrr_0.3.4     readr_1.3.1     tidyr_1.1.0    
- [9] tibble_3.0.3    tidyverse_1.3.0 limma_3.42.2    ggplot2_3.3.2  
-[13] patchwork_1.0.1 here_0.1        workflowr_1.6.2
+ [1] UpSetR_1.4.0    ggplotify_0.0.5 forcats_0.5.1   stringr_1.4.0  
+ [5] dplyr_1.0.5     purrr_0.3.4     readr_1.4.0     tidyr_1.1.3    
+ [9] tibble_3.1.0    tidyverse_1.3.0 limma_3.46.0    ggplot2_3.3.3  
+[13] patchwork_1.1.1 here_1.0.1      workflowr_1.6.2
 
 loaded via a namespace (and not attached):
- [1] httr_1.4.2          jsonlite_1.7.0      splines_3.6.3      
- [4] modelr_0.1.8        assertthat_0.2.1    stats4_3.6.3       
- [7] BiocManager_1.30.10 rvcheck_0.1.8       blob_1.2.1         
-[10] cellranger_1.1.0    yaml_2.2.1          pillar_1.4.6       
-[13] backports_1.1.8     lattice_0.20-41     glue_1.4.1         
-[16] digest_0.6.25       RColorBrewer_1.1-2  promises_1.1.1     
-[19] rvest_0.3.5         colorspace_1.4-1    cowplot_1.0.0      
-[22] htmltools_0.5.0     httpuv_1.5.4        Matrix_1.2-18      
-[25] plyr_1.8.6          pkgconfig_2.0.3     broom_0.7.0        
-[28] haven_2.3.1         scales_1.1.1        whisker_0.4        
-[31] later_1.1.0.1       git2r_0.27.1        mgcv_1.8-31        
-[34] generics_0.0.2      farver_2.0.3        IRanges_2.20.2     
-[37] ellipsis_0.3.1      withr_2.2.0         BiocGenerics_0.32.0
-[40] cli_2.0.2           magrittr_1.5        crayon_1.3.4       
-[43] readxl_1.3.1        evaluate_0.14       fs_1.4.2           
-[46] fansi_0.4.1         nlme_3.1-148        xml2_1.3.2         
-[49] tools_3.6.3         hms_0.5.3           lifecycle_0.2.0    
-[52] S4Vectors_0.24.4    munsell_0.5.0       reprex_0.3.0       
-[55] compiler_3.6.3      gridGraphics_0.5-0  rlang_0.4.7        
-[58] grid_3.6.3          rstudioapi_0.11     labeling_0.3       
-[61] rmarkdown_2.3       gtable_0.3.0        DBI_1.1.0          
-[64] R6_2.4.1            gridExtra_2.3       lubridate_1.7.9    
-[67] knitr_1.29          rprojroot_1.3-2     stringi_1.4.6      
-[70] parallel_3.6.3      Rcpp_1.0.5          vctrs_0.3.2        
-[73] dbplyr_1.4.4        tidyselect_1.1.0    xfun_0.15          </code></pre>
+ [1] nlme_3.1-152        fs_1.5.0            lubridate_1.7.10   
+ [4] RColorBrewer_1.1-2  httr_1.4.2          rprojroot_2.0.2    
+ [7] tools_4.0.3         backports_1.2.1     bslib_0.2.4        
+[10] utf8_1.2.1          R6_2.5.0            DBI_1.1.1          
+[13] BiocGenerics_0.36.0 mgcv_1.8-34         colorspace_2.0-0   
+[16] withr_2.4.1         tidyselect_1.1.0    gridExtra_2.3      
+[19] compiler_4.0.3      git2r_0.28.0        cli_2.4.0          
+[22] rvest_1.0.0         xml2_1.3.2          labeling_0.4.2     
+[25] sass_0.3.1          scales_1.1.1        digest_0.6.27      
+[28] rmarkdown_2.7       pkgconfig_2.0.3     htmltools_0.5.1.1  
+[31] dbplyr_2.1.1        rlang_0.4.10        readxl_1.3.1       
+[34] rstudioapi_0.13     gridGraphics_0.5-1  jquerylib_0.1.3    
+[37] farver_2.1.0        generics_0.1.0      jsonlite_1.7.2     
+[40] magrittr_2.0.1      Matrix_1.3-2        Rcpp_1.0.6         
+[43] munsell_0.5.0       S4Vectors_0.28.1    fansi_0.4.2        
+[46] lifecycle_1.0.0     stringi_1.5.3       whisker_0.4        
+[49] yaml_2.2.1          plyr_1.8.6          grid_4.0.3         
+[52] parallel_4.0.3      promises_1.2.0.1    crayon_1.4.1       
+[55] lattice_0.20-41     cowplot_1.1.1       haven_2.3.1        
+[58] splines_4.0.3       hms_1.0.0           knitr_1.31         
+[61] pillar_1.5.1        stats4_4.0.3        reprex_2.0.0       
+[64] glue_1.4.2          evaluate_0.14       BiocManager_1.30.12
+[67] modelr_0.1.8        vctrs_0.3.7         httpuv_1.5.5       
+[70] cellranger_1.1.0    gtable_0.3.0        assertthat_0.2.1   
+[73] xfun_0.22           broom_0.7.6         later_1.1.0.1      
+[76] lemon_0.4.5         rvcheck_0.1.8       IRanges_2.24.1     
+[79] ellipsis_0.3.1     </code></pre>
 </div>
 </div>
 </div>
@@ -1401,7 +1623,7 @@ footer is added to webpages before the MathJax javascript. -->
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
@@ -1419,7 +1641,7 @@ $(document).ready(function () {
 
 $(document).ready(function () {
   $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
+    $(this).parent().toggleClass('nav-tabs-open');
   });
 });
 </script>

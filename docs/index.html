@@ -302,7 +302,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-04-06
+<strong>Last updated:</strong> 2021-04-13
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 2 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -333,16 +333,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree98431578adb30dcaa808cddbfe752948d7eb5385targetblank9843157a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/98431578adb30dcaa808cddbfe752948d7eb5385" target="_blank">9843157</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree62fdddc3d48739e5e8f80a02b8ecef78a9b0c456targetblank62fdddca"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/62fdddc3d48739e5e8f80a02b8ecef78a9b0c456" target="_blank">62fdddc</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree98431578adb30dcaa808cddbfe752948d7eb5385targetblank9843157a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree62fdddc3d48739e5e8f80a02b8ecef78a9b0c456targetblank62fdddca" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/98431578adb30dcaa808cddbfe752948d7eb5385" target="_blank">9843157</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/62fdddc3d48739e5e8f80a02b8ecef78a9b0c456" target="_blank">62fdddc</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -352,7 +352,6 @@ Ignored files:
     Ignored:    .DS_Store
     Ignored:    .Rhistory
     Ignored:    .Rproj.user/
-    Ignored:    analysis/figure/
     Ignored:    analysis/figures.nb.html
     Ignored:    code/.DS_Store
     Ignored:    code/.Rhistory
@@ -403,9 +402,8 @@ Ignored files:
     Ignored:    output/random-cpg-sims/
     Ignored:    output/test/
 
-Unstaged changes:
-    Modified:   analysis/04_expressionGenesetsBcells.Rmd
-    Modified:   analysis/05_compareMethods.Rmd
+Untracked files:
+    Untracked:  analysis/old/
 
 </code></pre>
 <p>
@@ -444,6 +442,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/62fdddc3d48739e5e8f80a02b8ecef78a9b0c456/analysis/index.Rmd" target="_blank">62fdddc</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-13
+</td>
+<td>
+Removed unused links
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/a9a3a86439630816564e1ec217381de691d4d4f0/docs/index.html" target="_blank">a9a3a86</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-06
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -1474,25 +1506,21 @@ Start workflowr project.
 <li><p><a href="01_exploreArrayBiasEPIC.html">Explore EPIC array bias</a> Explore the various array biases on the EPIC array that affect gene set testing.</p></li>
 <li><p><a href="02_exploreArrayBias450.html">Explore 450k array bias</a> Explore the various array biases on the 450k array that affect gene set testing.</p></li>
 <li><ol style="list-style-type: lower-alpha">
-<li><p><a href="03_fdrAnalysisKIRC.html">Compare FDR of different methods (KIRC)</a> Analyse the normal samples from a 450k array KIRC TCGA dataset using various gene set testing methods to estimate their false discovery rate control.</p></li>
-<li><p><a href="03_fdrAnalysisBRCA.html">Compare FDR of different methods (BRCA)</a> Analyse the normal samples from a 450k array BRCA TCGA dataset using various gene set testing methods to estimate their false discovery rate control.</p></li>
+<li><p><a href="03_fdrAnalysisKIRC.html">Compare FDR of different methods (KIRC data)</a> Analyse the normal samples from a 450k array KIRC TCGA dataset using various gene set testing methods to estimate their false discovery rate control.</p></li>
+<li><p><a href="03_fdrAnalysisBRCA.html">Compare FDR of different methods (BRCA data)</a> Analyse the normal samples from a 450k array BRCA TCGA dataset using various gene set testing methods to estimate their false discovery rate control.</p></li>
 </ol></li>
 <li><ol style="list-style-type: lower-alpha">
 <li><p><a href="04_expressionGenesets.html">Generate a blood cell RNAseq &quot;truth&quot; set</a> Analyse an RNAseq sorted blood cell dataset and identify the top ranked gene sets for each cell type comparison.</p></li>
-<li><p><a href="04_expressionGenesetsFibroid.html">Generate a breast cancer cell line RNAseq &quot;truth&quot; set</a> Analyse an RNAseq breast cancer cell line data and identify the top ranked gene sets for each comparison.</p></li>
-<li><p><a href="04_expressionGenesetsCellLines.html">Generate a uterine fibroid RNAseq &quot;truth&quot; set</a> Analyse an RNAseq normal and fibroid uterine tissue dataset and identify the top ranked gene sets for each tissue comparison.</p></li>
 <li><p><a href="04_expressionGenesetsBcells.html">Generate a B-cell development gene exression &quot;truth&quot; set</a> Analyse Affymetrix gene expression microarray data of B-cell development and identify the top ranked gene sets for each stage comparison.</p></li>
 </ol></li>
 <li><ol style="list-style-type: lower-alpha">
-<li><p><a href="05_compareMethods.html">Compare performance of different methods</a> Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
-<li><p><a href="05_compareMethodsCellLines.html">Compare performance of different methods</a> Analyse an EPIC array breast cancer cell line data using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
-<li><p><a href="05_compareMethodsFibroid.html">Compare performance of different methods</a> Analyse an EPIC array normal and fibroid uterine tissue dataset using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
-<li><p><a href="05_compareMethodsBcells.html">Compare performance of different methods</a> Analyse a 450k array dataset of B-cell development data using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
+<li><p><a href="05_compareMethods.html">Compare performance of different methods (EPIC data)</a> Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
+<li><p><a href="05_compareMethodsBcells.html">Compare performance of different methods (450K data)</a> Analyse a 450k array dataset of B-cell development data using various gene set testing methods. Compare how well the different methods perform using several metrics.</p></li>
 </ol></li>
 <li><p><a href="06_runTimeComparison.html">Compare run-time of different methods</a> Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare the run-time of the different methods.</p></li>
 <li><ol style="list-style-type: lower-alpha">
-<li><p><a href="07_regionAnalysis.html">Evaluate GOregion (Sorted blood cell data)</a> Evalulate GOregion, our extension of gometh for geneset testing of differentially methylated regions (DMRs) identified by DMR finding software.</p></li>
-<li><p><a href="07_regionAnalysisBcells.html">Evaluate GOregion (B-cell development data)</a> Evalulate GOregion, our extension of gometh for geneset testing of differentially methylated regions (DMRs) identified by DMR finding software.</p></li>
+<li><p><a href="07_regionAnalysis.html">Evaluate GOregion (EPIC data)</a> Evalulate GOregion, our extension of gometh for geneset testing of differentially methylated regions (DMRs) identified by DMR finding software.</p></li>
+<li><p><a href="07_regionAnalysisBcells.html">Evaluate GOregion (450K data)</a> Evalulate GOregion, our extension of gometh for geneset testing of differentially methylated regions (DMRs) identified by DMR finding software.</p></li>
 </ol></li>
 <li><p><a href="methylGSAParamSweep.html">Effect of gene set size parameters on methylGSA</a> Analyse an EPIC array sorted blood cell dataset using various gene set testing methods. Compare the run-time of the different methods.</p></li>
 </ol>
