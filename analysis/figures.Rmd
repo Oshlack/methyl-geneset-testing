@@ -256,7 +256,7 @@ a + theme(legend.position = "none",
               legend.position = "bottom",
               legend.text = element_text(size = 7),
               legend.title = element_text(size = 9, angle = 90)) +
-    e +
+    wrap_elements(e) +
     plot_layout(design = layout) + 
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
