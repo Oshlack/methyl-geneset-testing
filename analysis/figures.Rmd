@@ -238,8 +238,9 @@ EEEEEE
 
 d$layers[[2]]$aes_params$size <- 0.2
 a$layers[[1]]$aes_params$size <- 0.25
+b$layers[[4]]$aes_params$size <- 2.1
 
-cairo_pdf(here("output/figures/SFig-03.pdf"), width = 8, height = 12)
+cairo_pdf(here("output/figures/SFig-03.pdf"), width = 9, height = 13)
 a + theme(legend.position = "none", 
           axis.title = element_text(size = 9)) + 
     b + theme(axis.title.x = element_text(size = 9),
@@ -714,10 +715,10 @@ CCCC
 "        
 cairo_pdf(here("output/figures/SFig-15.pdf"), width = 8, height = 10)
 wrap_elements(a + theme(legend.position = "right",
-                        title = element_blank())) + 
+                        plot.title = element_blank())) + 
     wrap_elements(shift_legend(b + theme(
-        title = element_blank()))) + 
-    wrap_elements(c + theme(title = element_blank())) +
+        plot.title = element_blank()))) + 
+    wrap_elements(c + theme(plot.title = element_blank())) +
     plot_layout(design = layout) +
     plot_annotation(tag_levels = 'A') &
     theme(plot.tag = element_text(size = 14, face = "bold"))
