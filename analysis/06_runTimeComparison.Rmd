@@ -180,6 +180,10 @@ if(!file.exists(inFile)){
         tmp <- unlist(transIDs$symbol[transIDs$symbol %in% x], use.names = FALSE)
         tmp[!is.na(tmp)]
     }))
+    entrezid <- suppressMessages(lapply(symbol, function(x){
+        tmp <- unlist(transIDs$entrezid[transIDs$symbol %in% x], use.names = FALSE)
+        tmp[!is.na(tmp)]
+    }))
     
     load(here("data/cache-intermediates/input.RData"))
     bVals <- ilogit2(mVals)
@@ -196,7 +200,7 @@ if(!file.exists(inFile)){
         gtRanks <- doGT(pheno.v = pheno,
                         data.m = bVals[, samps],
                         array = "EPIC",
-                        ncores = 1)
+                        ncores = 3)
         ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
                                     ncores = 3, minN = minsize, adjPVth = 1)$`Rank(P)`)
         toc(log = TRUE, quiet = TRUE)
@@ -214,7 +218,7 @@ if(!file.exists(inFile)){
         gtRanks <- doGT(pheno.v = pheno,
                         data.m = bVals[, samps],
                         array = "EPIC",
-                        ncores = 1)
+                        ncores = 6)
         ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
                                     ncores = 6, minN = minsize, adjPVth = 1)$`Rank(P)`)
         toc(log = TRUE, quiet = TRUE)
