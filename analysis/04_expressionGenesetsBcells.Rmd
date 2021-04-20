@@ -1,6 +1,6 @@
 ---
 title: 'Gene set testing for Illumina HumanMethylation Arrays'
-subtitle: 'Generating "truth" gene sets from RNA-seq data'
+subtitle: 'Generating "truth" gene sets from Affymetrix array data'
 author: "Jovana Maksimovic, Alicia Oshlack and Belinda Phipson"
 date: '`r format(Sys.Date(), "%B %d, %Y")`'
 output: html_document
@@ -19,6 +19,20 @@ library(ChAMP)
 source(here("code/utility.R"))
 ```
 
+# Data download, mapping and quantification
+
+The pre B-cell development Affymetrix gene expression array dataset used to generate the "truth" gene sets is avoilable from GEO at [GSE45460](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE45460).
+
+For downstream analysis the CEL files for each sample are expected to be present in the following directory structure:
+
+* `data`
+    * `datasets`
+        * `GSE45460`
+
+
+## Data import
+
+Load in data from CEL files and generate sample information from file names.
 
 ```{r, message=FALSE}
 files <- list.files(here("data/datasets/GSE45460"), pattern = "CEL",
@@ -29,7 +43,11 @@ colnames(targets) <- c("ID","Stage")
 targets$Stage <- gsub(".CEL","",targets$Stage, fixed = TRUE)
 rownames(targets) <- rownames(raw_data@phenoData)
 Biobase::pData(raw_data) <- targets
+
+targets
 ```
+
+# Quality control
 
 Multi-dimensional scaling (MDS) plots show the largest sources of variation in the data. They are a good way of exploring the relationships between the samples and identifying structure in the data. The following series of MDS plots examines the first four principal components. 
 
@@ -53,6 +71,8 @@ for(i in 1:length(dims)){
 (p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = "collect")
 ```
 
+Examine the raw intensity distribution of the samples.
+
 ```{r}
 log2(exprs(raw_data)) %>% 
     as_tibble %>%
@@ -75,6 +95,8 @@ fig <- here("output/figures/SFig-4E.rds")
 saveRDS(p, fig, compress = FALSE)
 ```
 
+Generate Relative Log Expression (RLE) plots of the data.
+
 ```{r, message=FALSE}
 raw_eset <- oligo::rma(raw_data, target = "core", normalize = FALSE)
 row_medians_assayData <- 
@@ -93,7 +115,7 @@ ggplot2::ggplot(RLE_data_gathered, aes(Sample, log2_expression_deviation)) +
     scale_x_discrete(labels=targets$ID)
 ```
 
-Apply the full RMA algorithm to our data in order to background-correct, normalize and summarize
+Apply the full RMA algorithm to our data in order to background-correct, normalize and summarize the data.
 
 ```{r}
 eset <- oligo::rma(raw_data, target = "core")
@@ -115,6 +137,7 @@ for(i in 1:length(dims)){
 
 (p[[1]] | p[[2]]) / (p[[3]] | p[[4]]) + plot_layout(guides = "collect")
 ```
+
 Save figure for use in manuscript.
 
 ```{r}
@@ -122,7 +145,11 @@ fig <- here("output/figures/SFig-4F.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
-We now filter out all transcripts that do not have intensities greater than the threshold in at least as many arrays as the smallest experimental group which we define as `r min(no_of_samples)`.
+```{r}
+no_of_samples <- table(targets$Stage)
+```
+
+Filter out all transcripts that do not have intensities greater than the threshold in at least as many arrays as the smallest experimental group which we define as `r min(no_of_samples)`.
 
 ```{r}
 medians <- rowMedians(Biobase::exprs(eset))
@@ -144,7 +171,6 @@ abline(v = man_threshold, col = "coral4", lwd = 2)
 ```
 
 ```{r}
-no_of_samples <- table(targets$Stage)
 idx_man_threshold <- apply(Biobase::exprs(eset), 1, function(x){
     sum(x > man_threshold) >= min(no_of_samples)})
 table(idx_man_threshold)
@@ -154,8 +180,7 @@ table(idx_man_threshold)
 eset_filt <- subset(eset, idx_man_threshold)
 ```
 
-Many transcript-cluster identifiers will map to multiple Entrez IDs, i.e.  they can’t be unambigously assigned.
-We will filter them out.
+Many transcript-cluster identifiers will map to multiple Entrez IDs, i.e.  they can’t be unambigously assigned. Filter them out.
 
 ```{r}
 anno <- AnnotationDbi::select(hugene10sttranscriptcluster.db,
@@ -204,6 +229,8 @@ eset_final <- eset_final[keep,]
 validObject(eset_final)
 ```
 
+Number of genes remaining for downstream analysis.
+
 ```{r}
 dim(eset_final)
 ```
@@ -211,7 +238,7 @@ dim(eset_final)
 
 # Differential expression analysis
 
-The background corrected and RMA normalised data...
+Using the RMA processed data, fit probe-wise linear models with `limma` to identify gene expression differences between Stage 1 and Stage 2 of pre B-cell development. 
 
 ```{r, fig.width=9,fig.height=6}
 Stage <- factor(targets$Stage)
@@ -227,6 +254,8 @@ pval <- 0.05
 fitSum <- summary(decideTests(tfit, p.value = pval))
 fitSum
 ```
+
+Visualise the number of differentially expressed genes.
 
 ```{r}
 fitSum %>% 

@@ -23,7 +23,7 @@ source(here("code/utility.R"))
 
 # Data download, mapping and quantification
 
-The RNAseq dataset used to generate the "truth" gene sets is avoilable from GEO at [GSE107011](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE107011) or SRA at [SRP125125](https://www.ncbi.nlm.nih.gov/sra?term=SRP125125).
+The flow-sorted blood cell RNAseq dataset used to generate the "truth" gene sets is avoilable from GEO at [GSE107011](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE107011) or SRA at [SRP125125](https://www.ncbi.nlm.nih.gov/sra?term=SRP125125).
 
 The RNAseq data was quasi-mapped and quantified using Salmon (v1.2.1) with the [hg19_cdna](http://refgenomes.databio.org/v2/asset/hg19_cdna/fasta/archive?tag=default) human transcriptome downloaded from [refgenie](http://refgenomes.databio.org/index). The code used to perform the Salmon quasi-mapping and quantification can be found in `code/salmon-quant.sh`. 
 

@@ -137,7 +137,7 @@ saveRDS(p, fig, compress = FALSE)
 
 ## GO analysis of DMRs
 
-Run GO analysis on the differentially methylated regions (DMRs) identified by DMRcate for each of the contrasts.
+Run GO analysis on the differentially methylated regions (DMRs) identified using the *DMRcate* package for each of the contrasts.
 
 ```{r}
 outFile <- here("data/cache-region/dmrcate-go.rds")

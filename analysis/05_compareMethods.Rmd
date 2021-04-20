@@ -166,15 +166,13 @@ saveRDS(p, fig, compress = FALSE)
 
 # Compare performance of different gene set testing methods
 
-We compare the performance of the following gene set testing methods available for methylation arrays: a standard hypergeometric test (HGT), GOmeth from the *missMethyl* package, methylglm (mGLM), methylRRA-ORA (mRRA (ORA)) and methylRRA-GSEA (mRRA (GSEA)) from the *methylGSA* package and ebayGSEA from the *ChAMP* package. 
+We compare the performance of the following gene set testing methods available for methylation arrays: a standard hypergeometric test (HGT), GOmeth from the *missMethyl* package, methylglm (mGLM), methylRRA-ORA (mRRA (ORA)) and methylRRA-GSEA (mRRA (GSEA)) from the *methylGSA* package and ebGSEA from GitHub at [https://github.com/aet21/ebGSEA](https://github.com/aet21/ebGSEA). 
 
 We perform gene set testing on the results of all three blood cell type comparisons: B-cells vs. NK cells, CD4 T-cells vs. CD8 T-cells and monocytes vs. neutrophils, using all of the different gene set testing methods.
 
-Gene set testing is performed for each comparison using GO categories, KEGG pathways and the BROAD MSigDB gene sets for the following methods: HGT, GOmeth, mGLM, mRRA (ORA) and mRRA (GSEA)
+Gene set testing is performed for each comparison using GO categories, KEGG pathways and the BROAD MSigDB gene sets for the following methods: HGT, GOmeth, mGLM, mRRA (ORA), mRRA (GSEA), ebGSEA (WT) and ebGSEA (KPMT).
 
-As gene set testing can only be performed using the BROAD MSigDB gene sets provided with the *ChAMP* package, the ebayGSEA method is only tested using the BROAD MSigDB gene sets for the three blood cell comparisons.
-
-Furthermore, as the methylGSA methods do not work well with sets that only contain very few genes or very many genes, we only test sets with at least 5 genes and at most 5000 genes. 
+As the methylGSA methods do not work well with sets that only contain very few genes or very many genes, we only test sets with at least 5 genes and at most 5000 genes. 
 
 Firstly, the results of the statistical analysis of the three blood cell comparisons are saved as an RDS object.
 
@@ -201,7 +199,7 @@ if(!file.exists(outFile)){
 ```
 
 As some of the methods take a considerable amount of time to perform the gene set testing analysis, we have created several scripts in order to run the analyses in parallel on a HPC.
-The code used to run all the gene set testing analyses using the different methods can be found in the `code/compare-methods` directory. It consists of four scripts: `genRunMethodJob.R`, `runChAMP.R`, `runMethylGSA.R` and `runMissMethyl.R`. The `genRunMethodJob.R` script creates and submits [Slurm](https://slurm.schedmd.com/overview.html) job scripts that run the `runChAMP.R`, `runMethylGSA.R` and `runMissMethyl.R` scripts, for *each* gene set type, in parallel, on a HPC. The results of each job are saved as an RDS file named `{package}.{set}.rds` in the `output/compare-methods` directory. Once all analysis jobs are complete, all of the suvbsequent analyses in this document can be executed.
+The code used to run all the gene set testing analyses using the different methods can be found in the `code/compare-methods` directory. It consists of four scripts: `genRunMethodJob.R`, `runebGSEA.R`, `runMethylGSA.R` and `runMissMethyl.R`. The `genRunMethodJob.R` script creates and submits [Slurm](https://slurm.schedmd.com/overview.html) job scripts that run the `runebGSEA.R`, `runMethylGSA.R` and `runMissMethyl.R` scripts, for *each* gene set type, in parallel, on a HPC. The results of each job are saved as an RDS file named `{package}.{set}.rds` in the `output/compare-methods/BLOOD` directory. Once all analysis jobs are complete, all of the subsequent analyses in this document can be executed.
 
 ## Load output for all methods
 
@@ -232,7 +230,8 @@ cpgEgGo %>%
   group_by(GO) %>%
   summarise(med = median(Freq)) -> medCpgEgGo
 ```
-In order to examine whether the probe-number bias influenced the significantly enriched GO categories for the five different methods, we split the GO categories into bins based on the median number of CpGs per gene per GO category. We then calculated the proportion of significantly enriched GO categories in each bin for each of the three comparisons. As GOmeth explicitly corrects for this bias it showed very little trend. However mRRA (ORA) tended to have more significant GO categories when the genes had larger numbers of CpGs. The hypergeometric test and mRRA (GSEA) tended to have more significant GO categories with average numbers of CpGs associated per gene ranging from 27 - 44. The mGLM method appears to control for the probe-number bias of the array fairly well.
+
+In order to examine whether the probe-number bias influenced the significantly enriched GO categories for the different methods, we split the GO categories into bins based on the median number of CpGs per gene per GO category. We then calculated the proportion of significantly enriched GO categories in each bin for each of the three comparisons. As GOmeth explicitly corrects for this bias it showed very little trend. The mGLM method also appears to control for the probe-number bias of the array fairly well. All other methods demonstrated an trend across the different sizes of GO categories.
 
 ```{r, fig.width=7}
 dat %>% filter(set == "GO") %>%
@@ -727,7 +726,7 @@ p
 
 ### BROAD gene sets
 
-As the ebGSEA method from the ChAMP package only allows testing of their in-built database of Broad Institute gene sets, we will compare to other methods by testing these same gene sets. Using the top 100 ranked gene sets as identified by Belinda's `gsaseq` analysis of the corresponding RNAseq data as "truth".
+Compare methods by testing the in-built database of Broad Institute gene sets provided with the *ChAMP*. Using the top 100 ranked gene sets as identified by `gsaseq` analysis of the corresponding B-cell development stages data as "truth".
 
 ```{r}
 rnaseqBROAD <- readRDS(here("data/cache-rnaseq/RNAseq-BROAD-GSA.rds"))

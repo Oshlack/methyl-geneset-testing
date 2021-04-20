@@ -23,7 +23,7 @@ set up the project directory and rerun the analysis. We have use the
 [`workflowr`][workflowr] package to organise the analysis and insert
 reproducibilty information into the output documents. 
 
-Getting the code
+Getting the code {#code}
 ================
 
 All the code and outputs of analysis are available from GitHub at 
@@ -66,7 +66,7 @@ generated using Illumina HumanMethylation450 arrays. These are both
 automatically downloaded as part of the analysis directly from the Bioconductor
 [ExperimentHub](expt-hub). 
 
-We also use a flow-sorted, blood cell RNAseq dataset,
+We use a flow-sorted, blood cell RNAseq dataset,
 which can be downloaded from GEO at [GSE107011](geo-rnaseq) or SRA at 
 [SRP125125](sra-rnaseq).
 
@@ -82,6 +82,21 @@ the following directory structure inside the `data/` directory:
             * ...
             * ...
             * `SRR6298376_quant`
+
+We use pre B-cell development Affymetrix gene expression array data, 
+which can be downloaded from GEO at [GSE45460](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE45460).
+
+For downstream analysis the CEL files for each sample are expected to be present 
+in the following directory structure:
+
+* `data`
+    * `datasets`
+        * `GSE45460`
+       
+We use publicly available 450K data generated from developing human B-cells,
+which can be downloaded from: [GSE45459](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE45459) .
+Specifically, the `GSE45459_Matrix_signal_intensities.txt.gz` file should be 
+downloaded and placed in the `data\datasets` directory and unzipped using `gunzip GSE45459_Matrix_signal_intensities.txt.gz`. 
 
 Some additional data files used during the analysis are provided as part of the
 repository. 
@@ -104,7 +119,7 @@ Intermediate data files created during the analysis will be placed in:
 These are used by later stages of the analysis so should not be moved, altered 
 or deleted.
 
-Running the analysis
+Running the analysis {#analysis}
 ====================
 
 The analysis directory contains the following analysis files:

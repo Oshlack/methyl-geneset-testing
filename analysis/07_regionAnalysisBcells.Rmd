@@ -35,7 +35,7 @@ source(here("code/utility.R"))
 
 # Load data
 
-We are using publicly available EPIC data [GSE45459](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE45459) generated from developing human B-cells. The data is normalised and filtered (bad probes, multi-mapping probes, SNP probes, sex chromosomes).
+We are using publicly available 450K data [GSE45459](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE45459) generated from developing human B-cells. The data is normalised and filtered (bad probes, multi-mapping probes, SNP probes, sex chromosomes).
 
 ```{r, message=FALSE, warning=FALSE}
 # load data
@@ -73,7 +73,7 @@ if(file.exists(dataFile)){
 
 # Statistical analysis
 
-Compare several sets of sorted immune cells. Consider results significant at FDR < 0.05 and delta beta ~ 10% (~ lfc = 0.5).
+Compare stages of pre B-cell development. Consider results significant at FDR < 0.05 and delta beta ~ 10% (~ lfc = 0.5).
 
 ```{r}
 mVals <- getM(fltGr)
@@ -130,9 +130,9 @@ length(dmrList[[1]])
 
 ## GO analysis of DMRs
 
-Run GO analysis on the differentially methylated regions (DMRs) identified by DMRcate for each of the contrasts.
+Run GO analysis on the differentially methylated regions (DMRs) identified using the *DMRcate* package.
 
-```{r}
+```{r, message=FALSE}
 outFile <- here("data/cache-region/dmrcate-GSE45459-go.rds")
 anno <- loadAnnotation(arrayType = "450k")
 txdb <- TxDb.Hsapiens.UCSC.hg19.knownGene
@@ -294,26 +294,10 @@ fig <- here("output/figures/SFig-14B.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
-Terms NOT in top 100 "truth" GO categories for Stage 2 versus Stage 3.
+Examine what the top 10 ranked gene sets are and how many genes they contain.
 
 ```{r}
 terms <- missMethyl:::.getGO()$idTable
-dat %>% dplyr::filter(contrast == "S2vS3") %>%
-    arrange(method, P.DE) %>%
-    group_by(method) %>%
-    dplyr::filter(!(GO %in% topGOSets$ID[topGOSets$contrast %in% "S2vS3"])) %>%
-    inner_join(terms, by = c("GO" = "GOID")) %>% data.frame
-```
-
-Top 100 "truth" terms for Stage 2 versus Stage 3 - these look very broad.
-
-```{r}
-topGOSets[topGOSets$contrast == "S2vS3",] %>% data.frame
-```
-
-Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
-
-```{r}
 nGenes <- rownames_to_column(data.frame(n = sapply(missMethyl:::.getGO()$idList, 
                                                    length)), 
                              var = "ID")
@@ -431,7 +415,7 @@ fig <- here("output/figures/SFig-15A.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
-Examine what the top 10 ranked gene sets are and how many genes they contain, for each method and comparison.
+Examine what the top 10 ranked gene sets are and how many genes they contain.
 
 ```{r}
 terms <- missMethyl:::.getGO()$idTable
@@ -617,7 +601,7 @@ ggplot(sub, aes(x = group, y = n, fill = method)) +
 
 ### CpG overlap between region-wise and probe-wise approaches
 
-Compare the CpGs covered by the different approaches, for the three contrasts.
+Compare the CpGs covered by the different approaches.
 
 ```{r}
 p <- vector("list", ncol(cont.matrix))
@@ -684,7 +668,7 @@ saveRDS(p[[1]], fig, compress = FALSE)
 
 ### Gene overlap between region-wise and probe-wise approaches
 
-Compare the genes covered by the different approaches, for the three contrasts.
+Compare the genes covered by the different approaches.
 
 ```{r}
 p <- vector("list", ncol(cont.matrix))
@@ -790,7 +774,7 @@ if(!file.exists(outFile)){
 }
 ```
 
-Examine effect of changing DMR parameter cut offs on gene set rankings of GO categories in "immune system process".
+Examine effect of changing DMR parameter cut offs on gene set rankings of GO categories.
 
 ```{r, fig.width=9}
 p <- vector("list", length(unique(dat$contrast)))
