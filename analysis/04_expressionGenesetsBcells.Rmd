@@ -122,7 +122,7 @@ fig <- here("output/figures/SFig-4F.rds")
 saveRDS(p[[1]], fig, compress = FALSE)
 ```
 
-We now filter out all transcripts that do not have intensities greater than the threshold in at least as many arrays as the smallest experimental group which we define as `min(no_of_samples)`.
+We now filter out all transcripts that do not have intensities greater than the threshold in at least as many arrays as the smallest experimental group which we define as `r min(no_of_samples)`.
 
 ```{r}
 medians <- rowMedians(Biobase::exprs(eset))
@@ -203,6 +203,11 @@ keep <- !is.na(fData(eset_final)$ENTREZID)
 eset_final <- eset_final[keep,]
 validObject(eset_final)
 ```
+
+```{r}
+dim(eset_final)
+```
+
 
 # Differential expression analysis
 

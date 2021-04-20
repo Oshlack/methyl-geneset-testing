@@ -413,7 +413,7 @@ for(i in 1:length(p)){
               legend.box = "horizontal",
               legend.margin = margin(0, 0, 0, 0, unit = "lines"),
               panel.spacing.x = unit(1, "lines")) +
-        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-80))) +
+        coord_cartesian(xlim = c(-log10(0.99), -log10(10^-200))) +
         geom_vline(xintercept = -log10(0.05), linetype = "dashed") +
         ggtitle(cont)
 }
