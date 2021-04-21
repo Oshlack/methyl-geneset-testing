@@ -140,7 +140,7 @@ doing this. Running this analysis from scratch requires a considerable amount
 of time, disk space and memory. **Some stages of the analysis need to be executed
 on a HPC to generate results required by downstream steps.** If you do no have 
 access to a HPC to perform these analyses using the code provided, you can 
-download pre-computed RDS files containing the results from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4005288.svg)](https://doi.org/10.5281/zenodo.4005288).
+download pre-computed RDS files containing the results from [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.4706148.svg)](https://doi.org/10.5281/zenodo.4706148).
 
 To use the pre-computed RDS objects, after cloning or downloading the GitHub repository to your computer, please extract the `outputs.tar.gz` archive under the `output` directory, using `tar -xvf outputs.tar.gz`.
 
