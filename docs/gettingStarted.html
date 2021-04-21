@@ -302,7 +302,7 @@ $(document).ready(function () {
 <div class="tab-content">
 <div id="summary" class="tab-pane fade in active">
 <p>
-<strong>Last updated:</strong> 2021-04-20
+<strong>Last updated:</strong> 2021-04-21
 </p>
 <p>
 <strong>Checks:</strong> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> 7 <span class="glyphicon glyphicon-exclamation-sign text-danger" aria-hidden="true"></span> 0
@@ -393,16 +393,16 @@ This reproducible <a href="http://rmarkdown.rstudio.com">R Markdown</a> analysis
 <div class="panel panel-default">
 <div class="panel-heading">
 <p class="panel-title">
-<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree9d235720163344bbbda0d29a9feb3b6c6d00359etargetblank9d23572a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/9d235720163344bbbda0d29a9feb3b6c6d00359e" target="_blank">9d23572</a> </a>
+<a data-toggle="collapse" data-parent="#workflowr-checks" href="#strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreee3c4003754a75b935124319e5683047080b23dfctargetblanke3c4003a"> <span class="glyphicon glyphicon-ok text-success" aria-hidden="true"></span> <strong>Repository version:</strong> <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/e3c4003754a75b935124319e5683047080b23dfc" target="_blank">e3c4003</a> </a>
 </p>
 </div>
-<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtree9d235720163344bbbda0d29a9feb3b6c6d00359etargetblank9d23572a" class="panel-collapse collapse">
+<div id="strongRepositoryversionstrongahrefhttpsatlassianpetermacorgaubitbucketscmosmethylgenesettestingtreee3c4003754a75b935124319e5683047080b23dfctargetblanke3c4003a" class="panel-collapse collapse">
 <div class="panel-body">
 <p>
 Great! You are using Git for version control. Tracking code development and connecting the code version to the results is critical for reproducibility.
 </p>
 <p>
-The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/9d235720163344bbbda0d29a9feb3b6c6d00359e" target="_blank">9d23572</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
+The results in this page were generated with repository version <a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/tree/e3c4003754a75b935124319e5683047080b23dfc" target="_blank">e3c4003</a>. See the <em>Past versions</em> tab to see a history of the changes made to the R Markdown and HTML files.
 </p>
 <p>
 Note that you need to be careful to ensure that all relevant files for the analysis have been committed to Git prior to generating the results (you can use <code>wflow_publish</code> or <code>wflow_git_commit</code>). workflowr only checks the R Markdown file, but you know if there are other scripts or data files that it depends on. Below is the status of the Git repository when the results were generated:
@@ -453,11 +453,13 @@ Ignored files:
     Ignored:    data/datasets/TCGA.BRCA.rds
     Ignored:    data/datasets/TCGA.KIRC.rds
     Ignored:    data/misc/
+    Ignored:    output/--exclude
     Ignored:    output/.DS_Store
     Ignored:    output/FDR-analysis/
     Ignored:    output/compare-methods/
     Ignored:    output/figures/
     Ignored:    output/methylgsa-params/
+    Ignored:    output/outputs-1.tar.gz
     Ignored:    output/outputs.tar.gz
     Ignored:    output/random-cpg-sims/
 
@@ -501,6 +503,40 @@ Message
 </tr>
 </thead>
 <tbody>
+<tr>
+<td>
+Rmd
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/e3c4003754a75b935124319e5683047080b23dfc/analysis/gettingStarted.Rmd" target="_blank">e3c4003</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-21
+</td>
+<td>
+wflow_publish(&quot;analysis/gettingStarted.Rmd&quot;)
+</td>
+</tr>
+<tr>
+<td>
+html
+</td>
+<td>
+<a href="https://atlassian.petermac.org.au/bitbucket/scm/os/methyl-geneset-testing/blob/0f8d628e1438d2411b2aceb9c6f64ec706752eb0/docs/gettingStarted.html" target="_blank">0f8d628</a>
+</td>
+<td>
+JovMaksimovic
+</td>
+<td>
+2021-04-20
+</td>
+<td>
+Build site.
+</td>
+</tr>
 <tr>
 <td>
 Rmd
@@ -781,7 +817,7 @@ wflow_publish(c(&quot;analysis/index.Rmd&quot;, &quot;analysis/gettingStarted.Rm
 [11] &quot;07_regionAnalysisBcells.Rmd&quot;     &quot;08_methylGSAParamSweep.Rmd&quot;     </code></pre>
 <p>As indicated by the numbering they should be run in this order. If you want to rerun the entire analysis this can be easily done using <code>workflowr</code>.</p>
 <pre class="r"><code>workflowr::wflow_build(republish = TRUE)</code></pre>
-<p>It is important to consider the computer and environment you are using before doing this. Running this analysis from scratch requires a considerable amount of time, disk space and memory. <strong>Some stages of the analysis need to be executed on a HPC to generate results required by downstream steps.</strong> If you do no have access to a HPC to perform these analyses using the code provided, you can download pre-computed RDS files containing the results from <a href="https://doi.org/10.5281/zenodo.4005288"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4005288.svg" alt="DOI" /></a>.</p>
+<p>It is important to consider the computer and environment you are using before doing this. Running this analysis from scratch requires a considerable amount of time, disk space and memory. <strong>Some stages of the analysis need to be executed on a HPC to generate results required by downstream steps.</strong> If you do no have access to a HPC to perform these analyses using the code provided, you can download pre-computed RDS files containing the results from <a href="https://doi.org/10.5281/zenodo.4706148"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.4706148.svg" alt="DOI" /></a>.</p>
 <p>To use the pre-computed RDS objects, after cloning or downloading the GitHub repository to your computer, please extract the <code>outputs.tar.gz</code> archive under the <code>output</code> directory, using <code>tar -xvf outputs.tar.gz</code>.</p>
 <p>It is also possible to run individual stages of the analysis, either by providing the names of the file you want to run to <code>workflowr::wflow_build()</code> or by manually knitting the document (for example using the 'Kint' button in RStudio).</p>
 <p>Once <strong>all</strong> the analyses have been rerun, the manuscript figures can be generated using the code provided <a href="figures.html">here</a>.</p>
