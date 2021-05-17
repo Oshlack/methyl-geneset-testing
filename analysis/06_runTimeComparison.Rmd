@@ -192,7 +192,7 @@ if(!file.exists(inFile)){
     
     for(i in 1:ncol(tfit$contrasts)){
         
-        tic("ebgsea.3")
+        tic("ebgsea.10")
         groups <- names(tfit$contrasts[,i])[tfit$contrasts[,i] != 0]
         samps <- as.logical(unname(rowSums(tfit$design[,groups])))
         pheno <- unname(tfit$design[samps, groups][,1])
@@ -200,9 +200,9 @@ if(!file.exists(inFile)){
         gtRanks <- doGT(pheno.v = pheno,
                         data.m = bVals[, samps],
                         array = "EPIC",
-                        ncores = 3)
+                        ncores = 10)
         ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
-                                    ncores = 3, minN = minsize, adjPVth = 1)$`Rank(P)`)
+                                    ncores = 10, minN = minsize, adjPVth = 1)$`Rank(P)`)
         toc(log = TRUE, quiet = TRUE)
         tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
         log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
@@ -210,7 +210,7 @@ if(!file.exists(inFile)){
         tic.clearlog()
         multi <- bind_rows(multi, log)
         
-        tic("ebgsea.6")
+        tic("ebgsea.20")
         groups <- names(tfit$contrasts[,i])[tfit$contrasts[,i] != 0]
         samps <- as.logical(unname(rowSums(tfit$design[,groups])))
         pheno <- unname(tfit$design[samps, groups][,1])
@@ -218,27 +218,9 @@ if(!file.exists(inFile)){
         gtRanks <- doGT(pheno.v = pheno,
                         data.m = bVals[, samps],
                         array = "EPIC",
-                        ncores = 6)
+                        ncores = 20)
         ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
-                                    ncores = 6, minN = minsize, adjPVth = 1)$`Rank(P)`)
-        toc(log = TRUE, quiet = TRUE)
-        tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
-        log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
-                          contrast = colnames(tfit$contrasts)[i])
-        tic.clearlog()
-        multi <- bind_rows(multi, log)
-        
-        tic("ebgsea.9")
-        groups <- names(tfit$contrasts[,i])[tfit$contrasts[,i] != 0]
-        samps <- as.logical(unname(rowSums(tfit$design[,groups])))
-        pheno <- unname(tfit$design[samps, groups][,1])
-        
-        gtRanks <- doGT(pheno.v = pheno,
-                        data.m = bVals[, samps],
-                        array = "EPIC",
-                        ncores = 9)
-        ebgs <- data.frame(doGSEAwt(rankEID.m = gtRanks, ptw.ls = entrezid,
-                                    ncores = 9, minN = minsize, adjPVth = 1)$`Rank(P)`)
+                                    ncores = 20, minN = minsize, adjPVth = 1)$`Rank(P)`)
         toc(log = TRUE, quiet = TRUE)
         tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
         log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
@@ -259,9 +241,9 @@ Plot run-time results.
 
 ```{r}
 multi %>% mutate(time = as.integer(time)) %>%
-    mutate(cores = limma::strsplit2(method, ".", fixed=TRUE)[,2]) -> dat
+    mutate(cores = limma::strsplit2(method, ".", fixed=TRUE)[,2]) -> ebgseaMulti
 
-p2 <- ggplot(dat, aes(x = cores, y = time/60, fill = contrast)) + 
+p2 <- ggplot(ebgseaMulti, aes(x = cores, y = time/60, fill = contrast)) + 
     geom_bar(position = "dodge", stat = "identity") +
     labs(x = "No. cores", y = "Run time (minutes)", fill = "Contrast") +
     ggtitle("Using multiple cores for ebGSEA") 
@@ -287,11 +269,11 @@ if(!file.exists(inFile)){
     
     for(i in 1:ncol(tfit$contrasts)){
         
-        tic("mgsa.glm.3")
+        tic("mgsa.glm.10")
         res <- methylglm(cpg.pval = tfit$p.value[,i],
                          FullAnnot = anno, minsize = minsize, maxsize = maxsize,
                          GS.list = symbol, GS.idtype = "SYMBOL", parallel = TRUE,
-                         BPPARAM = BiocParallel::MulticoreParam(workers = 3))
+                         BPPARAM = BiocParallel::MulticoreParam(workers = 10))
         toc(log = TRUE, quiet = TRUE)
         tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
         log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
@@ -299,23 +281,11 @@ if(!file.exists(inFile)){
         tic.clearlog()
         multi <- bind_rows(multi, log)
         
-        tic("mgsa.glm.6")
+        tic("mgsa.glm.20")
         res <- methylglm(cpg.pval = tfit$p.value[,i],
                          FullAnnot = anno, minsize = minsize, maxsize = maxsize,
                          GS.list = symbol, GS.idtype = "SYMBOL", parallel = TRUE,
-                         BPPARAM = BiocParallel::MulticoreParam(workers = 6))
-        toc(log = TRUE, quiet = TRUE)
-        tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
-        log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
-                          contrast = colnames(tfit$contrasts)[i])
-        tic.clearlog()
-        multi <- bind_rows(multi, log)
-        
-        tic("mgsa.glm.9")
-        res <- methylglm(cpg.pval = tfit$p.value[,i],
-                         FullAnnot = anno, minsize = minsize, maxsize = maxsize,
-                         GS.list = symbol, GS.idtype = "SYMBOL", parallel = TRUE,
-                         BPPARAM = BiocParallel::MulticoreParam(workers = 9))
+                         BPPARAM = BiocParallel::MulticoreParam(workers = 20))
         toc(log = TRUE, quiet = TRUE)
         tmp <- strsplit2(tic.log(format = TRUE)[[1]], " ")
         log <- data.frame(method = gsub(":", "", tmp[1]), time = tmp[2], 
@@ -335,9 +305,9 @@ Plot run-time results.
 
 ```{r}
 multi %>% mutate(time = as.integer(time)) %>%
-    mutate(cores = limma::strsplit2(method, ".", fixed=TRUE)[,3]) -> dat
+    mutate(cores = limma::strsplit2(method, ".", fixed=TRUE)[,3]) -> mglmMulti
 
-p3 <- ggplot(dat, aes(x = cores, y = time/60, fill = contrast)) + 
+p3 <- ggplot(mglmMulti, aes(x = cores, y = time/60, fill = contrast)) + 
     geom_bar(position = "dodge", stat = "identity") +
     labs(x = "No. cores", y = "Run time (minutes)", fill = "Contrast") +
     ggtitle("Using multiple cores for mGLM") 
@@ -354,19 +324,29 @@ p1 / (p2 | p3) + plot_layout(guides = "collect") &
 # Run-time summary table
 
 ```{r}
+timing$cores <- 1
+timing$time <- as.integer(timing$time)
+ebgseaMulti$cores <- as.integer(ebgseaMulti$cores)
+mglmMulti$cores <- as.integer(mglmMulti$cores)
+timing <- bind_rows(timing, ebgseaMulti,  mglmMulti)
+
+timing$method[grepl("mgsa.glm",timing$method)] <- "mgsa.glm"
+timing$method[grepl("ebgsea",timing$method)] <- "ebgsea"
+
 timing %>% mutate(method = unname(dict[method])) %>% 
-    group_by(method) %>%
+    group_by(method, cores) %>%
     mutate(time = as.integer(time)) %>%
     summarise(mean = mean(time)) %>%
     mutate(mins = mean/60) %>%
-    dplyr::select(method, mins) %>%
-    arrange(mins) %>%
+    dplyr::select(method, cores, mins) %>%
+    arrange(cores, mins) %>%
     as_tibble() -> tab
 
 tab %>% gt() %>%
     fmt_number(columns = vars(mins), decimals = 2) %>%
     cols_label(
         mins = md("**Minutes**"),
+        cores = md("**Cores**"),
         method = md("**Method**")
         ) %>%
   tab_header(
