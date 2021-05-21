@@ -9,4 +9,4 @@ The code in this analysis is covered by the [MIT license][mit] and the written
 content is covered by a [Creative Commons CC-BY][cc] license.
 
 [mit]: https://choosealicense.com/licenses/mit/ "MIT License"
-[cc]: https://creativecommons.org/licenses/by/4.0/ "CC-BY License"
+[cc]: https://choosealicense.com/licenses/cc-by-4.0/ "CC-BY License"
