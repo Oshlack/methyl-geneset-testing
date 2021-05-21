@@ -99,8 +99,8 @@ Citations
 ---------
 > Maksimovic J, Oshlack O, Phipson B. Gene set enrichment analysis for 
 > genome-wide DNA methylation data. bioRxiv. 2020. 
-> DOI: [10.1186/s13073-019-0615-0][pp].
+> DOI: [https://doi.org/10.1101/2020.08.24.265702][pp].
 
 [mit]: https://choosealicense.com/licenses/mit/ "MIT License"
-[cc]: https://creativecommons.org/licenses/by/4.0/ "CC-BY License"
+[cc]: https://choosealicense.com/licenses/cc-by-4.0/ "CC-BY License"
 [pp]: https://www.biorxiv.org/content/10.1101/2020.08.24.265702v1 "Pre-print"
