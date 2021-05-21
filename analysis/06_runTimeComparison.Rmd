@@ -353,6 +353,6 @@ tab %>% gt() %>%
     title = md("**Average run-time across all contrasts**"),
     subtitle = md("Using Broad MSigDB gene sets from `ChAMP` package")
     ) %>%
-  tab_source_note(md("_*All methods were run on a single core._"))
+  tab_source_note(md("_*Blade Server: 24 CPUs - Intel(R) Xeon(R) Gold 6126 CPU @ 2.60GHz._"))
 ```
 
