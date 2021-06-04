@@ -180,7 +180,7 @@ fitSum %>%
 
 p <- ggplot(dat, aes(x = Comparison, y = Value, fill = Direction)) +
     geom_bar(stat = "identity", position = "dodge") +
-    labs(x = "Comparison", y = glue("No. DE CpGs (FDR < {pval})"), 
+    labs(x = "Comparison", y = glue("No. DM CpGs (FDR < {pval})"), 
          fill = "Direction") +
     scale_fill_brewer(palette = "Set1", direction = -1)
 p
