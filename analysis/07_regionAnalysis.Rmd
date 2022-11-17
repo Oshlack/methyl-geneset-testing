@@ -694,7 +694,7 @@ for(i in 1:length(p)){
         scale_y_reverse(labels = scales::format_format(big.mark = " ", 
                                                        decimal.mark = ".", 
                                                        scientific = FALSE, 
-                                                       digits = 0),
+                                                       digits = 1),
                         expand = expansion(mult = c(0.6, 0))) +
         coord_flip() +
         theme_minimal() +
@@ -775,7 +775,7 @@ for(i in 1:length(p)){
         scale_y_reverse(labels = scales::format_format(big.mark = " ",
                                                        decimal.mark = ".",
                                                        scientific = FALSE,
-                                                       digits = 0),
+                                                       digits = 1),
                         expand = expansion(mult = c(0.6, 0))) +
         coord_flip() +
         theme_minimal() +
