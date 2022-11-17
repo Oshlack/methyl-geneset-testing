@@ -16,6 +16,7 @@ library(glue)
 library(limma)
 library(tidyverse)
 library(patchwork)
+library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 if(packageVersion("missMethyl") != "1.21.5"){
     devtools::install_github("Oshlack/missMethyl", ref = "genomic-features")
 }
@@ -27,7 +28,7 @@ library(missMethyl)
 Load methylation blood cell comparison input data and annotation.
 
 ```{r}
-load(here("data/input.RData"))
+load(here::here('data/cache-intermediates/blood.contrasts.rData'))
 anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 ```
 
@@ -192,7 +193,7 @@ if(!file.exists(outFile)){
 ## Gene set testing results with/without restriction by genomic feature 
 
 ```{r}
-immuneGO <- unique(read.csv(here("data/GO-immune-system-process.txt"), 
+immuneGO <- unique(read.csv(here("data/genesets/GO-immune-system-process.txt"), 
                             stringsAsFactors = FALSE, header = FALSE, 
                             col.names = "GOID"))
 
@@ -215,7 +216,7 @@ p
 ```
 
 ```{r}
-immuneGO <- readRDS(here("data/RNAseq-GO.rds"))
+immuneGO <- readRDS(here("data/cache-rnaseq/RNAseq-GO.rds"))
 immuneGO %>% group_by(contrast) %>%
     mutate(rank = 1:n()) %>%
     filter(rank <= 100) -> topSets
