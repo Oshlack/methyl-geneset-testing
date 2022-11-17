@@ -198,7 +198,7 @@ anno_summarized <-
 head(anno_summarized)
 ```
 ```{r}
-anno_filtered <- filter(anno_summarized, no_of_matches > 1)
+anno_filtered <- dplyr::filter(anno_summarized, no_of_matches > 1)
 
 head(anno_filtered)
 ```
@@ -261,7 +261,7 @@ Visualise the number of differentially expressed genes.
 fitSum %>% 
     data.frame %>%
     rename_with(.fn = ~ c("Direction", "Comparison", "Value")) %>%
-    filter(Direction != "NotSig") -> dat
+    dplyr::filter(Direction != "NotSig") -> dat
 
 p <- ggplot(dat, aes(x = Comparison, y = Value, fill = Direction)) +
     geom_bar(stat = "identity", position = "dodge") +
