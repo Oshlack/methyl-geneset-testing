@@ -26,6 +26,7 @@ library(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
 library(EnsDb.Hsapiens.v75)
 library(ChAMP)
 library(ebGSEA)
+library(tictoc)
 library(methylGSA)
 library(gt)
 source(here("code/utility.R"))
@@ -51,7 +52,7 @@ Execute and record run-time for each method (on a single core) for the three dif
 outDir <- here::here("data/cache-runtime")
 if (!dir.exists(outDir)) dir.create(outDir)
 
-inFile <- here("data/cache-runtime/run-time-results.rds")
+inFile <- here::here("data/cache-runtime/run-time-results.rds")
 
 if(!file.exists(inFile)){
     
@@ -66,7 +67,7 @@ if(!file.exists(inFile)){
         tmp[!is.na(tmp)]
     }))
     
-    load(here("data/cache-intermediates/input.RData"))
+    load(here::here('data/cache-intermediates/blood.contrasts.rData'))
     bVals <- ilogit2(mVals)
     anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
     timing <- NULL
@@ -86,7 +87,7 @@ if(!file.exists(inFile)){
         timing <- bind_rows(timing, log)
         
         tic("mgsa.glm")
-        res <- methylglm(cpg.pval = tfit$p.value[,i],
+        res <- methylGSA::methylglm(cpg.pval = tfit$p.value[,i],
                          FullAnnot = anno, minsize = minsize, maxsize = maxsize,
                          GS.list = symbol, GS.idtype = "SYMBOL")
         toc(log = TRUE, quiet = TRUE)
@@ -185,7 +186,7 @@ if(!file.exists(inFile)){
         tmp[!is.na(tmp)]
     }))
     
-    load(here("data/cache-intermediates/input.RData"))
+   load(here::here('data/cache-intermediates/blood.contrasts.rData'))
     bVals <- ilogit2(mVals)
     anno <- minfi::getAnnotation(IlluminaHumanMethylationEPICanno.ilm10b4.hg19)
     multi <- NULL

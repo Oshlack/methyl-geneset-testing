@@ -239,7 +239,7 @@ dat %>% filter(set == "GO") %>%
     mutate(method = unname(dict[method])) %>% 
     inner_join(medCpgEgGo, by = c("ID" = "GO")) -> sub
 
-bins <- rbin_quantiles(sub, ID, med, bins = 12)
+bins <- rbin::rbin_quantiles(sub, ID, med, bins = 12)
 sub$bin <- as.factor(findInterval(sub$med, bins$upper_cut))
 
 binLabs <- paste0("<", bins$upper_cut)
